@@ -8,13 +8,14 @@ public class Answer<D, M> {
 
     public Answer() {}
 
-    public Answer(D data) {
+    public Answer(D data, M meta) {
         this.data = data;
         if (data == null) {
             this.status = "fail";
         } else {
             this.status = "success";
         }
+        this.meta = meta;
     }
 
     public void setData(D data) {

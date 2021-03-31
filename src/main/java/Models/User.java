@@ -3,6 +3,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 import java.lang.String;
+import java.util.List;
 
 @Entity("users")
 public class User {
@@ -11,6 +12,7 @@ public class User {
     @Indexed(options = @IndexOptions(unique = true))
     private String username;
     private String password;
+    private List<String> issuedToken;
 
     User() {}
 
@@ -27,8 +29,24 @@ public class User {
         return _id.toString();
     }
 
-    private BCrypt.Result verifyPassword(String passwordToCheck) {
-        return BCrypt.verifyer().verify(password.toCharArray(), password);
+    public void setIssuedTokens(List<String> tokens) {
+        this.issuedToken = tokens;
+    }
+
+    public List<String> getIssuedTokens() {
+        return this.issuedToken;
+    }
+
+    public void setPassword(String notEncryptPassword) {
+        this.password = getHashedPassword(notEncryptPassword);
+    }
+
+    public void reGeneratePassword() {
+        password = getHashedPassword(password);
+    }
+
+    public BCrypt.Result verifyPassword(String passwordToCheck) {
+        return BCrypt.verifyer().verify(passwordToCheck.toCharArray(), password);
     }
 
     private static String getHashedPassword(String password) {

@@ -1,4 +1,5 @@
 import Controllers.UserController;
+import Models.User;
 import Utils.JsonTransformer;
 import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
@@ -14,7 +15,7 @@ public class Application {
         store.ensureIndexes();
 
         // Create JsonTransformer
-        final JsonTransformer transformer = new JsonTransformer();
+        final JsonTransformer toJson = new JsonTransformer();
 
         // Enable CORD
         before((req, res) -> {
@@ -28,13 +29,21 @@ public class Application {
             // Grouped API routes version 1
             path("/v1", () -> {
                 // Route for work with users list
-                get("/users", (req, res) -> UserController.getList(req, res, store), transformer);
+                get("/users", (req, res) ->
+                        UserController.getList(req, res, store), toJson);
+                // Route for register user
+                post("/users/register", (req, res) ->
+                        UserController.registerUser(req, res, store), toJson);
+                // Route for user login
+                post("/users/login", (req, res) ->
+                        UserController.loginUser(req, res, store), toJson);
+            });
+            after("/api/*", (req, res) -> {
+                res.type("application/json");
             });
         });
 
         // Routes for user actions
-        post("/users/register", (request, response) -> "Register new user");
-        post("/users/login", (request, response) -> "Login route");
         post("/users/logout", (request, response) -> "User logout");
         get("/users/autologin", (request, response) -> "Autologin route");
 
