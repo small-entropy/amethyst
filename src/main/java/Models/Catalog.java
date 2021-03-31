@@ -5,7 +5,7 @@ import dev.morphia.annotations.*;
 @Entity("catalogs")
 public class Catalog {
     @Id
-    private ObjectId id;
+    private ObjectId _id;
     private String name;
     private String description;
 
@@ -16,8 +16,8 @@ public class Catalog {
         this.description = description;
     }
 
-    public ObjectId getId() {
-        return this.id;
+    public ObjectId get_id() {
+        return this._id;
     }
 
     public String getName() {

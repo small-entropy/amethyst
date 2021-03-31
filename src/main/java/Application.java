@@ -1,20 +1,36 @@
+import Controllers.UserController;
+import Utils.JsonTransformer;
 import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
-
 import static spark.Spark.*;
 
 public class Application {
     public static void main(String[] args) {
 
+        // Create database connection
+        final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst");
+        store.getMapper().mapPackage("Models");
+        store.ensureIndexes();
 
-        final Datastore datastore = Morphia.createDatastore(MongoClients.create(), "Amethyst");
-        datastore.getMapper().mapPackage("Amethyst.Models");
-        datastore.getDatabase().drop();
-        datastore.ensureIndexes();
+        // Create JsonTransformer
+        final JsonTransformer transformer = new JsonTransformer();
 
-        // Route for work with users list
-        get("/users", (request, response) -> "Get users list");
+        // Enable CORD
+        before((req, res) -> {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            res.header("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization");
+        });
+
+        // Grouped API routes
+        path("/api", ()-> {
+            // Grouped API routes version 1
+            path("/v1", () -> {
+                // Route for work with users list
+                get("/users", (req, res) -> UserController.getList(req, res, store), transformer);
+            });
+        });
 
         // Routes for user actions
         post("/users/register", (request, response) -> "Register new user");
