@@ -1,23 +1,35 @@
+// Import UserController class
 import Controllers.UserController;
-import Models.User;
+// Import JsonTransformer class
 import Utils.JsonTransformer;
+// Import MongoClient class
 import com.mongodb.client.MongoClients;
+// Import Morphia classes
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+// Import Spark classes
 import static spark.Spark.*;
 
+/** Main server class*/
 public class Application {
+
+    /**
+     * Main function (run by start project)
+     * @param args method arguments
+     */
     public static void main(String[] args) {
 
         // Create database connection
         final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst");
+        // Map all models from package
         store.getMapper().mapPackage("Models");
+        // Enshure database indexes by models
         store.ensureIndexes();
 
         // Create JsonTransformer
         final JsonTransformer toJson = new JsonTransformer();
 
-        // Enable CORD
+        // Enable CORS
         before((req, res) -> {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -28,15 +40,21 @@ public class Application {
         path("/api", ()-> {
             // Grouped API routes version 1
             path("/v1", () -> {
-                // Route for work with users list
-                get("/users", (req, res) ->
-                        UserController.getList(req, res, store), toJson);
-                // Route for register user
-                post("/users/register", (req, res) ->
-                        UserController.registerUser(req, res, store), toJson);
-                // Route for user login
-                post("/users/login", (req, res) ->
-                        UserController.loginUser(req, res, store), toJson);
+                // Group users routes
+                path("/users", () -> {
+                    // Route for work with users list
+                    get("", (req, res) ->
+                            UserController.getList(req, res, store), toJson);
+                    // Route for register user
+                    post("/register", (req, res) ->
+                            UserController.registerUser(req, res, store), toJson);
+                    // Route for user login
+                    post("/login", (req, res) ->
+                            UserController.loginUser(req, res, store), toJson);
+                    // Route for user autologin
+                    get("/autologin", (req, res) ->
+                            UserController.autoLoginUser(req, res, store), toJson);
+                });
             });
             after("/api/*", (req, res) -> {
                 res.type("application/json");
@@ -45,7 +63,6 @@ public class Application {
 
         // Routes for user actions
         post("/users/logout", (request, response) -> "User logout");
-        get("/users/autologin", (request, response) -> "Autologin route");
 
         // Routes for work with user document
         get("/users/:id", (request, response) -> "Get user data");

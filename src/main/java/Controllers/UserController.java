@@ -5,11 +5,13 @@ import Models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 // Import GSON class
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 // Import Morphia classes
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 // Import Spark classes
+import org.bson.types.ObjectId;
 import spark.Request;
 import spark.Response;
 // Import Java standard classes
@@ -27,9 +29,17 @@ public class UserController {
     /**
      * Method for generate user token
      * */
-    private static String getToken() {
+    private static String getToken(User user) {
         Algorithm algorithm = Algorithm.HMAC256(UserController.salt);
-        return JWT.create().withIssuer("auth0").sign(algorithm);
+        return JWT.create()
+                .withClaim("id", user.get_id())
+                .withClaim("username", user.getUsername())
+                .withIssuer("auth0")
+                .sign(algorithm);
+    }
+
+    private static DecodedJWT decodeToken(String token) {
+        return JWT.decode(token);
     }
 
     /**
@@ -39,6 +49,45 @@ public class UserController {
      */
     private static String getAuthHeaderValue(String token) {
         return "Bearer ".concat(token);
+    }
+
+    /**
+     * Method to autologin by token in header ot query params
+     * @param request Spark request object
+     * @param response Spark response object
+     * @param datastore datastore to work with data (Morphia connection)
+     * @return result auth user
+     */
+    public static User autoLoginUser(Request request, Response response, Datastore datastore) {
+        // Field to headers
+        final String HEADER_FIELD = "Authorization";
+        // Field to query
+        final String QUERY_FIELD = "token";
+        // Separator to query string
+        final String QUERY_SEPARATOR = " ";
+        // Query array index
+        final short QUERY_INDEX = 1;
+        // Get value from header
+        String header = (request.headers(HEADER_FIELD) != null)
+                    ? request.headers(HEADER_FIELD).split(QUERY_SEPARATOR)[QUERY_INDEX]
+                    : null;
+        // Get value from query
+        String queryParam = request.queryMap().get(QUERY_FIELD).value();
+        // Check on exist token in header or query params
+        if (header != null || queryParam != null) {
+            // Chose value to decode
+            String toDecode = (header != null) ? header : queryParam;
+            // Try decode token
+            DecodedJWT decoded = UserController.decodeToken(toDecode);
+            // Get id as String from claim
+            String idString = decoded.getClaim("id").asString();
+            // Get ObjectId from id in claim
+            ObjectId id = (idString != null) ? new ObjectId(idString) : null;
+            // Find in datastore & return result
+            return datastore.find(User.class).filter(eq("_id", id)).first();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -70,7 +119,7 @@ public class UserController {
             // If user have a generated token - get it.
             // If user haven't a generated token - generate new token
             String token = (tokens.size() == 0)
-                    ? UserController.getToken()
+                    ? UserController.getToken(user)
                     : tokens.get(0);
             // Set token in header
             response.header("Authorization", UserController.getAuthHeaderValue(token));
@@ -87,22 +136,22 @@ public class UserController {
      * @param request Spark request object
      * @param response Spark response object
      * @param datastore datastore (morphia connection)
-     * @return user documentreturn
+     * @return user document
      */
     public static User registerUser(Request request, Response response, Datastore datastore) {
-        // Create algorithm object
-        Algorithm algorithm = Algorithm.HMAC256(UserController.salt);
-        // Generate JWT token
-        String token = UserController.getToken();
-        // Get tokens list
-        List<String> tokens = Arrays.asList(token);
         // Crete user object from JSON
         User user = new Gson().fromJson(request.body(), User.class);
         // Regenerate password hash
         user.reGeneratePassword();
+        // Save user
+        datastore.save(user);
+        // Generate JWT token
+        String token = UserController.getToken(user);
+        // Get tokens list
+        List<String> tokens = Arrays.asList(token);
         // Set issued tokens list
         user.setIssuedTokens(tokens);
-        // Save document in datastore
+        // Update document in datastore
         datastore.save(user);
         // Set token in headers
         response.header("Authorization", UserController.getAuthHeaderValue(token));
@@ -115,7 +164,7 @@ public class UserController {
      * @param request Spark request object
      * @param response Spark response object
      * @param datastore datastore (morphia connection)
-     * @return
+     * @return list of users documents
      */
     public static List<User> getList(Request request, Response response, Datastore datastore) {
         // Set default values for some params
