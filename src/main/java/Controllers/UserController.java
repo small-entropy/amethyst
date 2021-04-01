@@ -21,8 +21,21 @@ import java.util.List;
 import java.util.Map;
 
 import static dev.morphia.query.experimental.filters.Filters.eq;
+import static dev.morphia.query.experimental.filters.Filters.and;
 
 public class UserController {
+
+    /** Default header Authorization field */
+    private static final String headerAuthField = "Authorization";
+
+    /** Default query Authorization key */
+    private static final String queryAuthKey = "token";
+
+    /** Default header auth separator */
+    private static final String headerSeparator = " ";
+
+    /** Default header index */
+    private static final short headerAuthIndex = 1;
 
     /** Salt for generate password hash */
     private static final String salt = "super#@!$ecretSa|t";
@@ -39,8 +52,56 @@ public class UserController {
                 .sign(algorithm);
     }
 
+    /**
+     * Method for decode token
+     * @param token user token
+     * @return decoded token claim
+     */
     private static DecodedJWT decodeToken(String token) {
         return JWT.decode(token);
+    }
+
+    /**
+     * Method get token from
+     * @param request Spark request object
+     * @return token from header
+     */
+    private static String getTokenFromHeaders(Request request){
+        return (request.headers(UserController.headerAuthField) != null)
+                ? request.headers(UserController.headerAuthField).split(UserController.headerSeparator)[UserController.headerAuthIndex]
+                : null;
+    }
+
+    /**
+     * Method for get token from query
+     * @param request Spark request object
+     * @return token from query string
+     */
+    private static String getTokenFromQuery(Request request) {
+        return request.queryMap().get(UserController.queryAuthKey).value();
+    }
+
+    /**
+     * Method for login user by token
+     * @param request Spark request object
+     * @param datastore datastore (Morphia connection)
+     * @return user object
+     */
+    private static User getUserByToken(Request request, Datastore datastore) {
+        String header = UserController.getTokenFromHeaders(request);
+        String queryParam = UserController.getTokenFromQuery(request);
+        if (header != null || queryParam != null) {
+            String token = (header != null) ? header : queryParam;
+            DecodedJWT decoded = UserController.decodeToken(token);
+            String idString = decoded.getClaim("id").asString();
+            ObjectId id = new ObjectId(idString);
+            return datastore.find(User.class).filter(and(
+                    eq("_id", id),
+                    eq("active", true)
+            )).first();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -53,6 +114,21 @@ public class UserController {
     }
 
     /**
+     * Method for get token from headers or query params
+     * @param request Spark request object
+     * @return token from headers or query
+     */
+    private static String getTokenByRequest(Request request) {
+        String header = UserController.getTokenFromHeaders(request);
+        String queryParam = UserController.getTokenFromQuery(request);
+        if (header != null || queryParam != null) {
+            return (header != null) ? header : queryParam;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Method to autologin by token in header ot query params
      * @param request Spark request object
      * @param response Spark response object
@@ -60,40 +136,22 @@ public class UserController {
      * @return result auth user
      */
     public static StandardResponse<User> autoLoginUser(Request request, Response response, Datastore datastore) {
-        // Field to headers
-        final String HEADER_FIELD = "Authorization";
-        // Field to query
-        final String QUERY_FIELD = "token";
-        // Separator to query string
-        final String QUERY_SEPARATOR = " ";
-        // Query array index
-        final short QUERY_INDEX = 1;
-        // Get value from header
-        String header = (request.headers(HEADER_FIELD) != null)
-                    ? request.headers(HEADER_FIELD).split(QUERY_SEPARATOR)[QUERY_INDEX]
-                    : null;
-        // Get value from query
-        String queryParam = request.queryMap().get(QUERY_FIELD).value();
-        // Init mesasge & status
+        User user = UserController.getUserByToken(request, datastore);
         String status;
         String message;
-        // Check on exist token in header or query params
-        if (header != null || queryParam != null) {
-            // Chose value to decode
-            String toDecode = (header != null) ? header : queryParam;
-            // Try decode token
-            DecodedJWT decoded = UserController.decodeToken(toDecode);
-            // Get id as String from claim
-            String idString = decoded.getClaim("id").asString();
-            // Get ObjectId from id in claim
-            ObjectId id = (idString != null) ? new ObjectId(idString) : null;
-            // Find in datastore & return result
-            User user = datastore.find(User.class).filter(eq("_id", id)).first();
-            status = "success";
-            message = "Successfully auth by token";
-            return new StandardResponse<User>(status, message, user);
+        if (user != null) {
+            String token = UserController.getTokenByRequest(request);
+            if (user.getIssuedTokens() != null
+                    && user.getIssuedTokens().contains(token)) {
+                status = "success";
+                message = "Successfully auth by token";
+                return new StandardResponse<User>(status, message, user);
+            } else {
+                status = "fail";
+                message = "This token not active";
+                return new StandardResponse<User>(status, message, null);
+            }
         } else {
-            // Set message & status
             status = "fail";
             message = "Can not login by token";
             return new StandardResponse<User>(status, message, null);
@@ -115,7 +173,13 @@ public class UserController {
         // Get field "username" from map
         String username = (String) map.get("username");
         // Find user by username from request body
-        User user = datastore.find(User.class).filter(eq("username", username)).first();
+        User user = datastore
+                .find(User.class)
+                .filter(and(
+                        eq("username", username),
+                        eq("active", true)
+                ))
+                .first();
         // Verified user password:
         // if user not find - false,
         // if user send wrong password - false,
@@ -131,9 +195,14 @@ public class UserController {
             // Check list of user generated tokens.
             // If user have a generated token - get it.
             // If user haven't a generated token - generate new token
-            String token = (tokens.size() == 0)
-                    ? UserController.getToken(user)
-                    : tokens.get(0);
+            String token;
+            if (tokens == null || tokens.size() == 0) {
+                token = UserController.getToken(user);
+                user.setIssuedTokens(Arrays.asList(token));
+                datastore.save(user);
+            } else {
+                token = tokens.get(0);
+            }
             // Set token in header
             response.header("Authorization", UserController.getAuthHeaderValue(token));
             // Set value for message & status
@@ -181,6 +250,32 @@ public class UserController {
     }
 
     /**
+     * Method for remove user token
+     * @param request Spark request object
+     * @param response Spark response object
+     * @param datastore datastore (Morphia connection)
+     * @return user document
+     */
+    public static StandardResponse<User> logoutUser(Request request, Response response, Datastore datastore) {
+        User user = UserController.getUserByToken(request, datastore);
+        String message;
+        String status;
+        if (user != null) {
+            String token = UserController.getTokenByRequest(request);
+            int tokenIndex = user.getIssuedTokens().indexOf(token);
+            user.getIssuedTokens().remove(tokenIndex);
+            datastore.save(user);
+            status = "success";
+            message = "Logoun is success";
+            return new StandardResponse<User>(status, message, user);
+        } else {
+            status = "fail";
+            message = "Can not find user by token";
+            return new StandardResponse<User>(status, message, null);
+        }
+    }
+
+    /**
      * Method for get user list
      * @param request Spark request object
      * @param response Spark response object
@@ -201,9 +296,17 @@ public class UserController {
         String qLimit = request.queryMap().get(LIMIT_FIELD).value();
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         // Create find options for iterator
-        FindOptions findOptions = new FindOptions().skip(skip).limit(limit);
+        FindOptions findOptions = new FindOptions()
+                .projection().exclude("issuedToken", "password")
+                .skip(skip)
+                .limit(limit);
         // Return result as list of users document
-        List<User> users = datastore.find(User.class).iterator(findOptions).toList();
+        List<User> users = datastore
+                .find(User.class)
+                .filter(eq("active", true))
+
+                .iterator(findOptions)
+                .toList();
         // Set status, message
         String status;
         String message;

@@ -21,4 +21,11 @@ public class StandardResponse<T> {
         this.data = data;
     }
 
+    public StandardResponse(String status, String message, T data, StandardMeta meta) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
+        this.meta = meta;
+    }
+
 }

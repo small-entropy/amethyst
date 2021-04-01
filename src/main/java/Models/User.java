@@ -13,6 +13,7 @@ public class User {
     private String username;
     private String password;
     private List<String> issuedToken;
+    private boolean active = true;
 
     User() {}
 
@@ -51,6 +52,18 @@ public class User {
 
     private static String getHashedPassword(String password) {
         return BCrypt.withDefaults().hashToString(12, password.toCharArray());
+    }
+
+    public boolean getActive() {
+        return this.active;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
+    public void activate() {
+        this.active = true;
     }
 
 }

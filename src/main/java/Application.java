@@ -54,15 +54,15 @@ public class Application {
                     // Route for user autologin
                     get("/autologin", (req, res) ->
                             UserController.autoLoginUser(req, res, store), toJson);
+                    // Logout user
+                    get("/logout", (req, res) ->
+                            UserController.logoutUser(req, res, store), toJson);
                 });
             });
             after("/api/*", (req, res) -> {
                 res.type("application/json");
             });
         });
-
-        // Routes for user actions
-        post("/users/logout", (request, response) -> "User logout");
 
         // Routes for work with user document
         get("/users/:id", (request, response) -> "Get user data");
