@@ -15,18 +15,7 @@ public class JsonTransformer implements ResponseTransformer {
 
     @Override
     public String render(Object model) {
-        Answer<Object, Meta> answer = new Answer<Object, Meta>(model,null);
-        Meta meta;
-
-        if (model instanceof ArrayList) {
-            meta = new Meta();
-            meta.setCount(((ArrayList<?>) model).size());
-        } else  {
-            meta = null;
-        }
-
-        answer.setMeta(meta);
-        return gson.toJson(answer);
+        return gson.toJson(model);
     }
 
 }

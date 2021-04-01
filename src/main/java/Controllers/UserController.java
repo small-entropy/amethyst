@@ -2,6 +2,7 @@ package Controllers;
 // Import models
 import Models.User;
 // Import JWT classes
+import Utils.StandardResponse;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 // Import GSON class
@@ -58,7 +59,7 @@ public class UserController {
      * @param datastore datastore to work with data (Morphia connection)
      * @return result auth user
      */
-    public static User autoLoginUser(Request request, Response response, Datastore datastore) {
+    public static StandardResponse<User> autoLoginUser(Request request, Response response, Datastore datastore) {
         // Field to headers
         final String HEADER_FIELD = "Authorization";
         // Field to query
@@ -73,6 +74,9 @@ public class UserController {
                     : null;
         // Get value from query
         String queryParam = request.queryMap().get(QUERY_FIELD).value();
+        // Init mesasge & status
+        String status;
+        String message;
         // Check on exist token in header or query params
         if (header != null || queryParam != null) {
             // Chose value to decode
@@ -84,9 +88,15 @@ public class UserController {
             // Get ObjectId from id in claim
             ObjectId id = (idString != null) ? new ObjectId(idString) : null;
             // Find in datastore & return result
-            return datastore.find(User.class).filter(eq("_id", id)).first();
+            User user = datastore.find(User.class).filter(eq("_id", id)).first();
+            status = "success";
+            message = "Successfully auth by token";
+            return new StandardResponse<User>(status, message, user);
         } else {
-            return null;
+            // Set message & status
+            status = "fail";
+            message = "Can not login by token";
+            return new StandardResponse<User>(status, message, null);
         }
     }
 
@@ -97,7 +107,7 @@ public class UserController {
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static User loginUser(Request request, Response response, Datastore datastore) {
+    public static StandardResponse<User> loginUser(Request request, Response response, Datastore datastore) {
         // Transform JSON object from body to Map
         var map = new Gson().fromJson(request.body(), Map.class);
         // Get field "password" from map
@@ -111,6 +121,9 @@ public class UserController {
         // if user send wrong password - false,
         // if user send correct password - true
         boolean verified = user != null && user.verifyPassword(password).verified;
+        // Init message and status
+        String message;
+        String status;
         // Check verified result
         if (verified) {
             // Get user generated token
@@ -123,11 +136,16 @@ public class UserController {
                     : tokens.get(0);
             // Set token in header
             response.header("Authorization", UserController.getAuthHeaderValue(token));
+            // Set value for message & status
+            status = "success";
+            message = "Successfull user auth by token";
             // Return user object
-            return user;
+            return new StandardResponse<User>(status, message, user);
         } else {
+            status = "fail";
+            message = "Can not auth by current username & password";
             // Return null
-            return null;
+            return new StandardResponse<User>(status, message, null);
         }
     }
 
@@ -138,7 +156,7 @@ public class UserController {
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static User registerUser(Request request, Response response, Datastore datastore) {
+    public static StandardResponse<User> registerUser(Request request, Response response, Datastore datastore) {
         // Crete user object from JSON
         User user = new Gson().fromJson(request.body(), User.class);
         // Regenerate password hash
@@ -155,8 +173,11 @@ public class UserController {
         datastore.save(user);
         // Set token in headers
         response.header("Authorization", UserController.getAuthHeaderValue(token));
-        // Return saved document
-        return user;
+        // Set status, message
+        String status = "success";
+        String message = "Register user successed";
+        // Create & return answer object for method
+        return new StandardResponse<User>(status, message, user);
     }
 
     /**
@@ -166,7 +187,7 @@ public class UserController {
      * @param datastore datastore (morphia connection)
      * @return list of users documents
      */
-    public static List<User> getList(Request request, Response response, Datastore datastore) {
+    public static StandardResponse<List<User>> getList(Request request, Response response, Datastore datastore) {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
@@ -182,6 +203,21 @@ public class UserController {
         // Create find options for iterator
         FindOptions findOptions = new FindOptions().skip(skip).limit(limit);
         // Return result as list of users document
-        return datastore.find(User.class).iterator(findOptions).toList();
+        List<User> users = datastore.find(User.class).iterator(findOptions).toList();
+        // Set status, message
+        String status;
+        String message;
+        // Check users list size.
+        // If size equal - fail method status & message
+        // If size not equal - success method status & message
+        if (users.size() != 0) {
+            status = "success";
+            message = "Success finding users";
+        } else  {
+            status = "fail";
+            message = "Can not find users";
+        }
+        // Create & return answer object for method
+        return new StandardResponse<List<User>>(status, message, users);
     }
 }

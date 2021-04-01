@@ -1,9 +1,9 @@
 package Utils;
 
-public class Meta {
+public class StandardMeta {
     private Integer count;
 
-    Meta() {}
+    StandardMeta() {}
 
     public void setCount(Integer count) {
         this.count = count;
