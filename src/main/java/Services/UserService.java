@@ -1,4 +1,4 @@
-package Controllers;
+package Services;
 // Import models
 import Models.User;
 // Import JWT classes
@@ -23,7 +23,7 @@ import java.util.Map;
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import static dev.morphia.query.experimental.filters.Filters.and;
 
-public class UserController {
+public class UserService {
 
     /** Default header Authorization field */
     private static final String headerAuthField = "Authorization";
@@ -44,7 +44,7 @@ public class UserController {
      * Method for generate user token
      * */
     private static String getToken(User user) {
-        Algorithm algorithm = Algorithm.HMAC256(UserController.salt);
+        Algorithm algorithm = Algorithm.HMAC256(UserService.salt);
         return JWT.create()
                 .withClaim("id", user.get_id())
                 .withClaim("username", user.getUsername())
@@ -67,8 +67,8 @@ public class UserController {
      * @return token from header
      */
     private static String getTokenFromHeaders(Request request){
-        return (request.headers(UserController.headerAuthField) != null)
-                ? request.headers(UserController.headerAuthField).split(UserController.headerSeparator)[UserController.headerAuthIndex]
+        return (request.headers(UserService.headerAuthField) != null)
+                ? request.headers(UserService.headerAuthField).split(UserService.headerSeparator)[UserService.headerAuthIndex]
                 : null;
     }
 
@@ -78,7 +78,7 @@ public class UserController {
      * @return token from query string
      */
     private static String getTokenFromQuery(Request request) {
-        return request.queryMap().get(UserController.queryAuthKey).value();
+        return request.queryMap().get(UserService.queryAuthKey).value();
     }
 
     /**
@@ -88,17 +88,20 @@ public class UserController {
      * @return user object
      */
     private static User getUserByToken(Request request, Datastore datastore) {
-        String header = UserController.getTokenFromHeaders(request);
-        String queryParam = UserController.getTokenFromQuery(request);
+        String header = UserService.getTokenFromHeaders(request);
+        String queryParam = UserService.getTokenFromQuery(request);
         if (header != null || queryParam != null) {
             String token = (header != null) ? header : queryParam;
-            DecodedJWT decoded = UserController.decodeToken(token);
+            DecodedJWT decoded = UserService.decodeToken(token);
             String idString = decoded.getClaim("id").asString();
             ObjectId id = new ObjectId(idString);
-            return datastore.find(User.class).filter(and(
-                    eq("_id", id),
-                    eq("active", true)
-            )).first();
+            return datastore
+                    .find(User.class)
+                    .filter(and(
+                        eq("_id", id),
+                        eq("active", true)
+                    ))
+                    .first();
         } else {
             return null;
         }
@@ -119,8 +122,8 @@ public class UserController {
      * @return token from headers or query
      */
     private static String getTokenByRequest(Request request) {
-        String header = UserController.getTokenFromHeaders(request);
-        String queryParam = UserController.getTokenFromQuery(request);
+        String header = UserService.getTokenFromHeaders(request);
+        String queryParam = UserService.getTokenFromQuery(request);
         if (header != null || queryParam != null) {
             return (header != null) ? header : queryParam;
         } else {
@@ -136,11 +139,11 @@ public class UserController {
      * @return result auth user
      */
     public static StandardResponse<User> autoLoginUser(Request request, Response response, Datastore datastore) {
-        User user = UserController.getUserByToken(request, datastore);
+        User user = UserService.getUserByToken(request, datastore);
         String status;
         String message;
         if (user != null) {
-            String token = UserController.getTokenByRequest(request);
+            String token = UserService.getTokenByRequest(request);
             if (user.getIssuedTokens() != null
                     && user.getIssuedTokens().contains(token)) {
                 status = "success";
@@ -197,14 +200,14 @@ public class UserController {
             // If user haven't a generated token - generate new token
             String token;
             if (tokens == null || tokens.size() == 0) {
-                token = UserController.getToken(user);
+                token = UserService.getToken(user);
                 user.setIssuedTokens(Arrays.asList(token));
                 datastore.save(user);
             } else {
                 token = tokens.get(0);
             }
             // Set token in header
-            response.header("Authorization", UserController.getAuthHeaderValue(token));
+            response.header("Authorization", UserService.getAuthHeaderValue(token));
             // Set value for message & status
             status = "success";
             message = "Successfull user auth by token";
@@ -233,7 +236,7 @@ public class UserController {
         // Save user
         datastore.save(user);
         // Generate JWT token
-        String token = UserController.getToken(user);
+        String token = UserService.getToken(user);
         // Get tokens list
         List<String> tokens = Arrays.asList(token);
         // Set issued tokens list
@@ -241,7 +244,7 @@ public class UserController {
         // Update document in datastore
         datastore.save(user);
         // Set token in headers
-        response.header("Authorization", UserController.getAuthHeaderValue(token));
+        response.header("Authorization", UserService.getAuthHeaderValue(token));
         // Set status, message
         String status = "success";
         String message = "Register user successed";
@@ -257,11 +260,11 @@ public class UserController {
      * @return user document
      */
     public static StandardResponse<User> logoutUser(Request request, Response response, Datastore datastore) {
-        User user = UserController.getUserByToken(request, datastore);
+        User user = UserService.getUserByToken(request, datastore);
         String message;
         String status;
         if (user != null) {
-            String token = UserController.getTokenByRequest(request);
+            String token = UserService.getTokenByRequest(request);
             int tokenIndex = user.getIssuedTokens().indexOf(token);
             user.getIssuedTokens().remove(tokenIndex);
             datastore.save(user);
@@ -297,14 +300,16 @@ public class UserController {
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         // Create find options for iterator
         FindOptions findOptions = new FindOptions()
-                .projection().exclude("issuedToken", "password")
+                .projection()
+                .exclude("issuedToken", "password")
                 .skip(skip)
                 .limit(limit);
         // Return result as list of users document
         List<User> users = datastore
                 .find(User.class)
-                .filter(eq("active", true))
-
+                .filter(
+                        eq("active", true)
+                )
                 .iterator(findOptions)
                 .toList();
         // Set status, message

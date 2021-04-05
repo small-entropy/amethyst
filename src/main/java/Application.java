@@ -1,8 +1,13 @@
 // Import UserController class
-import Controllers.UserController;
+import Controllers.common.ApiController;
+import Controllers.common.CORS;
+import Controllers.common.ErrorsController;
+import Controllers.v1.UserController;
+import Services.UserService;
 // Import JsonTransformer class
 import Utils.JsonTransformer;
 // Import MongoClient class
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClients;
 // Import Morphia classes
 import dev.morphia.Datastore;
@@ -12,6 +17,7 @@ import static spark.Spark.*;
 
 /** Main server class*/
 public class Application {
+
 
     /**
      * Main function (run by start project)
@@ -23,46 +29,29 @@ public class Application {
         final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst");
         // Map all models from package
         store.getMapper().mapPackage("Models");
-        // Enshure database indexes by models
+        // Ensure database indexes by models
         store.ensureIndexes();
 
         // Create JsonTransformer
         final JsonTransformer toJson = new JsonTransformer();
 
         // Enable CORS
-        before((req, res) -> {
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            res.header("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization");
-        });
+        final String allowOrigin = "*";
+        final String allowMethods = "GET, POST, PUT, DELETE, OPTIONS";
+        final String allowHeaders = "Content-Type, api_key, Authorization";
+        CORS.enable(allowOrigin, allowMethods, allowHeaders);
 
         // Grouped API routes
         path("/api", ()-> {
             // Grouped API routes version 1
-            path("/v1", () -> {
-                // Group users routes
-                path("/users", () -> {
-                    // Route for work with users list
-                    get("", (req, res) ->
-                            UserController.getList(req, res, store), toJson);
-                    // Route for register user
-                    post("/register", (req, res) ->
-                            UserController.registerUser(req, res, store), toJson);
-                    // Route for user login
-                    post("/login", (req, res) ->
-                            UserController.loginUser(req, res, store), toJson);
-                    // Route for user autologin
-                    get("/autologin", (req, res) ->
-                            UserController.autoLoginUser(req, res, store), toJson);
-                    // Logout user
-                    get("/logout", (req, res) ->
-                            UserController.logoutUser(req, res, store), toJson);
-                });
-            });
-            after("/api/*", (req, res) -> {
-                res.type("application/json");
-            });
+            path("/v1", () -> UserController.methods(store, toJson));
+            // Callback after call all routes with /api/* pattern
+            ApiController.afterCall();
         });
+
+        // Errors handling
+        ErrorsController.erros_InternalServerError();
+        ErrorsController.errors_Custom();
 
         // Routes for work with user document
         get("/users/:id", (request, response) -> "Get user data");
