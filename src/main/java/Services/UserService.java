@@ -1,8 +1,13 @@
 package Services;
 // Import models
 import Models.User;
-// Import JWT classes
+// Import utils for request headers
+import Utils.HeadersUtils;
+// Import utils for work with JWT
 import Utils.JsonWebToken;
+// Import utils for work with query params
+import Utils.QueryUtils;
+// Import standard response class
 import Responses.StandardResponse;
 // Import GSON class
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -27,38 +32,6 @@ import static dev.morphia.query.experimental.filters.Filters.and;
  */
 public class UserService {
 
-    /** Default header Authorization field */
-    private static final String headerAuthField = "Authorization";
-
-    /** Default query Authorization key */
-    private static final String queryAuthKey = "token";
-
-    /** Default header auth separator */
-    private static final String headerSeparator = " ";
-
-    /** Default header index */
-    private static final short headerAuthIndex = 1;
-
-    /**
-     * Method get token from
-     * @param request Spark request object
-     * @return token from header
-     */
-    private static String getTokenFromHeaders(Request request){
-        return (request.headers(UserService.headerAuthField) != null)
-                ? request.headers(UserService.headerAuthField).split(UserService.headerSeparator)[UserService.headerAuthIndex]
-                : null;
-    }
-
-    /**
-     * Method for get token from query
-     * @param request Spark request object
-     * @return token from query string
-     */
-    private static String getTokenFromQuery(Request request) {
-        return request.queryMap().get(UserService.queryAuthKey).value();
-    }
-
     /**
      * Method for login user by token
      * @param request Spark request object
@@ -67,9 +40,9 @@ public class UserService {
      */
     private static User getUserByToken(Request request, Datastore datastore) {
         // Get token from request headers
-        String header = UserService.getTokenFromHeaders(request);
+        String header = HeadersUtils.getTokenFromHeaders(request);
         // Get token from request query params
-        String queryParam = UserService.getTokenFromQuery(request);
+        String queryParam = QueryUtils.getTokenFromQuery(request);
         // Check token from exist
         // If token exist in headers or query params - find in database
         // If token not exist in headers or query params - return null
@@ -113,8 +86,8 @@ public class UserService {
      * @return token from headers or query
      */
     private static String getTokenByRequest(Request request) {
-        String header = UserService.getTokenFromHeaders(request);
-        String queryParam = UserService.getTokenFromQuery(request);
+        String header = HeadersUtils.getTokenFromHeaders(request);
+        String queryParam = QueryUtils.getTokenFromQuery(request);
         if (header != null || queryParam != null) {
             return (header != null) ? header : queryParam;
         } else {

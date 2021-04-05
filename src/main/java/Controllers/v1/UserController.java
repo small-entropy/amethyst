@@ -43,7 +43,7 @@ public class UserController {
         get("/:id/properties/:id", (request, response) -> "Get user property");
         // Update user property by property UUID (user find by UUID)
         put("/:id/properties/:id", (request, response) -> "Update user property");
-        // Merk to remove user proeprty by UUID (user find by UUID)
+        // Merk to remove user property by UUID (user find by UUID)
         delete("/:id/properties/:id", (request, response) -> "Remove user property");
 
         // Routes for work with users orders
