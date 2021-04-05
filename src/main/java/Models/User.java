@@ -8,7 +8,7 @@ import java.util.List;
 @Entity("users")
 public class User {
     @Id
-    private ObjectId _id;
+    private ObjectId id;
     @Indexed(options = @IndexOptions(unique = true))
     private String username;
     private String password;
@@ -34,8 +34,8 @@ public class User {
      * Getter for user id
      * @return user id (as ObjectId)
      */
-    public String get_id() {
-        return _id.toString();
+    public String getId() {
+        return id.toString();
     }
 
     /**

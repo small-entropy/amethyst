@@ -32,6 +32,27 @@ import static dev.morphia.query.experimental.filters.Filters.and;
  */
 public class UserService {
 
+    public static User getUserByUuid(Request request, Response response, Datastore datastore) {
+        String token = UserService.getTokenByRequest(request);
+        DecodedJWT decoded = (token != null) ? JsonWebToken.decode(token) : null;
+        String decodedIdString = (decoded != null) ? decoded.getClaim("id").asString() : null;
+        String idString = request.params("id");
+        boolean isEqualsToken = decodedIdString != null && decodedIdString.equals(idString);
+        ObjectId id = new ObjectId(idString);
+        FindOptions findOptions = isEqualsToken
+                ? new FindOptions()
+                : new FindOptions()
+                    .projection()
+                    .exclude("issuedToken", "password");
+        return datastore
+                .find(User.class)
+                .filter(and(
+                        eq("id", id),
+                        eq("active", true)
+                ))
+                .first(findOptions);
+    }
+
     /**
      * Method for login user by token
      * @param request Spark request object
@@ -62,22 +83,13 @@ public class UserService {
             return datastore
                     .find(User.class)
                     .filter(and(
-                        eq("_id", id),
+                        eq("id", id),
                         eq("active", true)
                     ))
                     .first();
         } else {
             return null;
         }
-    }
-
-    /**
-     * Method for get auth string for header
-     * @param token user token
-     * @return string for save in response headers
-     */
-    private static String getAuthHeaderValue(String token) {
-        return "Bearer ".concat(token);
     }
 
     /**
@@ -102,27 +114,15 @@ public class UserService {
      * @param datastore datastore to work with data (Morphia connection)
      * @return result auth user
      */
-    public static StandardResponse<User> autoLoginUser(Request request, Response response, Datastore datastore) {
+    public static User autoLoginUser(Request request, Response response, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
-        String status;
-        String message;
-        if (user != null) {
-            String token = UserService.getTokenByRequest(request);
-            if (user.getIssuedTokens() != null
-                    && user.getIssuedTokens().contains(token)) {
-                status = "success";
-                message = "Successfully auth by token";
-                return new StandardResponse<User>(status, message, user);
-            } else {
-                status = "fail";
-                message = "This token not active";
-                return new StandardResponse<User>(status, message, null);
-            }
-        } else {
-            status = "fail";
-            message = "Can not login by token";
-            return new StandardResponse<User>(status, message, null);
-        }
+        String token = UserService.getTokenByRequest(request);
+        return (user != null
+                && token != null
+                && user.getIssuedTokens() != null
+                && user.getIssuedTokens().contains(token))
+                ? user
+                : null;
     }
 
     /**
@@ -132,7 +132,7 @@ public class UserService {
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static StandardResponse<User> loginUser(Request request, Response response, Datastore datastore) {
+    public static User loginUser(Request request, Response response, Datastore datastore) {
         // Transform JSON object from body to Map
         var map = new Gson().fromJson(request.body(), Map.class);
         // Get field "password" from map
@@ -164,21 +164,10 @@ public class UserService {
                 token = JsonWebToken.encode(user);
                 user.setIssuedTokens(Arrays.asList(token));
                 datastore.save(user);
-            } else {
-                token = tokens.get(0);
             }
-            // Set token in header
-            response.header("Authorization", UserService.getAuthHeaderValue(token));
-            // Set value for message & status
-            String status = "success";
-            String message = "Successfull user auth by token";
-            // Return user object
-            return new StandardResponse<User>(status, message, user);
+            return user;
         } else {
-            String status = "fail";
-            String message = "Can not auth by current username & password";
-            // Return null
-            return new StandardResponse<User>(status, message, null);
+            return null;
         }
     }
 
@@ -189,7 +178,7 @@ public class UserService {
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static StandardResponse<User> registerUser(Request request, Response response, Datastore datastore) {
+    public static User registerUser(Request request, Response response, Datastore datastore) {
         // Crete user object from JSON
         User user = new Gson().fromJson(request.body(), User.class);
         // Regenerate password hash
@@ -205,12 +194,7 @@ public class UserService {
         // Update document in datastore
         datastore.save(user);
         // Set token in headers
-        response.header("Authorization", UserService.getAuthHeaderValue(token));
-        // Set status, message
-        String status = "success";
-        String message = "Register user successed";
-        // Create & return answer object for method
-        return new StandardResponse<User>(status, message, user);
+        return user;
     }
 
     /**
@@ -220,23 +204,17 @@ public class UserService {
      * @param datastore datastore (Morphia connection)
      * @return user document
      */
-    public static StandardResponse<User> logoutUser(Request request, Response response, Datastore datastore) {
+    public static User logoutUser(Request request, Response response, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
-        String message;
-        String status;
         if (user != null) {
             String token = UserService.getTokenByRequest(request);
             int tokenIndex = user.getIssuedTokens().indexOf(token);
             user.getIssuedTokens().remove(tokenIndex);
             datastore.save(user);
-            status = "success";
-            message = "Logout is success";
+            return user;
         } else {
-            status = "fail";
-            message = "Can not find user by token";
+            return null;
         }
-
-        return new StandardResponse<User>(status, message, user);
     }
 
     /**
@@ -246,7 +224,7 @@ public class UserService {
      * @param datastore datastore (morphia connection)
      * @return list of users documents
      */
-    public static StandardResponse<List<User>> getList(Request request, Response response, Datastore datastore) {
+    public static List<User> getList(Request request, Response response, Datastore datastore) {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
@@ -266,21 +244,12 @@ public class UserService {
                 .skip(skip)
                 .limit(limit);
         // Return result as list of users document
-        List<User> users = datastore
+        return datastore
                 .find(User.class)
                 .filter(
                         eq("active", true)
                 )
                 .iterator(findOptions)
                 .toList();
-        // Check users list size.
-        // If size equal - fail method status & message
-        // If size not equal - success method status & message
-        boolean isEmptyUsers = users.size() != 0;
-        // Set status, message
-        String status = isEmptyUsers ? "success" : "fail";
-        String message = isEmptyUsers ? "Success finding users" : "Can not finding users";
-        // Create & return answer object for method
-        return new StandardResponse<List<User>>(status, message, users);
     }
 }

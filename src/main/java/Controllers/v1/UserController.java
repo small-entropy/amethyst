@@ -1,7 +1,13 @@
 package Controllers.v1;
+import Models.User;
+import Responses.StandardResponse;
 import Services.UserService;
 import Transformers.JsonTransformer;
+import Utils.HeadersUtils;
 import dev.morphia.Datastore;
+
+import java.util.List;
+
 import static spark.Spark.*;
 
 /**
@@ -16,19 +22,83 @@ public class UserController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Route for work with users list
-        get("", (req, res) -> UserService.getList(req, res, store), transformer);
+        get("", (req, res) -> {
+            List<User> users = UserService.getList(req, res, store);
+            // Check users list size.
+            // If size equal - fail method status & message
+            // If size not equal - success method status & message
+            boolean isEmptyUsers = users.size() != 0;
+            // Set status, message
+            String status = isEmptyUsers ? "success" : "fail";
+            String message = isEmptyUsers ? "Success finding users" : "Can not finding users";
+            return new StandardResponse<List<User>>(status, message, users);
+        }, transformer);
+
         // Route for register user
-        post("/register", (req, res) -> UserService.registerUser(req, res, store), transformer);
+        post("/register", (req, res) -> {
+            User user = UserService.registerUser(req, res, store);
+            String status = "success";
+            String message = "User registered";
+            final int firstIndex = 0;
+            String token = user.getIssuedTokens().get(firstIndex);
+            res.header(
+                    HeadersUtils.getAuthHeaderField(),
+                    HeadersUtils.getAuthHeaderValue(token)
+            );
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
+
         // Route for user login
-        post("/login", (req, res) -> UserService.loginUser(req, res, store), transformer);
+        post("/login", (req, res) -> {
+            User user = UserService.loginUser(req, res, store);
+            String status;
+            String message;
+            if (user != null) {
+                status = "success";
+                message = "Login is success";
+                final int firstIndex = 0;
+                String token = user.getIssuedTokens().get(firstIndex);
+                res.header(
+                        HeadersUtils.getAuthHeaderField(),
+                        HeadersUtils.getAuthHeaderValue(token)
+                );
+            } else {
+                status = "fail";
+                message = "Can not auth by current username & password";
+            }
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
+
         // Route for user autologin
-        get("/autologin", (req, res) -> UserService.autoLoginUser(req, res, store), transformer);
+        get("/autologin", (req, res) -> {
+            User user = UserService.autoLoginUser(req, res, store);
+            String status = (user != null) ? "success" : "fail";
+            String message = (user != null)
+                    ? "Successfully autologin by token"
+                    : "Can not autologin by token";
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
+
         // Logout user
-        get("/logout", (req, res) -> UserService.logoutUser(req, res, store), transformer);
+        get("/logout", (req, res) -> {
+            User user = UserService.logoutUser(req, res, store);
+            String status = (user != null) ? "success" : "fail";
+            String message = (user != null)
+                    ? "Successfully logout"
+                    : "Can not logout";
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
 
         // Routes for work with user document
         // Get user document by UUID
-        get("/:id", (request, response) -> "Get user data");
+        get("/:id", (req, res) -> {
+            User user = UserService.getUserByUuid(req, res, store);
+            String status = (user != null) ? "success" : "fails";
+            String message = (user != null)
+                    ? "Successfully user finded"
+                    : "Can not find user";
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
         // Update user document by UUID
         put("/:id", (request, response) -> "Update user data");
         // Mark to remove user document by UUID
