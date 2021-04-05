@@ -2,9 +2,8 @@ package Services;
 // Import models
 import Models.User;
 // Import JWT classes
-import Utils.StandardResponse;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import Utils.JsonWebToken;
+import Responses.StandardResponse;
 // Import GSON class
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
@@ -19,10 +18,13 @@ import spark.Response;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+// Import Morphia filter criteria methods
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import static dev.morphia.query.experimental.filters.Filters.and;
 
+/**
+ * Class service for work with users collection
+ */
 public class UserService {
 
     /** Default header Authorization field */
@@ -36,30 +38,6 @@ public class UserService {
 
     /** Default header index */
     private static final short headerAuthIndex = 1;
-
-    /** Salt for generate password hash */
-    private static final String salt = "super#@!$ecretSa|t";
-
-    /**
-     * Method for generate user token
-     * */
-    private static String getToken(User user) {
-        Algorithm algorithm = Algorithm.HMAC256(UserService.salt);
-        return JWT.create()
-                .withClaim("id", user.get_id())
-                .withClaim("username", user.getUsername())
-                .withIssuer("auth0")
-                .sign(algorithm);
-    }
-
-    /**
-     * Method for decode token
-     * @param token user token
-     * @return decoded token claim
-     */
-    private static DecodedJWT decodeToken(String token) {
-        return JWT.decode(token);
-    }
 
     /**
      * Method get token from
@@ -88,13 +66,26 @@ public class UserService {
      * @return user object
      */
     private static User getUserByToken(Request request, Datastore datastore) {
+        // Get token from request headers
         String header = UserService.getTokenFromHeaders(request);
+        // Get token from request query params
         String queryParam = UserService.getTokenFromQuery(request);
+        // Check token from exist
+        // If token exist in headers or query params - find in database
+        // If token not exist in headers or query params - return null
         if (header != null || queryParam != null) {
+            // Get token
+            // If token exist in headers - set it as value
+            // If token not exist in headers - set it as value
             String token = (header != null) ? header : queryParam;
-            DecodedJWT decoded = UserService.decodeToken(token);
+            // Try decode token
+            DecodedJWT decoded = JsonWebToken.decode(token);
+            // Get user UUID from decoded token as string
             String idString = decoded.getClaim("id").asString();
+            // Create ObjectId from user UUID string
             ObjectId id = new ObjectId(idString);
+            // Return result from find in database by user UUID
+            // (find only active users)
             return datastore
                     .find(User.class)
                     .filter(and(
@@ -188,9 +179,6 @@ public class UserService {
         // if user send wrong password - false,
         // if user send correct password - true
         boolean verified = user != null && user.verifyPassword(password).verified;
-        // Init message and status
-        String message;
-        String status;
         // Check verified result
         if (verified) {
             // Get user generated token
@@ -200,7 +188,7 @@ public class UserService {
             // If user haven't a generated token - generate new token
             String token;
             if (tokens == null || tokens.size() == 0) {
-                token = UserService.getToken(user);
+                token = JsonWebToken.encode(user);
                 user.setIssuedTokens(Arrays.asList(token));
                 datastore.save(user);
             } else {
@@ -209,13 +197,13 @@ public class UserService {
             // Set token in header
             response.header("Authorization", UserService.getAuthHeaderValue(token));
             // Set value for message & status
-            status = "success";
-            message = "Successfull user auth by token";
+            String status = "success";
+            String message = "Successfull user auth by token";
             // Return user object
             return new StandardResponse<User>(status, message, user);
         } else {
-            status = "fail";
-            message = "Can not auth by current username & password";
+            String status = "fail";
+            String message = "Can not auth by current username & password";
             // Return null
             return new StandardResponse<User>(status, message, null);
         }
@@ -236,7 +224,7 @@ public class UserService {
         // Save user
         datastore.save(user);
         // Generate JWT token
-        String token = UserService.getToken(user);
+        String token = JsonWebToken.encode(user);
         // Get tokens list
         List<String> tokens = Arrays.asList(token);
         // Set issued tokens list
@@ -269,13 +257,13 @@ public class UserService {
             user.getIssuedTokens().remove(tokenIndex);
             datastore.save(user);
             status = "success";
-            message = "Logoun is success";
-            return new StandardResponse<User>(status, message, user);
+            message = "Logout is success";
         } else {
             status = "fail";
             message = "Can not find user by token";
-            return new StandardResponse<User>(status, message, null);
         }
+
+        return new StandardResponse<User>(status, message, user);
     }
 
     /**
@@ -289,9 +277,9 @@ public class UserService {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
+        // Keys in query params
         final String SKIP_FIELD = "skip";
         final String LIMIT_FIELD = "limit";
-
         // Set skip value from request query
         String qSkip = request.queryMap().get(SKIP_FIELD).value();
         int skip = (qSkip == null) ? DEFAULT_SKIP : Integer.parseInt(qSkip);
@@ -312,19 +300,13 @@ public class UserService {
                 )
                 .iterator(findOptions)
                 .toList();
-        // Set status, message
-        String status;
-        String message;
         // Check users list size.
         // If size equal - fail method status & message
         // If size not equal - success method status & message
-        if (users.size() != 0) {
-            status = "success";
-            message = "Success finding users";
-        } else  {
-            status = "fail";
-            message = "Can not find users";
-        }
+        boolean isEmptyUsers = users.size() != 0;
+        // Set status, message
+        String status = isEmptyUsers ? "success" : "fail";
+        String message = isEmptyUsers ? "Success finding users" : "Can not finding users";
         // Create & return answer object for method
         return new StandardResponse<List<User>>(status, message, users);
     }

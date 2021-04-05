@@ -1,19 +1,55 @@
 // Import UserController class
 import Controllers.common.ApiController;
-import Controllers.common.CORS;
+import Controllers.common.CORSController;
 import Controllers.common.ErrorsController;
 import Controllers.v1.UserController;
-import Services.UserService;
 // Import JsonTransformer class
-import Utils.JsonTransformer;
+import Transformers.JsonTransformer;
 // Import MongoClient class
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClients;
 // Import Morphia classes
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 // Import Spark classes
 import static spark.Spark.*;
+
+/**
+ * Enum with routes paths
+ */
+enum RoutesPath {
+    API("/api"),
+    VERSION_ONE("/v1"),
+    USERS("/users");
+
+    private String value;
+
+    RoutesPath(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
+
+/**
+ * Enum for CORS configs
+ */
+enum CORSConfigs {
+    ORIGINS("*"),
+    METHODS("GET, POST, PUT, DELETE, OPTIONS"),
+    HEADERS("Content-Type, api_key, Authorization");
+
+    private String value;
+
+    CORSConfigs(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
 
 /** Main server class*/
 public class Application {
@@ -36,48 +72,26 @@ public class Application {
         final JsonTransformer toJson = new JsonTransformer();
 
         // Enable CORS
-        final String allowOrigin = "*";
-        final String allowMethods = "GET, POST, PUT, DELETE, OPTIONS";
-        final String allowHeaders = "Content-Type, api_key, Authorization";
-        CORS.enable(allowOrigin, allowMethods, allowHeaders);
+        CORSController.enable(
+                CORSConfigs.ORIGINS.getValue(),
+                CORSConfigs.HEADERS.getValue(),
+                CORSConfigs.METHODS.getValue()
+        );
 
         // Grouped API routes
-        path("/api", ()-> {
+        path(RoutesPath.API.getValue(), ()-> {
             // Grouped API routes version 1
-            path("/v1", () -> UserController.methods(store, toJson));
+            path(RoutesPath.VERSION_ONE.getValue(), () -> {
+                // Grouped API routes for work with users
+                path(RoutesPath.USERS.getValue(), () -> UserController.routes(store, toJson));
+            });
             // Callback after call all routes with /api/* pattern
-            ApiController.afterCall();
+            ApiController.afterCallCommon();
         });
 
         // Errors handling
-        ErrorsController.erros_InternalServerError();
+        ErrorsController.errors_InternalServerError();
         ErrorsController.errors_Custom();
-
-        // Routes for work with user document
-        get("/users/:id", (request, response) -> "Get user data");
-        put("/users/:id", (request, response) -> "Update user data");
-        delete("/users/:id", (request, response) -> "Remove user document");
-
-        // Routes for work with user properties
-        get("/users/:id/properties", (request, response) -> "User properties list");
-        post("/users/:id/properties", (request, response) -> "Create user properties");
-        get("/users/:id/properties/:id", (request, response) -> "Get user property");
-        put("/users/:id/properties/:id", (request, response) -> "Update user property");
-        delete("/users/:id/properties/:id", (request, response) -> "Remove user property");
-
-        // Routes for work with users orders
-        get("/users/:id/orders", (request, response) -> "Get users orders list");
-        post("/users/:id/orders", (request, response) -> "Create user order");
-        get("/users/:id/orders/:id", (request, response) -> "Get user order");
-        put("/users/:id/orders/:id", (request, response) -> "Update user order");
-        delete("/users/:id/orders/:id", (request, response) -> "Remove user order");
-
-        // Routes for work with user rights
-        get("/users/:id/rights", (request, response) -> "Get user rights");
-        post("/users/:id/rights", (request, response) -> "Create user right");
-        get("/users/:id/rights/:id", (request, response) -> "Get user right");
-        put("/users/:id/rights/:id", (request, response) -> "Update user right");
-        delete("/user/:id/rights/:id", (request, response) -> "Remove user right");
 
         // Route for work with catalog list
         get("/catalogs", (request, response) -> "Get catalogs list");

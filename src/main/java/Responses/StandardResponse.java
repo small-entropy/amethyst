@@ -1,4 +1,4 @@
-package Utils;
+package Responses;
 
 public class StandardResponse<D> {
     private String status;

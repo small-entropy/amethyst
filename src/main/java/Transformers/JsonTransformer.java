@@ -1,10 +1,9 @@
-package Utils;
+package Transformers;
+import Adapters.ObjectIdTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bson.types.ObjectId;
 import spark.ResponseTransformer;
-
-import java.util.ArrayList;
 
 public class JsonTransformer implements ResponseTransformer {
     // Create instance GsonBuilder

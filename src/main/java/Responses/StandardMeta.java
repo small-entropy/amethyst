@@ -1,4 +1,4 @@
-package Utils;
+package Responses;
 
 public class StandardMeta {
     private Integer count;
