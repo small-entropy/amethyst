@@ -18,10 +18,10 @@ import static spark.Spark.*;
  * Enum with routes paths
  */
 enum RoutesPath {
-    API("/api"),
-    VERSION_ONE("/v1"),
-    USERS("/users"),
-    CATALOGS("/catalogs");
+    API("/api"), // endpoint for server API
+    VERSION_ONE("/v1"), // endpoint for API version 1
+    USERS("/users"), // endpoint for users API
+    CATALOGS("/catalogs"); // endpoint for catalogs API
     private String value;
     RoutesPath(String value) {
         this.value = value;
@@ -35,9 +35,9 @@ enum RoutesPath {
  * Enum for CORS configs
  */
 enum CORSConfigs {
-    ORIGINS("*"),
-    METHODS("GET, POST, PUT, DELETE, OPTIONS"),
-    HEADERS("Content-Type, api_key, Authorization");
+    ORIGINS("*"), // default config for allowed origin
+    METHODS("GET, POST, PUT, DELETE, OPTIONS"), // default config for allowed methods
+    HEADERS("Content-Type, api_key, Authorization"); // default config for allowed headers
     private String value;
     CORSConfigs(String value) {
         this.value = value;
