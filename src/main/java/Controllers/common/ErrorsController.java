@@ -11,13 +11,10 @@ import static spark.Spark.*;
 enum HttpErrorsMessage {
     INTERNAL_SERVER_ERROR("Custom 500 handling"),
     NOT_FOUND("Route not found");
-
     private String value;
-
     HttpErrorsMessage(String value) {
         this.value = value;
     }
-
     public String getValue() {
         return value;
     }
@@ -28,16 +25,11 @@ enum HttpErrorsMessage {
  */
 enum HttpErrorsCodes {
     INTERNAL_SERVER_ERROR(500);
-
     private int value;
-
     HttpErrorsCodes(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return value;
-    }
+    public int getValue() { return value; }
 }
 
 /**

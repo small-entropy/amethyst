@@ -1,13 +1,10 @@
 package Responses;
 
-public class ErrorResponse {
-    private String status;
-    private String message;
-    private StandardMeta meta;
-
+/**
+ * Class for error response
+ */
+public class ErrorResponse extends AbstractResponse {
     public ErrorResponse(String message, StandardMeta meta) {
-        this.status = "error";
-        this.message = message;
-        this.meta = meta;
+        super("error", message, meta);
     }
 }
