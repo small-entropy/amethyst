@@ -6,33 +6,29 @@ import com.google.gson.Gson;
 import com.mongodb.MongoWriteException;
 import static spark.Spark.*;
 
-/**
- * Enum with Http Messages
- */
-enum HttpErrorsMessage {
-    INTERNAL_SERVER_ERROR("Custom 500 handling"),
-    NOT_FOUND("Route not found");
-    private String value;
-    HttpErrorsMessage(String value) {
-        this.value = value;
-    }
-    public String getValue() {
-        return value;
-    }
-};
 
 /**
  * Enum with Http Codes
  */
-enum HttpErrorsCodes {
-    INTERNAL_SERVER_ERROR(500),
-    UNAUTHORIZED(401),
-    CONFLICT(409);
-    private int value;
-    HttpErrorsCodes(int value) {
-        this.value = value;
+enum HttpErrors {
+    INTERNAL_SERVER_ERROR(500, "Internal server error"),
+    NOT_FOUND(404, "Route not found"),
+    UNAUTHORIZED(401, "Unauthorized user"),
+    CONFLICT(409, "Conflict with sent data");
+    private int code;
+    private String message;
+    HttpErrors(int code, String message) {
+        this.code = code;
+        this.message = message;
     }
-    public int getValue() { return value; }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
 
 /**
@@ -53,7 +49,7 @@ public class ErrorsController {
         // Error handler for internal server error
         internalServerError((req, res) -> {
             res.type(ErrorsController.RESPONSE_TYPE);
-            String message = HttpErrorsMessage.INTERNAL_SERVER_ERROR.getValue();
+            String message = HttpErrors.INTERNAL_SERVER_ERROR.getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
             return ErrorsController.GSON.toJson(response);
         });
@@ -61,7 +57,7 @@ public class ErrorsController {
         // Error handler for not found error
         notFound((req, res) -> {
             res.type(ErrorsController.RESPONSE_TYPE);
-            String message = HttpErrorsMessage.NOT_FOUND.getValue();
+            String message = HttpErrors.NOT_FOUND.getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
             return ErrorsController.GSON.toJson(response);
         });
@@ -73,7 +69,7 @@ public class ErrorsController {
     public static void errors_Custom() {
         // Custom exception handler for MongoWriteException error
         exception(MongoWriteException.class, (error, req, res) -> {
-            res.status(HttpErrorsCodes.INTERNAL_SERVER_ERROR.getValue());
+            res.status(HttpErrors.INTERNAL_SERVER_ERROR.getCode());
             res.type(ErrorsController.RESPONSE_TYPE);
             ErrorResponse response = new ErrorResponse(error.getMessage(), null);
             res.body(ErrorsController.GSON.toJson(response));
@@ -81,7 +77,7 @@ public class ErrorsController {
 
         // Custom exception handler for AlgorithmMismatchException error
         exception(AlgorithmMismatchException.class, (error, req, res) -> {
-            res.status(HttpErrorsCodes.INTERNAL_SERVER_ERROR.getValue());
+            res.status(HttpErrors.INTERNAL_SERVER_ERROR.getCode());
             res.type(ErrorsController.RESPONSE_TYPE);
             ErrorResponse response = new ErrorResponse(error.getMessage(), null);
             res.body(ErrorsController.GSON.toJson(response));
@@ -89,12 +85,14 @@ public class ErrorsController {
 
         // Custom exception handler for DataNotSendException error
         exception(TokenException.class, (error, req, res) -> {
+            // Get status code by exception message
             int statusCode = switch (error.getMessage()) {
-                case "NotSend" -> HttpErrorsCodes.UNAUTHORIZED.getValue();
-                case "NotEquals" -> HttpErrorsCodes.CONFLICT.getValue();
-                default -> HttpErrorsCodes.INTERNAL_SERVER_ERROR.getValue();
+                case "NotSend" -> HttpErrors.UNAUTHORIZED.getCode();
+                case "NotEquals" -> HttpErrors.CONFLICT.getCode();
+                default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             res.status(statusCode);
+            // Get error message
             String message = error.getCause().getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
             res.body(ErrorsController.GSON.toJson(response));
