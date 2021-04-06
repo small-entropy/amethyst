@@ -1,4 +1,5 @@
 package Controllers.common;
+import Exceptions.TokenException;
 import Responses.ErrorResponse;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.google.gson.Gson;
@@ -24,7 +25,9 @@ enum HttpErrorsMessage {
  * Enum with Http Codes
  */
 enum HttpErrorsCodes {
-    INTERNAL_SERVER_ERROR(500);
+    INTERNAL_SERVER_ERROR(500),
+    UNAUTHORIZED(401),
+    CONFLICT(409);
     private int value;
     HttpErrorsCodes(int value) {
         this.value = value;
@@ -81,6 +84,19 @@ public class ErrorsController {
             res.status(HttpErrorsCodes.INTERNAL_SERVER_ERROR.getValue());
             res.type(ErrorsController.RESPONSE_TYPE);
             ErrorResponse response = new ErrorResponse(error.getMessage(), null);
+            res.body(ErrorsController.GSON.toJson(response));
+        });
+
+        // Custom exception handler for DataNotSendException error
+        exception(TokenException.class, (error, req, res) -> {
+            int statusCode = switch (error.getMessage()) {
+                case "NotSend" -> HttpErrorsCodes.UNAUTHORIZED.getValue();
+                case "NotEquals" -> HttpErrorsCodes.CONFLICT.getValue();
+                default -> HttpErrorsCodes.INTERNAL_SERVER_ERROR.getValue();
+            };
+            res.status(statusCode);
+            String message = error.getCause().getMessage();
+            ErrorResponse response = new ErrorResponse(message, null);
             res.body(ErrorsController.GSON.toJson(response));
         });
     }

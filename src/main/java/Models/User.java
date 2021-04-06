@@ -5,6 +5,41 @@ import dev.morphia.annotations.*;
 import java.lang.String;
 import java.util.List;
 
+@Entity("users_property")
+class Property<T> {
+    @Id
+    private ObjectId id;
+    private String key;
+    private T value;
+
+    Property() {}
+
+    public Property(String key, T value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+}
+
 @Entity("users")
 public class User {
     @Id
@@ -17,6 +52,11 @@ public class User {
 
     User() {}
 
+    /**
+     * Constructor for user document
+     * @param username user username
+     * @param password user password
+     */
     public User(String username, String password) {
         this.username = username;
         this.password = getHashedPassword(password);

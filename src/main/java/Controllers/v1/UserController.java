@@ -95,14 +95,23 @@ public class UserController {
             User user = UserService.getUserByUuid(req, res, store);
             String status = (user != null) ? "success" : "fails";
             String message = (user != null)
-                    ? "Successfully user finded"
+                    ? "Successfully user found"
                     : "Can not find user";
             return new StandardResponse<User>(status, message, user);
         }, transformer);
+
         // Update user document by UUID
         put("/:id", (request, response) -> "Update user data");
+
         // Mark to remove user document by UUID
-        delete("/:id", (request, response) -> "Remove user document");
+        delete("/:id", (req, res) -> {
+            User user = UserService.markToRemove(req,res, store);
+            String status = (user != null) ? "success" : "fail";
+            String message = (user != null)
+                    ? "User successfully deactivated"
+                    : "Can not deactivate user";
+            return new StandardResponse<User>(status, message, user);
+        }, transformer);
 
         // Routes for work with user properties
         // Get user properties list by user UUID

@@ -1,5 +1,6 @@
 package Services;
 // Import models
+import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
 import Utils.HeadersUtils;
@@ -8,7 +9,6 @@ import Utils.JsonWebToken;
 // Import utils for work with query params
 import Utils.QueryUtils;
 // Import standard response class
-import Responses.StandardResponse;
 // Import GSON class
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
@@ -32,6 +32,60 @@ import static dev.morphia.query.experimental.filters.Filters.and;
  */
 public class UserService {
 
+    /**
+     * Method for deactivate user account
+     * @param request Spark request object
+     * @param response Spark response object
+     * @param datastore Morphia datastore (connection)
+     * @return user object after saving
+     */
+    public static User markToRemove(Request request, Response response, Datastore datastore) throws TokenException {
+        // Get token from request
+        String token = UserService.getTokenByRequest(request);
+        // Check token on exist
+        if (token != null) {
+            // Decode token
+            DecodedJWT decoded = JsonWebToken.decode(token);
+            // Get id from token
+            String decodedId = decoded.getClaim("id").asString();
+            // Get id from query params
+            String paramId = request.params("id");
+            // Check ids on equals
+            boolean isEqualsIds = decodedId.equals(paramId);
+            // If ids equals - deactivate user account and save it
+            // If ids not equals - return null
+            if (isEqualsIds) {
+                ObjectId id = new ObjectId(paramId);
+                User user = datastore
+                        .find(User.class)
+                        .filter(eq("id", id))
+                        .first();
+                if (user != null) {
+                    user.deactivate();
+                    datastore.save(user);
+                    return user;
+                } else {
+                    return null;
+                }
+            } else {
+                Error error = new Error("Incorrect token");
+                throw new TokenException("NotEquals", error);
+            }
+        } else {
+            Error error = new Error("Token not send");
+            throw new TokenException("NotSend", error);
+        }
+    }
+
+    /**
+     * Method for get user information by UUID.
+     * If user send token - get full document.
+     * If user not send token - get short document
+     * @param request Spark request object
+     * @param response Spark response object
+     * @param datastore Morphia datastore (connection)
+     * @return finded user document
+     */
     public static User getUserByUuid(Request request, Response response, Datastore datastore) {
         String token = UserService.getTokenByRequest(request);
         DecodedJWT decoded = (token != null) ? JsonWebToken.decode(token) : null;
