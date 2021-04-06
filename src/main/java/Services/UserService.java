@@ -1,5 +1,6 @@
 package Services;
 // Import models
+import DTO.UserDTO;
 import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
@@ -18,11 +19,9 @@ import dev.morphia.query.FindOptions;
 // Import Spark classes
 import org.bson.types.ObjectId;
 import spark.Request;
-import spark.Response;
 // Import Java standard classes
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 // Import Morphia filter criteria methods
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import static dev.morphia.query.experimental.filters.Filters.and;
@@ -35,11 +34,10 @@ public class UserService {
     /**
      * Method for deactivate user account
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore Morphia datastore (connection)
      * @return user object after saving
      */
-    public static User markToRemove(Request request, Response response, Datastore datastore) throws TokenException {
+    public static User markToRemove(Request request, Datastore datastore) throws TokenException {
         // Get token from request
         String token = UserService.getTokenByRequest(request);
         // Check token on exist
@@ -82,11 +80,10 @@ public class UserService {
      * If user send token - get full document.
      * If user not send token - get short document
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore Morphia datastore (connection)
      * @return finded user document
      */
-    public static User getUserByUuid(Request request, Response response, Datastore datastore) {
+    public static User getUserByUuid(Request request, Datastore datastore) {
         String token = UserService.getTokenByRequest(request);
         DecodedJWT decoded = (token != null) ? JsonWebToken.decode(token) : null;
         String decodedIdString = (decoded != null) ? decoded.getClaim("id").asString() : null;
@@ -164,11 +161,10 @@ public class UserService {
     /**
      * Method to autologin by token in header ot query params
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore datastore to work with data (Morphia connection)
      * @return result auth user
      */
-    public static User autoLoginUser(Request request, Response response, Datastore datastore) {
+    public static User autoLoginUser(Request request, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
         String token = UserService.getTokenByRequest(request);
         return (user != null
@@ -182,17 +178,16 @@ public class UserService {
     /**
      * Method for auth user
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static User loginUser(Request request, Response response, Datastore datastore) {
+    public static User loginUser(Request request, Datastore datastore) {
         // Transform JSON object from body to Map
-        var map = new Gson().fromJson(request.body(), Map.class);
+        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
         // Get field "password" from map
-        String password = (String) map.get("password");
+        String password = userDTO.getPassword();
         // Get field "username" from map
-        String username = (String) map.get("username");
+        String username = userDTO.getUsername();
         // Find user by username from request body
         User user = datastore
                 .find(User.class)
@@ -228,15 +223,16 @@ public class UserService {
     /**
      * Method for register user
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static User registerUser(Request request, Response response, Datastore datastore) {
-        // Crete user object from JSON
-        User user = new Gson().fromJson(request.body(), User.class);
-        // Regenerate password hash
-        user.reGeneratePassword();
+    public static User registerUser(Request request, Datastore datastore) {
+        // Crete user data transfer object from JSON
+        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        User user = new User(
+                userDTO.getUsername(),
+                userDTO.getPassword()
+        );
         // Save user
         datastore.save(user);
         // Generate JWT token
@@ -254,11 +250,10 @@ public class UserService {
     /**
      * Method for remove user token
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore datastore (Morphia connection)
      * @return user document
      */
-    public static User logoutUser(Request request, Response response, Datastore datastore) {
+    public static User logoutUser(Request request, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
         if (user != null) {
             String token = UserService.getTokenByRequest(request);
@@ -274,11 +269,10 @@ public class UserService {
     /**
      * Method for get user list
      * @param request Spark request object
-     * @param response Spark response object
      * @param datastore datastore (morphia connection)
      * @return list of users documents
      */
-    public static List<User> getList(Request request, Response response, Datastore datastore) {
+    public static List<User> getList(Request request, Datastore datastore) {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;

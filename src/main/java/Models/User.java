@@ -3,6 +3,8 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 import java.lang.String;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Entity("users_property")
@@ -15,6 +17,7 @@ class Property<T> {
     Property() {}
 
     public Property(String key, T value) {
+        this.id = new ObjectId();
         this.key = key;
         this.value = value;
     }
@@ -49,6 +52,7 @@ public class User {
     private String password;
     private List<String> issuedToken;
     private boolean active = true;
+    private List<Property> properties;
 
     User() {}
 
@@ -60,6 +64,9 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = getHashedPassword(password);
+        Long currentDateTime = System.currentTimeMillis();
+        Property<Long> registered = new Property<Long>("registered", currentDateTime);
+        this.properties = Arrays.asList(registered);
     }
 
     /**

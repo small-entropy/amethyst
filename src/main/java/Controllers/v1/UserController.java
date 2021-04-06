@@ -23,7 +23,7 @@ public class UserController {
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Route for work with users list
         get("", (req, res) -> {
-            List<User> users = UserService.getList(req, res, store);
+            List<User> users = UserService.getList(req, store);
             // Check users list size.
             // If size equal - fail method status & message
             // If size not equal - success method status & message
@@ -36,7 +36,7 @@ public class UserController {
 
         // Route for register user
         post("/register", (req, res) -> {
-            User user = UserService.registerUser(req, res, store);
+            User user = UserService.registerUser(req, store);
             String status = "success";
             String message = "User registered";
             final int firstIndex = 0;
@@ -50,7 +50,7 @@ public class UserController {
 
         // Route for user login
         post("/login", (req, res) -> {
-            User user = UserService.loginUser(req, res, store);
+            User user = UserService.loginUser(req, store);
             String status;
             String message;
             if (user != null) {
@@ -71,7 +71,7 @@ public class UserController {
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
-            User user = UserService.autoLoginUser(req, res, store);
+            User user = UserService.autoLoginUser(req, store);
             String status = (user != null) ? "success" : "fail";
             String message = (user != null)
                     ? "Successfully autologin by token"
@@ -81,7 +81,7 @@ public class UserController {
 
         // Logout user
         get("/logout", (req, res) -> {
-            User user = UserService.logoutUser(req, res, store);
+            User user = UserService.logoutUser(req, store);
             String status = (user != null) ? "success" : "fail";
             String message = (user != null)
                     ? "Successfully logout"
@@ -92,7 +92,7 @@ public class UserController {
         // Routes for work with user document
         // Get user document by UUID
         get("/:id", (req, res) -> {
-            User user = UserService.getUserByUuid(req, res, store);
+            User user = UserService.getUserByUuid(req, store);
             String status = (user != null) ? "success" : "fails";
             String message = (user != null)
                     ? "Successfully user found"
@@ -105,7 +105,7 @@ public class UserController {
 
         // Mark to remove user document by UUID
         delete("/:id", (req, res) -> {
-            User user = UserService.markToRemove(req,res, store);
+            User user = UserService.markToRemove(req, store);
             String status = (user != null) ? "success" : "fail";
             String message = (user != null)
                     ? "User successfully deactivated"
