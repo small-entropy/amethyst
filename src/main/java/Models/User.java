@@ -4,44 +4,8 @@ import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 import java.lang.String;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-@Entity("users_property")
-class Property<T> {
-    @Id
-    private ObjectId id;
-    private String key;
-    private T value;
-
-    Property() {}
-
-    public Property(String key, T value) {
-        this.id = new ObjectId();
-        this.key = key;
-        this.value = value;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-}
 
 @Entity("users")
 public class User {
@@ -52,7 +16,7 @@ public class User {
     private String password;
     private List<String> issuedToken;
     private boolean active = true;
-    private List<Property> properties;
+    private List<UserProperty> properties;
 
     User() {}
 
@@ -65,8 +29,17 @@ public class User {
         this.username = username;
         this.password = getHashedPassword(password);
         Long currentDateTime = System.currentTimeMillis();
-        Property<Long> registered = new Property<Long>("registered", currentDateTime);
-        this.properties = Arrays.asList(registered);
+        UserProperty registered = new UserProperty("registered", currentDateTime);
+        UserProperty banned = new UserProperty("banned", false, true);
+        this.properties = Arrays.asList(registered, banned);
+    }
+
+    public List<UserProperty> getProperties() {
+        return properties;
+    }
+
+    public void addPropeerty(UserProperty property) {
+        this.properties.add(property);
     }
 
     /**

@@ -1,6 +1,8 @@
 package Controllers.v1;
 import Models.User;
+import Models.UserProperty;
 import Responses.StandardResponse;
+import Services.UserPropertyService;
 import Services.UserService;
 import Transformers.JsonTransformer;
 import Utils.HeadersUtils;
@@ -115,15 +117,32 @@ public class UserController {
 
         // Routes for work with user properties
         // Get user properties list by user UUID
-        get("/:id/properties", (req, res) -> "User properties list");
+        get("/:id/properties", (req, res) -> {
+            List<UserProperty> properties = UserPropertyService.getUserProperties(req, store);
+            String status = (properties != null) ? "success" : "fail";
+            String message = (properties != null)
+                    ? "User properties found"
+                    : "Can not find user properties";
+            return new StandardResponse<List<UserProperty>>(status, message, properties);
+        }, transformer);
+
         // Create new user property (user find by UUID)
         post("/:id/properties", (request, response) -> "Create user properties");
+
         // Get user property by UUID (user find by UUID)
-        get("/:id/properties/:id", (request, response) -> "Get user property");
+        get("/:id/properties/:property_id", (req, res) -> {
+            UserProperty property = UserPropertyService.getUserPropertyById(req, store);
+            String status = (property != null) ? "success" : "fail";
+            String message = (property != null)
+                    ? "User property found"
+                    : "Can not find user property";
+            return new StandardResponse<UserProperty>(status, message, property);
+        }, transformer);
+
         // Update user property by property UUID (user find by UUID)
-        put("/:id/properties/:id", (request, response) -> "Update user property");
-        // Merk to remove user property by UUID (user find by UUID)
-        delete("/:id/properties/:id", (request, response) -> "Remove user property");
+        put("/:id/properties/:property_id", (request, response) -> "Update user property");
+        // Remove user property by UUID (user find by UUID)
+        delete("/:id/properties/:property_id", (request, response) -> "Remove user property");
 
         // Routes for work with users orders
         // Get all orders by user UUID

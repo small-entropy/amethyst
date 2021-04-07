@@ -11,6 +11,7 @@ import Utils.JsonWebToken;
 import Utils.QueryUtils;
 // Import standard response class
 // Import GSON class
+import Utils.RequestUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 // Import Morphia classes
@@ -33,7 +34,7 @@ public class UserService {
 
     /**
      * Method for update user document
-     * @return updated user docukent
+     * @return updated user document
      */
     public static String updateUser() {
         return "Update user data";
@@ -47,7 +48,7 @@ public class UserService {
      */
     public static User markToRemove(Request request, Datastore datastore) throws TokenException {
         // Get token from request
-        String token = UserService.getTokenByRequest(request);
+        String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
         if (token != null) {
             // Decode token
@@ -92,7 +93,7 @@ public class UserService {
      * @return finded user document
      */
     public static User getUserByUuid(Request request, Datastore datastore) {
-        String token = UserService.getTokenByRequest(request);
+        String token = RequestUtils.getTokenByRequest(request);
         DecodedJWT decoded = (token != null) ? JsonWebToken.decode(token) : null;
         String decodedIdString = (decoded != null) ? decoded.getClaim("id").asString() : null;
         String idString = request.params("id");
@@ -152,21 +153,6 @@ public class UserService {
     }
 
     /**
-     * Method for get token from headers or query params
-     * @param request Spark request object
-     * @return token from headers or query
-     */
-    private static String getTokenByRequest(Request request) {
-        String header = HeadersUtils.getTokenFromHeaders(request);
-        String queryParam = QueryUtils.getTokenFromQuery(request);
-        if (header != null || queryParam != null) {
-            return (header != null) ? header : queryParam;
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Method to autologin by token in header ot query params
      * @param request Spark request object
      * @param datastore datastore to work with data (Morphia connection)
@@ -174,7 +160,7 @@ public class UserService {
      */
     public static User autoLoginUser(Request request, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
-        String token = UserService.getTokenByRequest(request);
+        String token = RequestUtils.getTokenByRequest(request);
         return (user != null
                 && token != null
                 && user.getIssuedTokens() != null
@@ -264,7 +250,7 @@ public class UserService {
     public static User logoutUser(Request request, Datastore datastore) {
         User user = UserService.getUserByToken(request, datastore);
         if (user != null) {
-            String token = UserService.getTokenByRequest(request);
+            String token = RequestUtils.getTokenByRequest(request);
             int tokenIndex = user.getIssuedTokens().indexOf(token);
             user.getIssuedTokens().remove(tokenIndex);
             datastore.save(user);
