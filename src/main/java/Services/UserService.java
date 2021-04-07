@@ -32,6 +32,14 @@ import static dev.morphia.query.experimental.filters.Filters.and;
 public class UserService {
 
     /**
+     * Method for update user document
+     * @return updated user docukent
+     */
+    public static String updateUser() {
+        return "Update user data";
+    }
+
+    /**
      * Method for deactivate user account
      * @param request Spark request object
      * @param datastore Morphia datastore (connection)
@@ -249,7 +257,7 @@ public class UserService {
 
     /**
      * Method for remove user token
-     * @param request Spark request object
+     * @param request Spa   rk request object
      * @param datastore datastore (Morphia connection)
      * @return user document
      */

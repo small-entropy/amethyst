@@ -101,7 +101,7 @@ public class UserController {
         }, transformer);
 
         // Update user document by UUID
-        put("/:id", (request, response) -> "Update user data");
+        put("/:id", (request, response) -> UserService.updateUser());
 
         // Mark to remove user document by UUID
         delete("/:id", (req, res) -> {
@@ -115,7 +115,7 @@ public class UserController {
 
         // Routes for work with user properties
         // Get user properties list by user UUID
-        get("/:id/properties", (request, response) -> "User properties list");
+        get("/:id/properties", (req, res) -> "User properties list");
         // Create new user property (user find by UUID)
         post("/:id/properties", (request, response) -> "Create user properties");
         // Get user property by UUID (user find by UUID)
