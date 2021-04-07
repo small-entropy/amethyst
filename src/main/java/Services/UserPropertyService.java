@@ -55,7 +55,7 @@ public class UserPropertyService {
                     .find(User.class)
                     .filter(and(
                             eq("id", id),
-                            eq("active", true)
+                            eq("status", "active")
                     ))
                     .first(findOptions)
                 : null;

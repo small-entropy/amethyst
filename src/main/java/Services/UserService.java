@@ -103,12 +103,12 @@ public class UserService {
                 ? new FindOptions()
                 : new FindOptions()
                     .projection()
-                    .exclude("issuedToken", "password");
+                    .exclude("issuedToken", "password", "status");
         return datastore
                 .find(User.class)
                 .filter(and(
                         eq("id", id),
-                        eq("active", true)
+                        eq("status", "active")
                 ))
                 .first(findOptions);
     }
@@ -144,7 +144,7 @@ public class UserService {
                     .find(User.class)
                     .filter(and(
                         eq("id", id),
-                        eq("active", true)
+                        eq("status", "active")
                     ))
                     .first();
         } else {
@@ -187,7 +187,7 @@ public class UserService {
                 .find(User.class)
                 .filter(and(
                         eq("username", username),
-                        eq("active", true)
+                        eq("status", "active")
                 ))
                 .first();
         // Verified user password:
@@ -282,14 +282,14 @@ public class UserService {
         // Create find options for iterator
         FindOptions findOptions = new FindOptions()
                 .projection()
-                .exclude("issuedToken", "password")
+                .exclude("issuedToken", "password", "properties", "status")
                 .skip(skip)
                 .limit(limit);
         // Return result as list of users document
         return datastore
                 .find(User.class)
                 .filter(
-                        eq("active", true)
+                        eq("status", "active")
                 )
                 .iterator(findOptions)
                 .toList();

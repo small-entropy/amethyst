@@ -15,7 +15,7 @@ public class User {
     private String username;
     private String password;
     private List<String> issuedToken;
-    private boolean active = true;
+    private String status;
     private List<UserProperty> properties;
 
     User() {}
@@ -32,13 +32,14 @@ public class User {
         UserProperty registered = new UserProperty("registered", currentDateTime);
         UserProperty banned = new UserProperty("banned", false, true);
         this.properties = Arrays.asList(registered, banned);
+        this.status = "active";
     }
 
     public List<UserProperty> getProperties() {
         return properties;
     }
 
-    public void addPropeerty(UserProperty property) {
+    public void addProperty(UserProperty property) {
         this.properties.add(property);
     }
 
@@ -112,21 +113,21 @@ public class User {
      * Getter for active state user
      * @return current value of active field
      */
-    public boolean getActive() {
-        return this.active;
+    public String getStatus() {
+        return this.status;
     }
 
     /**
      * Method for deactivate user
      */
     public void deactivate() {
-        this.active = false;
+        this.status = "inactive";
     }
 
     /**
      * Method for activate user
      */
     public void activate() {
-        this.active = true;
+        this.status = "active";
     }
 }
