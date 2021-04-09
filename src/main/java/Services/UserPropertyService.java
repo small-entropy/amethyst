@@ -42,7 +42,6 @@ public class UserPropertyService {
         } else {
             isTrusted = false;
         }
-
         // Create ObjectID from
         ObjectId id = (idParam != null) ? new ObjectId(idParam) : null;
         // Create find options

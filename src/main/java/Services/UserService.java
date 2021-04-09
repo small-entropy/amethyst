@@ -50,6 +50,8 @@ public class UserService {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
+        // If token send - try deactivate user
+        // If token not send - throw exception
         if (token != null) {
             // Decode token
             DecodedJWT decoded = JsonWebToken.decode(token);
@@ -60,18 +62,27 @@ public class UserService {
             // Check ids on equals
             boolean isEqualsIds = decodedId.equals(paramId);
             // If ids equals - deactivate user account and save it
-            // If ids not equals - return null
+            // If ids not equals - throw exception
             if (isEqualsIds) {
+                // Convert string to ObjectId
                 ObjectId id = new ObjectId(paramId);
+                // Find user by id
                 User user = datastore
                         .find(User.class)
                         .filter(eq("id", id))
                         .first();
+                // Check founded user
+                // If user found - deactivate user & save changes
+                // If user not found - return null
                 if (user != null) {
+                    // Deactivate user
                     user.deactivate();
+                    // Save changes in database
                     datastore.save(user);
+                    // Return saved document
                     return user;
                 } else {
+                    // Return null if user not found
                     return null;
                 }
             } else {
@@ -90,7 +101,7 @@ public class UserService {
      * If user not send token - get short document
      * @param request Spark request object
      * @param datastore Morphia datastore (connection)
-     * @return finded user document
+     * @return founded user document
      */
     public static User getUserByUuid(Request request, Datastore datastore) {
         String token = RequestUtils.getTokenByRequest(request);
@@ -248,14 +259,31 @@ public class UserService {
      * @return user document
      */
     public static User logoutUser(Request request, Datastore datastore) {
+        // Get user document from database
         User user = UserService.getUserByToken(request, datastore);
+        // Check user document on exist
+        // If founded user document not equal null - remove token from issued token list,
+        // save changes & return saved document.
+        // If founded user document equal null - return null.
         if (user != null) {
+            // Get token from request
             String token = RequestUtils.getTokenByRequest(request);
+            // Get user token index
             int tokenIndex = user.getIssuedTokens().indexOf(token);
-            user.getIssuedTokens().remove(tokenIndex);
-            datastore.save(user);
-            return user;
+            if (tokenIndex != -1) {
+                // Remove from issued tokens list token from request
+                user.getIssuedTokens().remove(tokenIndex);
+                // Save changes in database
+                datastore.save(user);
+                // Return saved document
+                return user;
+            } else {
+                // If token not include in issued token list
+                // return null
+                return null;
+            }
         } else {
+            // Return null if user not found
             return null;
         }
     }
