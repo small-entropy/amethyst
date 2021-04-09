@@ -4,14 +4,11 @@ import DTO.UserDTO;
 import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
-import Utils.HeadersUtils;
+import Utils.*;
 // Import utils for work with JWT
-import Utils.JsonWebToken;
 // Import utils for work with query params
-import Utils.QueryUtils;
 // Import standard response class
 // Import GSON class
-import Utils.RequestUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 // Import Morphia classes
@@ -21,11 +18,13 @@ import dev.morphia.query.FindOptions;
 import org.bson.types.ObjectId;
 import spark.Request;
 // Import Java standard classes
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 // Import Morphia filter criteria methods
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import static dev.morphia.query.experimental.filters.Filters.and;
+import static dev.morphia.query.experimental.filters.Filters.in;
 
 /**
  * Class service for work with users collection
@@ -103,18 +102,15 @@ public class UserService {
      * @param datastore Morphia datastore (connection)
      * @return founded user document
      */
-    public static User getUserByUuid(Request request, Datastore datastore) {
-        String token = RequestUtils.getTokenByRequest(request);
-        DecodedJWT decoded = (token != null) ? JsonWebToken.decode(token) : null;
-        String decodedIdString = (decoded != null) ? decoded.getClaim("id").asString() : null;
-        String idString = request.params("id");
-        boolean isEqualsToken = decodedIdString != null && decodedIdString.equals(idString);
-        ObjectId id = new ObjectId(idString);
-        FindOptions findOptions = isEqualsToken
+    public static User getUserById(Request request, Datastore datastore) {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        String idParam = request.params("id");
+        ObjectId id = new ObjectId(idParam);
+        FindOptions findOptions = isTrusted
                 ? new FindOptions()
                 : new FindOptions()
                     .projection()
-                    .exclude("issuedToken", "password", "status");
+                    .exclude("issuedToken", "password", "status", "properties");
         return datastore
                 .find(User.class)
                 .filter(and(

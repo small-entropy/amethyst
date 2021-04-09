@@ -1,4 +1,5 @@
 package Controllers.common;
+import Exceptions.DataException;
 import Exceptions.TokenException;
 import Responses.ErrorResponse;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
@@ -12,7 +13,7 @@ import static spark.Spark.*;
  */
 enum HttpErrors {
     INTERNAL_SERVER_ERROR(500, "Internal server error"),
-    NOT_FOUND(404, "Route not found"),
+    NOT_FOUND(404, "Not found"),
     UNAUTHORIZED(401, "Unauthorized user"),
     CONFLICT(409, "Conflict with sent data");
     private int code;
@@ -83,7 +84,7 @@ public class ErrorsController {
             res.body(ErrorsController.GSON.toJson(response));
         });
 
-        // Custom exception handler for DataNotSendException error
+        // Custom exception handler for TokenException error
         exception(TokenException.class, (error, req, res) -> {
             // Get status code by exception message
             int statusCode = switch (error.getMessage()) {
@@ -93,6 +94,17 @@ public class ErrorsController {
             };
             res.status(statusCode);
             // Get error message
+            String message = error.getCause().getMessage();
+            ErrorResponse response = new ErrorResponse(message, null);
+            res.body(ErrorsController.GSON.toJson(response));
+        });
+        // Custom exception handler for DataException
+        exception(DataException.class, (error, req, res) -> {
+            int statusCode = switch (error.getMessage()) {
+                case "NotFound" -> HttpErrors.NOT_FOUND.getCode();
+                default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
+            };
+            res.status(statusCode);
             String message = error.getCause().getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
             res.body(ErrorsController.GSON.toJson(response));

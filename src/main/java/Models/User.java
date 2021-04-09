@@ -17,6 +17,7 @@ public class User {
     private List<String> issuedToken;
     private String status;
     private List<UserProperty> properties;
+    private List<UserProperty> profile;
 
     User() {}
 
@@ -30,9 +31,18 @@ public class User {
         this.password = getHashedPassword(password);
         Long currentDateTime = System.currentTimeMillis();
         UserProperty registered = new UserProperty("registered", currentDateTime);
-        UserProperty banned = new UserProperty("banned", false, true);
-        this.properties = Arrays.asList(registered, banned);
+        UserProperty banned = new UserProperty("banned", false);
+        this.properties = Arrays.asList(banned);
+        this.profile =  Arrays.asList(registered);
         this.status = "active";
+    }
+
+    public List<UserProperty> getProfile() {
+        return profile;
+    }
+
+    public void addProfileProperty(UserProperty property) {
+        this.profile.add(property);
     }
 
     public List<UserProperty> getProperties() {

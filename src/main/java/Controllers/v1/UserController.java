@@ -2,6 +2,7 @@ package Controllers.v1;
 import Models.User;
 import Models.UserProperty;
 import Responses.StandardResponse;
+import Services.UserProfileService;
 import Services.UserPropertyService;
 import Services.UserService;
 import Transformers.JsonTransformer;
@@ -94,7 +95,7 @@ public class UserController {
         // Routes for work with user document
         // Get user document by UUID
         get("/:id", (req, res) -> {
-            User user = UserService.getUserByUuid(req, store);
+            User user = UserService.getUserById(req, store);
             String status = (user != null) ? "success" : "fails";
             String message = (user != null)
                     ? "Successfully user found"
@@ -127,7 +128,16 @@ public class UserController {
         }, transformer);
 
         // Create new user property (user find by UUID)
-        post("/:id/properties", (request, response) -> "Create user properties");
+        // This method only for create public property!
+        // For create not public property use other method!
+        post("/:id/properties", (req, res) -> {
+            UserProperty userProperty = UserPropertyService.createUserProperty(req, store);
+            String status = (userProperty != null) ? "success" : "fail";
+            String message = (userProperty != null)
+                    ? "Successfully create user property"
+                    : "Can not create user property";
+            return new StandardResponse<UserProperty>(status, message, userProperty);
+        }, transformer);
 
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
@@ -143,6 +153,41 @@ public class UserController {
         put("/:id/properties/:property_id", (request, response) -> "Update user property");
         // Remove user property by UUID (user find by UUID)
         delete("/:id/properties/:property_id", (request, response) -> "Remove user property");
+
+        // Route for get user profile
+        get("/:id/profile", (req, res)-> {
+            List<UserProperty> profile = UserProfileService.getUserProfile(req, store);
+            String status = (profile != null) ? "success" : "fail";
+            String message = (profile != null)
+                    ? "Successfully found user profile"
+                    : "Can not found user profile";
+            return new StandardResponse<List<UserProperty>>(status, message, profile);
+        }, transformer);
+
+        // Route for get user profile property by ID
+        get("/:id/profile/:property_id", (req, res) -> {
+            UserProperty property = UserProfileService.getUserProfilePropertyById(req, store);
+            String status = (property != null) ? "success" : "fail";
+            String message = (property != null)
+                    ? "Founded profile property"
+                    : "Can not found profile property";
+            return new StandardResponse<UserProperty>(status, message, property);
+        }, transformer);
+        // Route for create profile property
+        post("/:id/profile", (req, res) -> {
+            UserProperty property = UserProfileService.createUserProfileProperty(req, store);
+            String status = (property != null) ? "success" : "fail";
+            String message = (property != null)
+                    ? "Successfully created profile property"
+                    : "Can not create profile property";
+            return new StandardResponse<UserProperty>(status, message, property);
+        }, transformer);
+
+        // Update user profile property by property UUID (user find by UUID)
+        put("/:id/properties/:property_id", (request, response) -> "Update user profile property");
+        // Remove user profile property by UUID (user find by UUID)
+        delete("/:id/properties/:property_id", (request, response) -> "Remove user profile property");
+
 
         // Routes for work with users orders
         // Get all orders by user UUID

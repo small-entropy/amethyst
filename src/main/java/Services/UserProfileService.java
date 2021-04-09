@@ -1,15 +1,12 @@
 package Services;
-// Import user model (class)
 import DTO.UserPropertyDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
-// Import user property model (class)
 import Models.UserProperty;
 import Utils.Comparator;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
-import dev.morphia.query.FindOptions;
 import org.bson.types.ObjectId;
 import spark.Request;
 
@@ -19,17 +16,17 @@ import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;
 
 /**
- * Class controller for work with user properties
+ * Class controller for work with user profile properties
  */
-public class UserPropertyService {
+public class UserProfileService {
 
     /**
-     * Method for create user property
+     * Method for create user profile property
      * @param request Spark request object
      * @param datastore Morphia datastore object
      * @return user property
      */
-    public static UserProperty createUserProperty(Request request, Datastore datastore) throws TokenException, DataException {
+    public static UserProperty createUserProfileProperty(Request request, Datastore datastore) throws TokenException, DataException {
         // Get user id from params
         String idParam = request.params("id");
         // Check equals id from request url & id from send token
@@ -63,7 +60,7 @@ public class UserPropertyService {
                             userPropertyDTO.getKey(),
                             userPropertyDTO.getValue()
                     );
-                    user.getProperties().add(userProperty);
+                    user.getProfile().add(userProperty);
                     datastore.save(user);
                     return userProperty;
                 } else {
@@ -80,55 +77,39 @@ public class UserPropertyService {
     }
 
     /**
-     * Method for get user properties
+     * Method for get user profile properties
      * @param request Spark request object
      * @param datastore Morphia datastore object (connection)
      * @return list of user properties
      */
-    public static List<UserProperty> getUserProperties(Request request, Datastore datastore) throws TokenException {
+    public static List<UserProperty> getUserProfile(Request request, Datastore datastore) throws TokenException {
         // Get user ID param from request URL
         String idParam = request.params("id");
-        // Is trusted request
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        if (isTrusted) {
-            // Create ObjectID from
-            ObjectId id = (idParam != null) ? new ObjectId(idParam) : null;
-            // Create find options
-            FindOptions findOptions = new FindOptions()
-                    .projection()
-                    .include("properties");
-            // Find user document
-            User user = (id != null)
-                    ? datastore
-                    .find(User.class)
-                    .filter(and(
-                            eq("id", id),
-                            eq("status", "active")
-                    ))
-                    .first(findOptions)
-                    : null;
-            // Get user properties from user document
-            return (user != null) ? user.getProperties() : null;
-        } else {
-            Error error = new Error("Id from request not equal id from token");
-            throw new TokenException("NotEquals", error);
-        }
+        ObjectId id = new ObjectId(idParam);
+        User user = datastore
+                .find(User.class)
+                .filter(and(
+                        eq("id", id),
+                        eq("status", "active")
+                ))
+                .first();
+        return (user != null) ? user.getProfile() : null;
     }
 
     /**
-     * Method for get user property by id
+     * Method for get user profile property by id
      * @param request Spark request object
      * @param datastore Morphia datastore object
      * @return founded user property
      */
-    public static UserProperty getUserPropertyById(Request request, Datastore datastore) throws TokenException {
-        List<UserProperty> properties = UserPropertyService.getUserProperties(request, datastore);
+    public static UserProperty getUserProfilePropertyById(Request request, Datastore datastore) throws TokenException {
+        List<UserProperty> profile = UserProfileService.getUserProfile(request, datastore);
         String propertyId = request.params("property_id");
         UserProperty result = null;
-        if (properties != null && propertyId != null) {
-            for (UserProperty property : properties) {
-                if (property.getId().toString().equals(propertyId)) {
-                    result = property;
+        if (profile != null && propertyId != null) {
+            for (UserProperty profile_property : profile) {
+                if (profile_property.getId().toString().equals(propertyId)) {
+                    result = profile_property;
                 }
             }
         }
