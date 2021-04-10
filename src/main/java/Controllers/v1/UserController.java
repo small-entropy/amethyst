@@ -151,8 +151,16 @@ public class UserController {
 
         // Update user property by property UUID (user find by UUID)
         put("/:id/properties/:property_id", (request, response) -> "Update user property");
+
         // Remove user property by UUID (user find by UUID)
-        delete("/:id/properties/:property_id", (request, response) -> "Remove user property");
+        delete("/:id/properties/:property_id", (req, res) -> {
+            List<UserProperty> properties = UserPropertyService.removeUserProperty(req, store);
+            String status = (properties != null) ? "success" : "fail";
+            String message = (properties != null)
+                    ? "Successfully remove user property"
+                    : "Can not remove user property";
+            return new StandardResponse<List<UserProperty>>(status, message, properties);
+        }, transformer);
 
         // Route for get user profile
         get("/:id/profile", (req, res)-> {
@@ -187,19 +195,6 @@ public class UserController {
         put("/:id/properties/:property_id", (request, response) -> "Update user profile property");
         // Remove user profile property by UUID (user find by UUID)
         delete("/:id/properties/:property_id", (request, response) -> "Remove user profile property");
-
-
-        // Routes for work with users orders
-        // Get all orders by user UUID
-        get("/:id/orders", (request, response) -> "Get users orders list");
-        // Create new user order (find user by UUID)
-        post("/:id/orders", (request, response) -> "Create user order");
-        // Get user order by UUID (find user by UUID)
-        get("/:id/orders/:id", (request, response) -> "Get user order");
-        // Get update user order by UUID (find user by UUID)
-        put("/:id/orders/:id", (request, response) -> "Update user order");
-        // Mark to remove user order by UUID (find user by UUID)
-        delete("/:id/orders/:id", (request, response) -> "Remove user order");
 
         // Routes for work with user rights
         // Get all rights by user UUID

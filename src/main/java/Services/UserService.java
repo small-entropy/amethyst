@@ -1,6 +1,7 @@
 package Services;
 // Import models
 import DTO.UserDTO;
+import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
@@ -18,13 +19,11 @@ import dev.morphia.query.FindOptions;
 import org.bson.types.ObjectId;
 import spark.Request;
 // Import Java standard classes
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 // Import Morphia filter criteria methods
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import static dev.morphia.query.experimental.filters.Filters.and;
-import static dev.morphia.query.experimental.filters.Filters.in;
 
 /**
  * Class service for work with users collection
@@ -37,6 +36,30 @@ public class UserService {
      */
     public static String updateUser() {
         return "Update user data";
+    }
+
+    public static User getUserWithTrust(Request request, Datastore datastore) throws TokenException, DataException {
+        String idParams = request.params("id");
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        if (isTrusted) {
+            ObjectId id = new ObjectId(idParams);
+            User user = datastore
+                    .find(User.class)
+                    .filter(and(
+                            eq("id", id),
+                            eq("status", "active")
+                    ))
+                    .first();
+            if (user != null) {
+                return user;
+            } else {
+                Error error = new Error("User not found. Send not valid id");
+                throw new DataException("NotFound", error);
+            }
+        } else {
+            Error error = new Error("Id from request not equal id from token");
+            throw new TokenException("NotEquals", error);
+        }
     }
 
     /**
