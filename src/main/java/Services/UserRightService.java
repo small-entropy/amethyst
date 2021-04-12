@@ -10,6 +10,9 @@ import spark.Request;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class service for work with user right document
+ */
 public class UserRightService {
 
     /**
@@ -18,8 +21,11 @@ public class UserRightService {
      */
     public static List<UserRight> getDefaultRightList() {
         UserRight usersRight = new UserRight("users");
-        UserRight catalogsRight = new UserRight("catalog");
-        return Arrays.asList(usersRight, catalogsRight);
+        UserRight rightsRight = new UserRight("user_rights", false, false, false, false);
+        UserRight propertiesRight = new UserRight("properties_right", false, false, false, false);
+        UserRight profileRight = new UserRight("profile_right", false, true, false, false);
+        UserRight catalogsRight = new UserRight("catalogs");
+        return Arrays.asList(usersRight, catalogsRight, rightsRight, propertiesRight, profileRight);
     }
 
     public static String updateRight(Request request, Datastore datastore) {
