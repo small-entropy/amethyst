@@ -39,11 +39,26 @@ public class UserService {
         return "Update user data";
     }
 
+    /**
+     * Method for get user document, when send token in request headers or request params
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @return user document
+     * @throws TokenException exception for errors with user token
+     * @throws DataException  exception for errors with founded data
+     */
     public static User getUserWithTrust(Request request, Datastore datastore) throws TokenException, DataException {
+    	// User id from URL params
         String idParams = request.params("id");
+        // Result of check on trust
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        // Check trust result.
+        // If token and URL have a equals user ID - get full user document.
+        // If token and URL haven't equals user ID - throw error. 
         if (isTrusted) {
+        	// Generate Object ID from string
             ObjectId id = new ObjectId(idParams);
+            // Get user document from database
             User user = datastore
                     .find(User.class)
                     .filter(and(
@@ -51,6 +66,9 @@ public class UserService {
                             eq("status", "active")
                     ))
                     .first();
+            // Check result on exist.
+            // If user exist - return user document.
+            // If user not exist (equals null) - throw exception.
             if (user != null) {
                 return user;
             } else {
