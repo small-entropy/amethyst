@@ -5,6 +5,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
+import Models.UserRight;
 import Utils.*;
 // Import utils for work with JWT
 // Import utils for work with query params

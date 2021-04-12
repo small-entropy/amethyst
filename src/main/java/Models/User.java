@@ -18,6 +18,7 @@ public class User {
     private String status;
     private List<UserProperty> properties;
     private List<UserProperty> profile;
+    private List<UserRight> rights;
 
     User() {}
 
@@ -37,18 +38,50 @@ public class User {
         this.status = "active";
     }
 
+    /**
+     * Getter for user right
+     * @return list of user right
+     */
+    public List<UserRight> getRights() {
+        return rights;
+    }
+
+    /**
+     * Setter for user right property
+     * @param rights new user list
+     */
+    public void setRights(List<UserRight> rights) {
+        this.rights = rights;
+    }
+
+    /**
+     *
+     * @return
+     */
     public List<UserProperty> getProfile() {
         return profile;
     }
 
+    /**
+     *
+     * @param property
+     */
     public void addProfileProperty(UserProperty property) {
         this.profile.add(property);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<UserProperty> getProperties() {
         return properties;
     }
 
+    /**
+     *
+     * @param property
+     */
     public void addProperty(UserProperty property) {
         this.properties.add(property);
     }
