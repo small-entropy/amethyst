@@ -2,8 +2,7 @@
 import Controllers.common.ApiController;
 import Controllers.common.CORSController;
 import Controllers.common.ErrorsController;
-import Controllers.v1.CatalogsController;
-import Controllers.v1.UserController;
+import Controllers.v1.*;
 // Import JsonTransformer class
 import Transformers.JsonTransformer;
 // Import MongoClient class
@@ -79,7 +78,18 @@ public class Application {
             // Grouped API routes version 1
             path(RoutesPath.VERSION_ONE.getValue(), () -> {
                 // Grouped API routes for work with users
-                path(RoutesPath.USERS.getValue(), () -> UserController.routes(store, toJson));
+                path(RoutesPath.USERS.getValue(), () -> {
+                    // Routes for register user, login user, logout user & autologin by token
+                    AuthorizationController.routes(store, toJson);
+                    // Routes for work with user document
+                    UserController.routes(store, toJson);
+                    // Routes for work with user property documents
+                    UserPropertyController.routes(store, toJson);
+                    // Routs for work with profile documents
+                    UserProfileController.routes(store, toJson);
+                    // Routes for work with user rights documents
+                    UserRightsController.routes(store, toJson);
+                });
                 // Grouped API routes for work with catalogs
                 path(RoutesPath.CATALOGS.getValue(), () -> CatalogsController.routes(store, toJson));
             });
