@@ -10,6 +10,7 @@ import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
 import spark.Request;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static dev.morphia.query.experimental.filters.Filters.and;
@@ -19,6 +20,12 @@ import static dev.morphia.query.experimental.filters.Filters.eq;
  * Class controller for work with user profile properties
  */
 public class UserProfileService {
+
+    public static List<UserProperty> getDefaultProfile() {
+        Long currentDateTime = System.currentTimeMillis();
+        UserProperty registered = new UserProperty("registered", currentDateTime);
+        return Arrays.asList(registered);
+    }
 
     /**
      * Method for create user profile property

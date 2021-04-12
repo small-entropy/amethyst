@@ -12,9 +12,8 @@ public class UserRightService {
      * @return list of rights
      */
     public static List<UserRight> getDefaultRightList() {
-        List<UserRight> rights = Arrays.asList();
-        rights.add(new UserRight("users"));
-        rights.add(new UserRight("catalog"));
-        return rights;
+        UserRight usersRight = new UserRight("users");
+        UserRight catalogsRight = new UserRight("catalog");
+        return Arrays.asList(usersRight, catalogsRight);
     }
 }

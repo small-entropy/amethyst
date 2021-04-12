@@ -14,8 +14,9 @@ public class UserRight {
     UserRight() {}
 
     public UserRight(String collection) {
+        this.id = new ObjectId();
         this.collection = collection;
-        this.create = true;
+        this.create = false;
         this.read = true;
         this.update = false;
         this.delete = false;

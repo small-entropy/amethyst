@@ -10,12 +10,19 @@ import Utils.Comparator;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import spark.Request;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Class controller for work with user properties
  */
 public class UserPropertyService {
+
+    public static List<UserProperty> getDefaultUserProperty() {
+        UserProperty banned = new UserProperty("banned", false);
+        return Arrays.asList(banned);
+    }
 
     public static List<UserProperty> removeUserProperty(Request request, Datastore datastore) {
         return null;

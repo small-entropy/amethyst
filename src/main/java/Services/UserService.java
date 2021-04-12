@@ -5,6 +5,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 // Import utils for request headers
+import Models.UserProperty;
 import Models.UserRight;
 import Utils.*;
 // Import utils for work with JWT
@@ -284,7 +285,16 @@ public class UserService {
         List<String> tokens = Arrays.asList(token);
         // Set issued tokens list
         user.setIssuedTokens(tokens);
-        // Update document in datastore
+        // Get defaults user properties & set it in user document
+        List<UserProperty> properties = UserPropertyService.getDefaultUserProperty();
+        user.setProperties(properties);
+        // Get default user profile properties & set it in user document
+        List<UserProperty> profile = UserProfileService.getDefaultProfile();
+        user.setProfile(profile);
+        // Get defaults user rights & set it in user document
+        List<UserRight> rights = UserRightService.getDefaultRightList();
+        user.setRights(rights);
+        // Save changes in database
         datastore.save(user);
         // Set token in headers
         return user;
@@ -348,7 +358,7 @@ public class UserService {
         // Create find options for iterator
         FindOptions findOptions = new FindOptions()
                 .projection()
-                .exclude("issuedToken", "password", "properties", "status")
+                .exclude("issuedToken", "password", "properties", "status", "rights")
                 .skip(skip)
                 .limit(limit);
         // Return result as list of users document

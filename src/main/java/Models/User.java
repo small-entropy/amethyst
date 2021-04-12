@@ -30,12 +30,11 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = getHashedPassword(password);
-        Long currentDateTime = System.currentTimeMillis();
-        UserProperty registered = new UserProperty("registered", currentDateTime);
-        UserProperty banned = new UserProperty("banned", false);
-        this.properties = Arrays.asList(banned);
-        this.profile =  Arrays.asList(registered);
         this.status = "active";
+    }
+
+    public void setProfile(List<UserProperty> profile) {
+        this.profile = profile;
     }
 
     /**
@@ -60,6 +59,10 @@ public class User {
      */
     public List<UserProperty> getProfile() {
         return profile;
+    }
+
+    public void setProperties(List<UserProperty> properties) {
+        this.properties = properties;
     }
 
     /**
