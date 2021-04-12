@@ -21,6 +21,10 @@ import static dev.morphia.query.experimental.filters.Filters.eq;
  */
 public class UserProfileService {
 
+    /**
+     * Method for get default profile properties list
+     * @return list of user properties for profile
+     */
     public static List<UserProperty> getDefaultProfile() {
         Long currentDateTime = System.currentTimeMillis();
         UserProperty registered = new UserProperty("registered", currentDateTime);
