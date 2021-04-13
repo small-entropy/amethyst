@@ -55,7 +55,6 @@ public class Application {
      * @param args method arguments
      */
     public static void main(String[] args) {
-
         // Create database connection
         final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst");
         // Map all models from package

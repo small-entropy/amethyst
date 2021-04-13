@@ -6,23 +6,23 @@ import dev.morphia.annotations.Embedded;
 public class UserRight {
     private ObjectId id;
     private String collection;
-    private boolean create;
-    private boolean read;
-    private boolean update;
-    private boolean delete;
+    private String create;
+    private String read;
+    private String update;
+    private String delete;
 
     UserRight() {}
 
     public UserRight(String collection) {
         this.id = new ObjectId();
         this.collection = collection;
-        this.create = false;
-        this.read = true;
-        this.update = false;
-        this.delete = false;
+        this.create = "001000";
+        this.read = "011001";
+        this.update = "001000";
+        this.delete = "001000";
     }
 
-    public UserRight(String collection, boolean create, boolean read, boolean update, boolean delete) {
+    public UserRight(String collection, String create, String read, String update, String delete) {
         this.id = new ObjectId();
         this.collection = collection;
         this.create = create;
@@ -31,51 +31,43 @@ public class UserRight {
         this.delete = delete;
     }
 
-    /**
-     * Getter for id property
-     * @return current value of id property
-     */
     public ObjectId getId() {
         return id;
     }
 
-    /**
-     * Getter collection name
-     * @return current value of collection name
-     */
     public String getCollection() {
         return collection;
     }
 
-    /**
-     * Getter for create rule
-     * @return current value of create rule
-     */
-    public boolean getCreate() {
+    public String getCreate() {
         return create;
     }
 
-    /**
-     * Getter for read rule
-     * @return current value of read rule
-     */
-    public boolean getRead() {
+    public String getRead() {
         return read;
     }
 
-    /**
-     * Getter for update rule
-     * @return current value of update rule
-     */
-    public boolean getUpdate() {
+    public String getUpdate() {
         return update;
     }
 
-    /**
-     * Getter for delete rule
-     * @return current value of delete rule
-     */
-    public boolean getDelete() {
+    public String getDelete() {
         return delete;
+    }
+
+    public void setCreate(String create) {
+        this.create = create;
+    }
+
+    public void setRead(String read) {
+        this.read = read;
+    }
+
+    public void setUpdate(String update) {
+        this.update = update;
+    }
+
+    public void setDelete(String delete) {
+        this.delete = delete;
     }
 }
