@@ -1,8 +1,10 @@
 package Controllers.v1;
+import DTO.RuleDTO;
 import Models.User;
 import Responses.StandardResponse;
 import Services.UserService;
 import Transformers.JsonTransformer;
+import Utils.RightManager;
 import dev.morphia.Datastore;
 
 import java.util.List;
@@ -22,7 +24,8 @@ public class UserController {
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Route for work with users list
         get("", (req, res) -> {
-            List<User> users = UserService.getList(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest(req, store, "users_right", "read");
+            List<User> users = UserService.getList(req, store, rule);
             // Check users list size.
             // If size equal - fail method status & message
             // If size not equal - success method status & message

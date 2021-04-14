@@ -1,5 +1,6 @@
 package Services;
 // Import models
+import DTO.RuleDTO;
 import DTO.UserDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
@@ -169,7 +170,7 @@ public class UserService {
      * @param datastore datastore (Morphia connection)
      * @return user object
      */
-    private static User getUserByToken(Request request, Datastore datastore) {
+    public static User getUserByToken(Request request, Datastore datastore) {
         // Get token from request headers
         String header = HeadersUtils.getTokenFromHeaders(request);
         // Get token from request query params
@@ -307,6 +308,8 @@ public class UserService {
      * @return user document
      */
     public static User logoutUser(Request request, Datastore datastore) {
+        // Not include in token value
+        final int NOT_IN_LIST = -1;
         // Get user document from database
         User user = UserService.getUserByToken(request, datastore);
         // Check user document on exist
@@ -318,7 +321,7 @@ public class UserService {
             String token = RequestUtils.getTokenByRequest(request);
             // Get user token index
             int tokenIndex = user.getIssuedTokens().indexOf(token);
-            if (tokenIndex != -1) {
+            if (tokenIndex != NOT_IN_LIST) {
                 // Remove from issued tokens list token from request
                 user.getIssuedTokens().remove(tokenIndex);
                 // Save changes in database
@@ -342,13 +345,15 @@ public class UserService {
      * @param datastore datastore (morphia connection)
      * @return list of users documents
      */
-    public static List<User> getList(Request request, Datastore datastore) {
+    public static List<User> getList(Request request, Datastore datastore, RuleDTO rule) {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
         // Keys in query params
         final String SKIP_FIELD = "skip";
         final String LIMIT_FIELD = "limit";
+
+        String[] DEFAULT_FIND_EXCLUDE = new String[]{ "issuedToken", "password", "properties", "status", "rights" };
         // Set skip value from request query
         String qSkip = request.queryMap().get(SKIP_FIELD).value();
         int skip = (qSkip == null) ? DEFAULT_SKIP : Integer.parseInt(qSkip);
@@ -356,11 +361,18 @@ public class UserService {
         String qLimit = request.queryMap().get(LIMIT_FIELD).value();
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         // Create find options for iterator
+        String[] args = (rule != null)
+                ? switch (rule.getOtherAccess()) {
+                    case "Full" -> new String[]{};
+                    case "PublicAndPrivate" -> new String[]{ "issuedToken", "status", "password" };
+                    default -> DEFAULT_FIND_EXCLUDE;
+                }
+                : DEFAULT_FIND_EXCLUDE;
         FindOptions findOptions = new FindOptions()
-                .projection()
-                .exclude("issuedToken", "password", "properties", "status", "rights")
-                .skip(skip)
-                .limit(limit);
+                    .projection()
+                    .exclude(args)
+                    .skip(skip)
+                    .limit(limit);
         // Return result as list of users document
         return datastore
                 .find(User.class)

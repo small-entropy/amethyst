@@ -6,6 +6,7 @@ import Controllers.v1.*;
 // Import JsonTransformer class
 import Transformers.JsonTransformer;
 // Import MongoClient class
+import Utils.RightManager;
 import com.mongodb.client.MongoClients;
 // Import Morphia classes
 import dev.morphia.Datastore;

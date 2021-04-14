@@ -52,4 +52,32 @@ public class RuleDTO {
     public boolean isOtherGlobal() {
         return otherGlobal;
     }
+
+    public String getOtherAccess() {
+        if(this.isOtherPublic() && isOtherPrivate() && isOtherGlobal()) {
+            return "Full";
+        } else if (this.isOtherPublic() && isOtherPrivate() && !isOtherGlobal()) {
+            return "PublicAndPrivate";
+        } else if (this.isOtherPublic() && !isOtherPrivate() && !isOtherGlobal()) {
+            return "OnlyPublic";
+        } else if (!this.isOtherPublic() && isOtherPrivate() && !isOtherGlobal()) {
+            return "PublicAndGlobal";
+        } else {
+            return "NotAccess";
+        }
+    }
+
+    public String getMyAccess() {
+        if(this.isMyPublic() && isMyPrivate() && isMyGlobal()) {
+            return "Full";
+        } else if (this.isMyPublic() && isMyPrivate() && !isMyGlobal()) {
+            return "PublicAndPrivate";
+        } else if (this.isMyPublic() && !isMyPrivate() && !isMyGlobal()) {
+            return "OnlyPublic";
+        } else if (!this.isMyPublic() && isMyPrivate() && !isMyGlobal()) {
+            return "PublicAndGlobal";
+        } else {
+            return "NotAccess";
+        }
+    }
 }

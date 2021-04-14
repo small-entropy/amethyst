@@ -1,8 +1,14 @@
 package Utils;
 
 import DTO.RuleDTO;
+import Exceptions.TokenException;
 import Models.User;
 import Models.UserRight;
+import Services.UserService;
+import dev.morphia.Datastore;
+import spark.Request;
+
+import javax.xml.crypto.Data;
 
 
 /**
@@ -10,6 +16,16 @@ import Models.UserRight;
  * Class for checks rights
  */
 public class RightManager {
+
+    public static RuleDTO getRuleByRequest(Request request, Datastore datastore, String rightName, String ruleName) {
+        try {
+            User user = UserService.getUserByToken(request, datastore);
+            return RightManager.getRuleObject(user, rightName, ruleName);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
     /**
      * Method for get right from user document
      * @param name  name of collection
@@ -39,7 +55,7 @@ public class RightManager {
 
     public static RuleDTO getRuleObject(User user, String rightName, String ruleName) {
         UserRight right = RightManager.getRight(rightName, user);
-        String rule = RightManager.getRule(right, ruleName);
-        return new RuleDTO(rule);
+        String rule = (right != null) ? RightManager.getRule(right, ruleName) : null;
+        return (rule != null) ? new RuleDTO(rule) : null;
     }
 }
