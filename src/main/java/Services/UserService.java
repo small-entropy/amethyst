@@ -382,4 +382,14 @@ public class UserService {
                 .iterator(findOptions)
                 .toList();
     }
+
+    /**
+     * Method for get user list without rule
+     * @param request Spark request object
+     * @param datastore datastore (morphia connection)
+     * @return list of users documents
+     */
+    public static List<User> getList(Request request, Datastore datastore) {
+        return UserService.getList(request, datastore, null);
+    }
 }
