@@ -68,7 +68,8 @@ public class AuthorizationController {
         }, transformer);
         // Route for user autologin
         get("/autologin", (req, res) -> {
-            User user = UserService.autoLoginUser(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            User user = UserService.autoLoginUser(req, store, rule);
             String status = (user != null) ? "success" : "fail";
             String message = (user != null)
                     ? "Successfully autologin by token"
@@ -77,7 +78,8 @@ public class AuthorizationController {
         }, transformer);
         // Logout user
         get("/logout", (req, res) -> {
-            User user = UserService.logoutUser(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            User user = UserService.logoutUser(req, store, rule);
             String status = (user != null) ? "success" : "fail";
             String message = (user != null)
                     ? "Successfully logout"

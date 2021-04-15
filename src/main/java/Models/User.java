@@ -1,6 +1,5 @@
 package Models;
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import com.google.gson.annotations.Expose;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 import java.lang.String;
@@ -33,6 +32,36 @@ public class User {
         this.status = "active";
     }
 
+    /**
+     * Constructor for user document
+     * @param id user id (ObjectId)
+     * @param username user username
+     * @param password user password
+     * @param properties user properties
+     * @param profile user profile
+     * @param rights user rights
+     */
+    public User(
+            ObjectId id,
+            String username,
+            String password,
+            List<UserProperty> properties,
+            List<UserProperty> profile,
+            List<UserRight> rights
+    ) {
+        this.id = id;
+        this.username = username;
+        this.password = getHashedPassword(password);
+        this.status = "active";
+        this.properties = properties;
+        this.profile = profile;
+        this.rights = rights;
+    }
+
+    /**
+     * Setter for profile field
+     * @param profile list of user properties for profile
+     */
     public void setProfile(List<UserProperty> profile) {
         this.profile = profile;
     }

@@ -21,6 +21,7 @@ import dev.morphia.query.FindOptions;
 import org.bson.types.ObjectId;
 import spark.Request;
 // Import Java standard classes
+import javax.xml.crypto.Data;
 import java.util.Arrays;
 import java.util.List;
 // Import Morphia filter criteria methods
@@ -246,7 +247,7 @@ public class UserService {
      * @param datastore datastore (Morphia connection)
      * @return user object
      */
-    public static User getUserByToken(Request request, Datastore datastore) {
+    public static User getUserByToken(Request request, Datastore datastore, FindOptions findOptions) {
         // Get token from request headers
         String header = HeadersUtils.getTokenFromHeaders(request);
         // Get token from request query params
@@ -261,11 +262,6 @@ public class UserService {
             String token = (header != null) ? header : queryParam;
             // Get user id from token
             ObjectId id = JsonWebToken.getIdFromToken(token);
-            // Return result from find in database by user UUID
-            // (find only active users)
-            FindOptions findOptions = new FindOptions()
-                    .projection()
-                    .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
             // Find & return user document
             return UserService.getUserById(id, datastore, findOptions);
         } else {
@@ -274,14 +270,39 @@ public class UserService {
     }
 
     /**
+     * Method for get full user document without rule object
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @return user document
+     */
+    public static User getUserByToken(Request request, Datastore datastore) {
+        // Create find options
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(UserService.ALL_ALLOWED);
+        // Return user document
+        return UserService.getUserByToken(request, datastore, findOptions);
+    }
+
+    /**
      * Method to autologin by token in header ot query params
      * @param request Spark request object
      * @param datastore datastore to work with data (Morphia connection)
+     * @param rule rule data transfer object
      * @return result auth user
      */
-    public static User autoLoginUser(Request request, Datastore datastore) {
-        User user = UserService.getUserByToken(request, datastore);
+    public static User autoLoginUser(Request request, Datastore datastore, RuleDTO rule) {
+        // Create finding options for find user with current rule
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(UserService.getMyFindOptionsArgs(rule));
+        // Get user document by token
+        User user = UserService.getUserByToken(request, datastore, findOptions);
+        // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
+        // Check user on exist & check issuedToken (token must be contains in this field)
+        // If all check right - return user object,
+        // else - return null.
         return (user != null
                 && token != null
                 && user.getIssuedTokens() != null
@@ -380,30 +401,24 @@ public class UserService {
     public static User registerUser(Request request, Datastore datastore) {
         // Crete user data transfer object from JSON
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        // Create user document
         User user = new User(
+                new ObjectId(),
                 userDTO.getUsername(),
-                userDTO.getPassword()
+                userDTO.getPassword(),
+                UserPropertyService.getDefaultUserProperty(),
+                UserProfileService.getDefaultProfile(),
+                UserRightService.getDefaultRightList()
         );
-        // Save user
-        datastore.save(user);
         // Generate JWT token
         String token = JsonWebToken.encode(user);
         // Get tokens list
         List<String> tokens = Arrays.asList(token);
         // Set issued tokens list
         user.setIssuedTokens(tokens);
-        // Get defaults user properties & set it in user document
-        List<UserProperty> properties = UserPropertyService.getDefaultUserProperty();
-        user.setProperties(properties);
-        // Get default user profile properties & set it in user document
-        List<UserProperty> profile = UserProfileService.getDefaultProfile();
-        user.setProfile(profile);
-        // Get defaults user rights & set it in user document
-        List<UserRight> rights = UserRightService.getDefaultRightList();
-        user.setRights(rights);
-        // Save changes in database
+        // Save user document in database
         datastore.save(user);
-        // Options
+        // Options for find in documents
         FindOptions findOptions = new FindOptions()
                 .projection()
                 .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
@@ -417,10 +432,10 @@ public class UserService {
      * @param datastore datastore (Morphia connection)
      * @return user document
      */
-    public static User logoutUser(Request request, Datastore datastore) {
+    public static User logoutUser(Request request, Datastore datastore, RuleDTO rule) {
         // Not include in token value
         final int NOT_IN_LIST = -1;
-        // Get user document from database
+        // Get user document from database (full document)
         User user = UserService.getUserByToken(request, datastore);
         // Check user document on exist
         // If founded user document not equal null - remove token from issued token list,
@@ -431,13 +446,21 @@ public class UserService {
             String token = RequestUtils.getTokenByRequest(request);
             // Get user token index
             int tokenIndex = user.getIssuedTokens().indexOf(token);
+            // Check token index on list contains
+            // If token index not contains in list - return null.
+            // If token index contains in list - save changes, and return
+            // saved document from database
             if (tokenIndex != NOT_IN_LIST) {
                 // Remove from issued tokens list token from request
                 user.getIssuedTokens().remove(tokenIndex);
                 // Save changes in database
                 datastore.save(user);
-                // Return saved document
-                return user;
+                // Crate find options
+                FindOptions findOptions = new FindOptions()
+                        .projection()
+                        .exclude(UserService.getMyFindOptionsArgs(rule));
+                // Get user document by user id with find options with rule excluded fields
+                return UserService.getUserById(user.getPureId(), datastore, findOptions);
             } else {
                 // If token not include in issued token list
                 // return null
