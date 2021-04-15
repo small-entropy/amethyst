@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.bson.types.ObjectId;
 
 /**
  * Class for work with JWT
@@ -52,6 +53,17 @@ public class JsonWebToken {
                 .withIssuer(JsonWebToken.AUTH_ISSUE)
                 .build();
         // Return result verifier
-        return  verifier.verify(token);
+        return verifier.verify(token);
+    }
+
+    /**
+     * Method for return user id (as ObjectId) from token
+     * @param token user token
+     * @return user id
+     */
+    public static ObjectId getIdFromToken(String token) {
+        DecodedJWT decoded = JsonWebToken.decode(token);
+        String claimId = decoded.getClaim("id").asString();
+        return new ObjectId(claimId);
     }
 }

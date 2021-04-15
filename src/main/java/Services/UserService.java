@@ -13,7 +13,6 @@ import Utils.*;
 // Import utils for work with query params
 // Import standard response class
 // Import GSON class
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 // Import Morphia classes
 import dev.morphia.Datastore;
@@ -98,14 +97,14 @@ public class UserService {
      * @throws DataException  exception for errors with founded data
      */
     public static User getUserWithTrust(Request request, Datastore datastore) throws TokenException, DataException {
-    	// User id from URL params
-        String idParams = request.params("id");
         // Result of check on trust
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check trust result.
         // If token and URL have a equals user ID - get full user document.
         // If token and URL haven't equals user ID - throw error. 
         if (isTrusted) {
+            // User id from URL params
+            String idParams = request.params("id");
         	// Generate Object ID from string
             ObjectId id = new ObjectId(idParams);
             // Get user document from database
@@ -144,17 +143,13 @@ public class UserService {
         // If token send - try deactivate user
         // If token not send - throw exception
         if (token != null) {
-            // Decode token
-            DecodedJWT decoded = JsonWebToken.decode(token);
-            // Get id from token
-            String decodedId = decoded.getClaim("id").asString();
-            // Get id from query params
-            String paramId = request.params("id");
             // Check ids on equals
-            boolean isEqualsIds = decodedId.equals(paramId);
+            boolean isEqualsIds = Comparator.id_fromParam_fromToken(request);
             // If ids equals - deactivate user account and save it
             // If ids not equals - throw exception
             if (isEqualsIds) {
+                // Get id from query params
+                String paramId = request.params("id");
                 // Find user by id
                 User user = UserService.getUserById(paramId, datastore);
                 // Check founded user
@@ -264,12 +259,8 @@ public class UserService {
             // If token exist in headers - set it as value
             // If token not exist in headers - set it as value
             String token = (header != null) ? header : queryParam;
-            // Try decode token
-            DecodedJWT decoded = JsonWebToken.decode(token);
-            // Get user UUID from decoded token as string
-            String idString = decoded.getClaim("id").asString();
-            // Create ObjectId from user UUID string
-            ObjectId id = new ObjectId(idString);
+            // Get user id from token
+            ObjectId id = JsonWebToken.getIdFromToken(token);
             // Return result from find in database by user UUID
             // (find only active users)
             FindOptions findOptions = new FindOptions()
@@ -422,7 +413,7 @@ public class UserService {
 
     /**
      * Method for remove user token
-     * @param request Spa   rk request object
+     * @param request Spark request object
      * @param datastore datastore (Morphia connection)
      * @return user document
      */
