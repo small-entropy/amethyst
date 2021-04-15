@@ -24,7 +24,9 @@ public class UserController {
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Route for work with users list
         get("", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest(req, store, "users_right", "read");
+            // Get rule data transfer object for request
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            // Get list of users documents
             List<User> users = UserService.getList(req, store, rule);
             // Check users list size.
             // If size equal - fail method status & message

@@ -33,12 +33,60 @@ import static dev.morphia.query.experimental.filters.Filters.and;
  */
 public class UserService {
 
+    // Fields for only public field by rights for users collection
+    private final static String[] PUBLIC_ALLOWED = new String[]{ "issuedToken", "password", "properties", "status", "rights" };
+    // Fields for public and private fields by rights for users collection
+    private final static String[] PUBLIC_AND_PRIVATE_ALLOWED = new String[]{ "status", "password" };
+    // Fields for all fields by rights for users collection
+    private final static String[] ALL_ALLOWED = new String[]{};
     /**
      * Method for update user document
      * @return updated user document
      */
     public static String updateUser() {
         return "Update user data";
+    }
+
+    /**
+     * Method for find user by username from request
+     * Method return document with all fields
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @return user document
+     */
+    public static User getUserByUsername(Request request, Datastore datastore) {
+        UserDTO userDTO = UserService.getUserDtoFromBody(request);
+        return UserService.getUserByUsername(userDTO, datastore);
+    }
+
+    /**
+     * Method for find user by username from user data transfer object
+     * @param userDTO user data transfer object
+     * @param datastore Morphia datastore
+     * @return user document
+     */
+    public static User getUserByUsername(UserDTO userDTO, Datastore datastore) {
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(UserService.ALL_ALLOWED);
+        return UserService.getUserByUsername(userDTO, datastore, findOptions);
+    }
+
+    /**
+     * Method fo find user by username from user data transfer object.
+     * In this method user document can exclude fields by find options
+     * @param userDTO user data transfer object
+     * @param datastore Morphia datastore object
+     * @param findOptions find options object
+     * @return user document
+     */
+    public static User getUserByUsername(UserDTO userDTO, Datastore datastore, FindOptions findOptions) {
+        return datastore.find(User.class)
+                .filter(and(
+                        eq("username", userDTO.getUsername()),
+                        eq("status", "active")
+                ))
+                .first(findOptions);
     }
 
     /**
@@ -107,13 +155,8 @@ public class UserService {
             // If ids equals - deactivate user account and save it
             // If ids not equals - throw exception
             if (isEqualsIds) {
-                // Convert string to ObjectId
-                ObjectId id = new ObjectId(paramId);
                 // Find user by id
-                User user = datastore
-                        .find(User.class)
-                        .filter(eq("id", id))
-                        .first();
+                User user = UserService.getUserById(paramId, datastore);
                 // Check founded user
                 // If user found - deactivate user & save changes
                 // If user not found - return null
@@ -149,12 +192,24 @@ public class UserService {
     public static User getUserById(Request request, Datastore datastore) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         String idParam = request.params("id");
-        ObjectId id = new ObjectId(idParam);
         FindOptions findOptions = isTrusted
                 ? new FindOptions()
+                    .projection()
+                    .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED)
                 : new FindOptions()
                     .projection()
-                    .exclude("issuedToken", "password", "status", "properties");
+                    .exclude(UserService.PUBLIC_ALLOWED);
+        return UserService.getUserById(idParam, datastore, findOptions);
+    }
+
+    /**
+     * Method for find user by id (if id is ObjectId type)
+     * @param id user id (ObjectID)
+     * @param datastore Morphia datastore object
+     * @param findOptions find options
+     * @return user document
+     */
+    public static User getUserById(ObjectId id, Datastore datastore, FindOptions findOptions) {
         return datastore
                 .find(User.class)
                 .filter(and(
@@ -162,6 +217,32 @@ public class UserService {
                         eq("status", "active")
                 ))
                 .first(findOptions);
+    }
+
+    /**
+     * Method for find user by param id (id is string)
+     * @param paramId user id as string
+     * @param datastore Morphia datastore object
+     * @param findOptions find options
+     * @return user document
+     */
+    public static User getUserById(String paramId, Datastore datastore, FindOptions findOptions) {
+        ObjectId id = new ObjectId(paramId);
+        return UserService.getUserById(id, datastore, findOptions);
+    }
+
+    /**
+     * Method for get user document by param id (id as string).
+     * This method return document with all fields
+     * @param paramId user id as string
+     * @param datastore Morphia datastore
+     * @return user document
+     */
+    public static User getUserById(String paramId, Datastore datastore) {
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(UserService.ALL_ALLOWED);
+        return UserService.getUserById(paramId, datastore, findOptions);
     }
 
     /**
@@ -191,13 +272,11 @@ public class UserService {
             ObjectId id = new ObjectId(idString);
             // Return result from find in database by user UUID
             // (find only active users)
-            return datastore
-                    .find(User.class)
-                    .filter(and(
-                        eq("id", id),
-                        eq("status", "active")
-                    ))
-                    .first();
+            FindOptions findOptions = new FindOptions()
+                    .projection()
+                    .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
+            // Find & return user document
+            return UserService.getUserById(id, datastore, findOptions);
         } else {
             return null;
         }
@@ -221,26 +300,57 @@ public class UserService {
     }
 
     /**
+     * Method for create user data transfer object from request body
+     * @param request Spark request object
+     * @return user data transfer object
+     */
+    private static UserDTO getUserDtoFromBody(Request request) {
+        return new Gson().fromJson(request.body(), UserDTO.class);
+    }
+
+    /**
+     * Method for get find options argument by rule my documents access state
+     * @param rule user rule
+     * @return arguments for find options
+     */
+    private static String[] getMyFindOptionsArgs(RuleDTO rule) {
+        return (rule != null)
+                ? switch (rule.getMyAccess()) {
+                    case "Full" -> UserService.ALL_ALLOWED;
+                    case "PublicAndPrivate" -> UserService.PUBLIC_AND_PRIVATE_ALLOWED;
+                    default -> UserService.PUBLIC_ALLOWED;
+                }
+                : UserService.PUBLIC_ALLOWED;
+    }
+
+    /**
+     * Method for get find options argument by rule other documents access state
+     * @param rule user rule
+     * @return arguments for find options
+     */
+    private static String[] getOtherFindOptionsArgs(RuleDTO rule) {
+        return (rule != null)
+                ? switch (rule.getOtherAccess()) {
+            case "Full" -> UserService.ALL_ALLOWED;
+            case "PublicAndPrivate" -> UserService.PUBLIC_AND_PRIVATE_ALLOWED;
+            default -> UserService.PUBLIC_ALLOWED;
+        }
+                : UserService.PUBLIC_ALLOWED;
+    }
+
+    /**
      * Method for auth user
      * @param request Spark request object
      * @param datastore datastore (morphia connection)
      * @return user document
      */
-    public static User loginUser(Request request, Datastore datastore) {
+    public static User loginUser(Request request, Datastore datastore, RuleDTO rule) {
         // Transform JSON object from body to Map
-        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        UserDTO userDTO = UserService.getUserDtoFromBody(request);
         // Get field "password" from map
         String password = userDTO.getPassword();
-        // Get field "username" from map
-        String username = userDTO.getUsername();
         // Find user by username from request body
-        User user = datastore
-                .find(User.class)
-                .filter(and(
-                        eq("username", username),
-                        eq("status", "active")
-                ))
-                .first();
+        User user = UserService.getUserByUsername(userDTO, datastore);
         // Verified user password:
         // if user not find - false,
         // if user send wrong password - false,
@@ -259,7 +369,12 @@ public class UserService {
                 user.setIssuedTokens(Arrays.asList(token));
                 datastore.save(user);
             }
-            return user;
+            // Create find options
+            FindOptions findOptions = new FindOptions()
+                    .projection()
+                    .exclude(UserService.getMyFindOptionsArgs(rule));
+            // Find & return document
+            return UserService.getUserById(user.getPureId(), datastore, findOptions);
         } else {
             return null;
         }
@@ -297,8 +412,12 @@ public class UserService {
         user.setRights(rights);
         // Save changes in database
         datastore.save(user);
+        // Options
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
         // Set token in headers
-        return user;
+        return UserService.getUserById(user.getPureId(), datastore, findOptions);
     }
 
     /**
@@ -343,6 +462,7 @@ public class UserService {
      * Method for get user list
      * @param request Spark request object
      * @param datastore datastore (morphia connection)
+     * @param rule user rule for this action
      * @return list of users documents
      */
     public static List<User> getList(Request request, Datastore datastore, RuleDTO rule) {
@@ -352,33 +472,22 @@ public class UserService {
         // Keys in query params
         final String SKIP_FIELD = "skip";
         final String LIMIT_FIELD = "limit";
-
-        String[] DEFAULT_FIND_EXCLUDE = new String[]{ "issuedToken", "password", "properties", "status", "rights" };
         // Set skip value from request query
         String qSkip = request.queryMap().get(SKIP_FIELD).value();
         int skip = (qSkip == null) ? DEFAULT_SKIP : Integer.parseInt(qSkip);
         // Set limit value from request query
         String qLimit = request.queryMap().get(LIMIT_FIELD).value();
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
-        // Create find options for iterator
-        String[] args = (rule != null)
-                ? switch (rule.getOtherAccess()) {
-                    case "Full" -> new String[]{};
-                    case "PublicAndPrivate" -> new String[]{ "issuedToken", "status", "password" };
-                    default -> DEFAULT_FIND_EXCLUDE;
-                }
-                : DEFAULT_FIND_EXCLUDE;
+        // Create find options
         FindOptions findOptions = new FindOptions()
                     .projection()
-                    .exclude(args)
+                    .exclude(UserService.getOtherFindOptionsArgs(rule))
                     .skip(skip)
                     .limit(limit);
         // Return result as list of users document
         return datastore
                 .find(User.class)
-                .filter(
-                        eq("status", "active")
-                )
+                .filter(eq("status", "active"))
                 .iterator(findOptions)
                 .toList();
     }

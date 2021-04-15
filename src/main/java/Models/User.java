@@ -105,6 +105,10 @@ public class User {
         return id.toString();
     }
 
+    public ObjectId getPureId() {
+        return id;
+    }
+
     /**
      * Setter for user issued tokens
      * @param tokens list of tokens

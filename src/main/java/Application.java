@@ -79,7 +79,8 @@ public class Application {
             path(RoutesPath.VERSION_ONE.getValue(), () -> {
                 // Grouped API routes for work with users
                 path(RoutesPath.USERS.getValue(), () -> {
-                    // Routes for register user, login user, logout user & autologin by token
+                    // Routes for register user, login user, logout user
+                    // & autologin by token
                     AuthorizationController.routes(store, toJson);
                     // Routes for work with user document
                     UserController.routes(store, toJson);

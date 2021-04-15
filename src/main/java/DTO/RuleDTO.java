@@ -1,5 +1,8 @@
 package DTO;
 
+/**
+ * Class of data transfer object for rule
+ */
 public class RuleDTO {
     private final boolean myPublic;
     private final boolean myPrivate;
@@ -53,6 +56,10 @@ public class RuleDTO {
         return otherGlobal;
     }
 
+    /**
+     * Method for get common state access for user not own documents
+     * @return name of state
+     */
     public String getOtherAccess() {
         if(this.isOtherPublic() && isOtherPrivate() && isOtherGlobal()) {
             return "Full";
@@ -67,6 +74,10 @@ public class RuleDTO {
         }
     }
 
+    /**
+     * Method for get common state access for user own documents
+     * @return name of state
+     */
     public String getMyAccess() {
         if(this.isMyPublic() && isMyPrivate() && isMyGlobal()) {
             return "Full";

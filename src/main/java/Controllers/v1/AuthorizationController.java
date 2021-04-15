@@ -1,10 +1,12 @@
 package Controllers.v1;
 
+import DTO.RuleDTO;
 import Models.User;
 import Responses.StandardResponse;
 import Services.UserService;
 import Transformers.JsonTransformer;
 import Utils.HeadersUtils;
+import Utils.RightManager;
 import dev.morphia.Datastore;
 
 import static spark.Spark.get;
@@ -43,7 +45,10 @@ public class AuthorizationController {
         }, transformer);
         // Route for user login
         post("/login", (req, res) -> {
-            User user = UserService.loginUser(req, store);
+            // Get rule for user by request
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, "users_right", "read");
+            // Get user document
+            User user = UserService.loginUser(req, store, rule);
             String status;
             String message;
             if (user != null) {
