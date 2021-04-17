@@ -1,9 +1,11 @@
 package Controllers.v1;
 
+import DTO.RuleDTO;
 import Models.UserProperty;
 import Responses.StandardResponse;
 import Services.UserPropertyService;
 import Transformers.JsonTransformer;
+import Utils.RightManager;
 import dev.morphia.Datastore;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class UserPropertyController {
         // Routes for work with user properties
         // Get user properties list by user UUID
         get("/:id/properties", (req, res) -> {
-            List<UserProperty> properties = UserPropertyService.getUserProperties(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            List<UserProperty> properties = UserPropertyService.getUserProperties(req, store, rule);
             String status = (properties != null) ? "success" : "fail";
             String message = (properties != null)
                     ? "User properties found"
@@ -34,7 +37,8 @@ public class UserPropertyController {
         // This method only for create public property!
         // For create not public property use other method!
         post("/:id/properties", (req, res) -> {
-            UserProperty userProperty = UserPropertyService.createUserProperty(req, store);
+            RuleDTO ruleDTO = RightManager.getRuleByRequest_Token(req, store, "users_right", "create");
+            UserProperty userProperty = UserPropertyService.createUserProperty(req, store, ruleDTO);
             String status = (userProperty != null) ? "success" : "fail";
             String message = (userProperty != null)
                     ? "Successfully create user property"
@@ -43,7 +47,8 @@ public class UserPropertyController {
         }, transformer);
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
-            UserProperty property = UserPropertyService.getUserPropertyById(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            UserProperty property = UserPropertyService.getUserPropertyById(req, store, rule);
             String status = (property != null) ? "success" : "fail";
             String message = (property != null)
                     ? "User property found"

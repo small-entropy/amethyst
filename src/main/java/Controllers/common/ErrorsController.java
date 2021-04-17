@@ -1,4 +1,5 @@
 package Controllers.common;
+import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Responses.ErrorResponse;
@@ -15,7 +16,8 @@ enum HttpErrors {
     INTERNAL_SERVER_ERROR(500, "Internal server error"),
     NOT_FOUND(404, "Not found"),
     UNAUTHORIZED(401, "Unauthorized user"),
-    CONFLICT(409, "Conflict with sent data");
+    CONFLICT(409, "Conflict with sent data"),
+    NOT_ACCEPTABLE(406, "Not Acceptable");
     private int code;
     private String message;
     HttpErrors(int code, String message) {
@@ -102,6 +104,17 @@ public class ErrorsController {
         exception(DataException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
                 case "NotFound" -> HttpErrors.NOT_FOUND.getCode();
+                default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
+            };
+            res.status(statusCode);
+            String message = error.getCause().getMessage();
+            ErrorResponse response = new ErrorResponse(message, null);
+            res.body(ErrorsController.GSON.toJson(response));
+        });
+        // Custom exception handler for AccessException
+        exception(AccessException.class, (error, req, res) -> {
+            int statusCode = switch (error.getMessage()) {
+                case "CanRead", "CanCreate" -> HttpErrors.NOT_ACCEPTABLE.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             res.status(statusCode);
