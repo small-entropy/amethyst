@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import Models.UserProperty;
 import Responses.StandardResponse;
-import Services.UserProfileService;
+import Services.v1.UserProfileService;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;

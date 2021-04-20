@@ -3,9 +3,9 @@ package Controllers.v1;
 import DTO.RuleDTO;
 import Models.UserProperty;
 import Responses.StandardResponse;
-import Services.UserPropertyService;
+import Services.v1.UserPropertyService;
 import Transformers.JsonTransformer;
-import Utils.RightManager;
+import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
 import java.util.List;

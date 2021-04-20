@@ -1,9 +1,11 @@
 package Controllers.v1;
 
+import DTO.RuleDTO;
 import Models.UserRight;
 import Responses.StandardResponse;
-import Services.UserRightService;
+import Services.v1.UserRightService;
 import Transformers.JsonTransformer;
+import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class UserRightsController {
         // Routes for work with user rights
         // Get all rights by user UUID
         get("/:id/rights", (req, res) -> {
-            List<UserRight> rights = UserRightService.getUserRights(req, store);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            List<UserRight> rights = UserRightService.getUserRights(req, store, rule);
             String status = (rights != null) ? "success" : "fail";
             String message = (rights != null)
                     ? "Successfully founded rights for user"

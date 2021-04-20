@@ -1,4 +1,4 @@
-package Utils;
+package Utils.common;
 
 import Models.User;
 import Models.UserProperty;

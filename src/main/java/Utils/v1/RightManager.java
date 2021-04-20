@@ -1,9 +1,9 @@
-package Utils;
+package Utils.v1;
 
 import DTO.RuleDTO;
 import Models.User;
 import Models.UserRight;
-import Services.UserService;
+import Services.v1.UserService;
 import dev.morphia.Datastore;
 import spark.Request;
 

@@ -1,12 +1,11 @@
 // Import UserController class
 import Controllers.common.ApiController;
 import Controllers.common.CORSController;
-import Controllers.common.ErrorsController;
+import Controllers.core.ErrorsController;
 import Controllers.v1.*;
 // Import JsonTransformer class
 import Transformers.JsonTransformer;
 // Import MongoClient class
-import Utils.RightManager;
 import com.mongodb.client.MongoClients;
 // Import Morphia classes
 import dev.morphia.Datastore;
@@ -100,6 +99,7 @@ public class Application {
 
         // Errors handling
         ErrorsController.errors_InternalServerError();
+        ErrorsController.errors_ExternalPackagesErrors();
         ErrorsController.errors_Custom();
     }
 }

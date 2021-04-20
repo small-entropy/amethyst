@@ -1,29 +1,21 @@
-package Services;
+package Services.v1;
 
+import DTO.RuleDTO;
+import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.User;
 import Models.UserRight;
+import Services.core.CoreRightService;
+import Utils.common.Comparator;
 import dev.morphia.Datastore;
 import spark.Request;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Class service for work with user right document
  */
-public class UserRightService {
-
-    /**
-     * Method for get default list of rights
-     * @return list of rights
-     */
-    public static List<UserRight> getDefaultRightList() {
-        UserRight usersRight = new UserRight("users_right");
-        UserRight catalogsRight = new UserRight("catalogs_right");
-        return Arrays.asList(usersRight, catalogsRight);
-    }
+public class UserRightService extends CoreRightService {
 
     public static String updateRight(Request request, Datastore datastore) {
         return "Update user right";
@@ -40,14 +32,23 @@ public class UserRightService {
     /**
      * Method for get user right list
      * @param request Spark request object
-     * @param datastore Morphia datastore (connection) object
-     * @return list of user rights
-     * @throws DataException exception for errors with data
-     * @throws TokenException exception for errors of token
+     * @param datastore Morphia datastore object
+     * @param rule rule data transfer object
+     * @return user document rights list
+     * @throws AccessException no access exception
      */
-    public static List<UserRight> getUserRights(Request request, Datastore datastore) throws DataException, TokenException {
-        User user = UserService.getUserWithTrust(request, datastore);
-        return (user.getRights() != null) ? user.getRights() : null;
+    public static List<UserRight> getUserRights(Request request, Datastore datastore, RuleDTO rule) throws AccessException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
+        if (hasAccess) {
+            return UserRightService.getUserRights(request, datastore);
+        } else {
+            String message = (isTrusted)
+                    ? "Can not rights for read own private fields"
+                    : "Can not rights for read other private fields";
+            Error error = new Error(message);
+            throw new AccessException("CanRead", error);
+        }
     }
 
     /**

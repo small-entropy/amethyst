@@ -2,9 +2,9 @@ package Controllers.v1;
 import DTO.RuleDTO;
 import Models.User;
 import Responses.StandardResponse;
-import Services.UserService;
+import Services.v1.UserService;
 import Transformers.JsonTransformer;
-import Utils.RightManager;
+import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package Utils;
+package Utils.common;
 import spark.Request;
 
 enum HeadersFields {

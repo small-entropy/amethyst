@@ -1,4 +1,6 @@
-package Utils;
+package Utils.common;
+import Utils.common.HeadersUtils;
+import Utils.common.QueryUtils;
 import spark.Request;
 
 /**
