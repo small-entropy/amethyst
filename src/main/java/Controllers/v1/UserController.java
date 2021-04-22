@@ -17,15 +17,28 @@ import static spark.Spark.*;
  */
 public class UserController {
 
+    /**
+     * Enum with exception messages for controller
+     */
     private enum Messages {
         LIST("User list successfully founded"),
         USER("Successfully found user"),
         MARK_TO_REMOVE("Successfully marked to remove");
+        // Property for text message
         private final String message;
+
+        /**
+         * Constructor for enum
+         * @param message text message
+         */
         Messages(String message) {
             this.message = message;
         }
 
+        /**
+         * Getter for messages
+         * @return text of message
+         */
         public String getMessage() {
             return message;
         }

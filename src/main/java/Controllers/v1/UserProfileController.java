@@ -13,14 +13,28 @@ import static spark.Spark.*;
  * Class with routes for work with profile documents
  */
 public class UserProfileController {
+
+    /**
+     * Enum for exception messages
+     */
     private enum Messages {
         PROFILE("Successfully get user profile"),
         PROPERTY("Successfully get user profile property");
+        // Property for text message
         private final String message;
+
+        /**
+         * Constructor for enum
+         * @param message text of message
+         */
         Messages(String message) {
             this.message = message;
         }
 
+        /**
+         * Getter for message property
+         * @return value of message property
+         */
         public String getMessage() {
             return message;
         }

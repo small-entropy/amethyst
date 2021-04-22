@@ -18,15 +18,29 @@ import static spark.Spark.*;
  * Static class with routes for work with user property documents
  */
 public class UserPropertyController {
+
+    /**
+     * Enum for exception messages
+     */
     private enum Messages {
         PROPERTIES("Successfully get user properties"),
         PROPERTY("Successfully get user property"),
         CREATED("Successfully created user property");
+        // Message property
         private final String message;
+
+        /**
+         * Constructor for enum
+         * @param message text of message
+         */
         Messages(String message) {
             this.message = message;
         }
 
+        /**
+         * Getter for message property
+         * @return value of message property
+         */
         public String getMessage() {
             return message;
         }

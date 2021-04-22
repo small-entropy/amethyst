@@ -18,16 +18,29 @@ import static spark.Spark.post;
  */
 public class AuthorizationController extends CoreController {
 
+    /**
+     * Enum for exception messages
+     */
     private enum Messages {
         REGISTERED("User successfully registered"),
         AUTOLOGIN("Successfully login by token"),
         LOGIN("Login is success"),
         LOGOUT("User successfully logout");
+        // Property for text message
         private final String message;
+
+        /**
+         * Constructor fo enum
+         * @param message text of message
+         */
         Messages(String message) {
             this.message = message;
         }
 
+        /**
+         * Getter for message property
+         * @return value of message property
+         */
         public String getMessage() {
             return message;
         }
