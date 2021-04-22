@@ -4,6 +4,7 @@ import Responses.ErrorResponse;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.google.gson.Gson;
 import com.mongodb.MongoWriteException;
+import spark.Response;
 
 import static spark.Spark.*;
 import static spark.Spark.exception;
@@ -38,6 +39,30 @@ public class CoreErrorsController {
     protected static final Gson GSON = new Gson();
 
     /**
+     * Method for send default error response by status code & exception
+     * @param response Spark response object
+     * @param statusCode status code for response
+     * @param error exception object
+     */
+    public static void sendError(Response response, int statusCode, Exception error) {
+        String message = error.getCause().getMessage();
+        sendError(response, statusCode, message);
+    }
+
+    /**
+     * Method for send default error response by status code & error message
+     * @param response Spark response object
+     * @param statusCode response status code
+     * @param message error message
+     */
+    public static void sendError(Response response, int statusCode, String message) {
+        response.status(statusCode);
+        response.type(ErrorsController.RESPONSE_TYPE);
+        ErrorResponse errorResponse = new ErrorResponse(message, null);
+        response.body(GSON.toJson(errorResponse));
+    }
+
+    /**
      * Methods for default errors handlers
      */
     public static void errors_InternalServerError() {
@@ -61,18 +86,12 @@ public class CoreErrorsController {
     public static void errors_ExternalPackagesErrors() {
         // Custom exception handler for MongoWriteException error
         exception(MongoWriteException.class, (error, req, res) -> {
-            res.status(HttpErrors.INTERNAL_SERVER_ERROR.getCode());
-            res.type(ErrorsController.RESPONSE_TYPE);
-            ErrorResponse response = new ErrorResponse(error.getMessage(), null);
-            res.body(ErrorsController.GSON.toJson(response));
+            sendError(res, HttpErrors.INTERNAL_SERVER_ERROR.getCode(), error.getMessage());
         });
 
         // Custom exception handler for AlgorithmMismatchException error
         exception(AlgorithmMismatchException.class, (error, req, res) -> {
-            res.status(HttpErrors.INTERNAL_SERVER_ERROR.getCode());
-            res.type(ErrorsController.RESPONSE_TYPE);
-            ErrorResponse response = new ErrorResponse(error.getMessage(), null);
-            res.body(ErrorsController.GSON.toJson(response));
+            sendError(res, HttpErrors.INTERNAL_SERVER_ERROR.getCode(), error.getMessage());
         });
     }
 }

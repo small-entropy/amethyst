@@ -1,6 +1,7 @@
 package Services.v1;
 // Import models
 import DTO.RuleDTO;
+import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 import Services.core.CoreUserService;
@@ -40,7 +41,7 @@ public class UserService extends CoreUserService {
      * @param datastore Morphia datastore (connection)
      * @return user object after saving
      */
-    public static User markToRemove(Request request, Datastore datastore) throws TokenException {
+    public static User markToRemove(Request request, Datastore datastore) throws TokenException, DataException {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -68,7 +69,8 @@ public class UserService extends CoreUserService {
                     return user;
                 } else {
                     // Return null if user not found
-                    return null;
+                    Error error = new Error("Can not find user for mark to remove");
+                    throw new DataException("NotFound", error);
                 }
             } else {
                 Error error = new Error("Incorrect token");
@@ -107,7 +109,7 @@ public class UserService extends CoreUserService {
      * @param rule user rule for this action
      * @return list of users documents
      */
-    public static List<User> getList(Request request, Datastore datastore, RuleDTO rule) {
+    public static List<User> getList(Request request, Datastore datastore, RuleDTO rule) throws DataException {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
@@ -121,6 +123,7 @@ public class UserService extends CoreUserService {
         String qLimit = request.queryMap().get(LIMIT_FIELD).value();
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         String[] excludes = UserService.getOtherFindOptionsArgs(rule);
+        // Get users list
         return UserService.getList(skip, limit, excludes, datastore);
     }
 }

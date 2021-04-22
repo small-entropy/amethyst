@@ -1,7 +1,7 @@
 package Responses;
 
 public abstract class AbstractResponse {
-    private String status;
+    private final String status;
     private String message;
     private StandardMeta meta;
 

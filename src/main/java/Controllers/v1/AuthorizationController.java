@@ -1,8 +1,9 @@
 package Controllers.v1;
 
+import Controllers.core.CoreController;
 import DTO.RuleDTO;
 import Models.User;
-import Responses.StandardResponse;
+import Responses.SuccessResponse;
 import Services.v1.AuthorizationService;
 import Transformers.JsonTransformer;
 import Utils.common.HeadersUtils;
@@ -15,7 +16,22 @@ import static spark.Spark.post;
 /**
  * Class with authorization routes
  */
-public class AuthorizationController {
+public class AuthorizationController extends CoreController {
+
+    private enum Messages {
+        REGISTERED("User successfully registered"),
+        AUTOLOGIN("Successfully login by token"),
+        LOGIN("Login is success"),
+        LOGOUT("User successfully logout");
+        private final String message;
+        Messages(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 
     /**
      * Method with define authorization routes
@@ -28,21 +44,13 @@ public class AuthorizationController {
         post("/register", (req, res) -> {
             // Register user by request data
             User user = AuthorizationService.registerUser(req, store);
-            // Set response status field
-            String status = "success";
-            // Set response message field
-            String message = "User registered";
             // Define index of current token
             final int firstIndex = 0;
-            // Get current token from user document
             String token = user.getIssuedTokens().get(firstIndex);
             // Set response headers
-            res.header(
-                    HeadersUtils.getAuthHeaderField(),
-                    HeadersUtils.getAuthHeaderValue(token)
-            );
+            res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
             // Return response
-            return new StandardResponse<User>(status, message, user);
+            return new SuccessResponse<User>(Messages.REGISTERED.getMessage(), user);
         }, transformer);
 
         // Route for user login
@@ -51,44 +59,28 @@ public class AuthorizationController {
             RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, "users_right", "read");
             // Get user document
             User user = AuthorizationService.loginUser(req, store, rule);
-            String status;
-            String message;
-            if (user != null) {
-                status = "success";
-                message = "Login is success";
-                final int firstIndex = 0;
-                String token = user.getIssuedTokens().get(firstIndex);
-                res.header(
-                        HeadersUtils.getAuthHeaderField(),
-                        HeadersUtils.getAuthHeaderValue(token)
-                );
-            } else {
-                status = "fail";
-                message = "Can not auth by current username & password";
-            }
-            return new StandardResponse<User>(status, message, user);
+            // Init default user issued token first index
+            final int firstIndex = 0;
+            // Get token from issued token
+            String token = user.getIssuedTokens().get(firstIndex);
+            // Set headers for authorization
+            res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
+            // Return answer
+            return new SuccessResponse<User>(Messages.LOGIN.getMessage(), user);
         }, transformer);
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
             User user = AuthorizationService.autoLoginUser(req, store, rule);
-            String status = (user != null) ? "success" : "fail";
-            String message = (user != null)
-                    ? "Successfully autologin by token"
-                    : "Can not autologin by token";
-            return new StandardResponse<User>(status, message, user);
+            return new SuccessResponse<User>(Messages.AUTOLOGIN.getMessage(), user);
         }, transformer);
 
         // Logout user
         get("/logout", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
             User user = AuthorizationService.logoutUser(req, store, rule);
-            String status = (user != null) ? "success" : "fail";
-            String message = (user != null)
-                    ? "Successfully logout"
-                    : "Can not logout";
-            return new StandardResponse<User>(status, message, user);
+            return new SuccessResponse<User>(Messages.LOGOUT.getMessage(), user);
         }, transformer);
     }
 }

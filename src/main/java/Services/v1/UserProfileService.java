@@ -32,7 +32,13 @@ public class UserProfileService extends CoreUserProfileService {
         if (isTrusted) {
             ObjectId id = new ObjectId(request.params("id"));
             UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-            return UserProfileService.createUserProfileProperty(id, userPropertyDTO, datastore);
+            UserProperty property = UserProfileService.createUserProfileProperty(id, userPropertyDTO, datastore);
+            if (property != null) {
+                return property;
+            } else {
+                Error error = new Error("Can not create user profile property with this key");
+                throw new DataException("CanNotCreate", error);
+            }
         } else {
             Error error = new Error("Id from request not equal id from token");
             throw new TokenException("NotEquals", error);
@@ -45,7 +51,7 @@ public class UserProfileService extends CoreUserProfileService {
      * @param datastore Morphia datastore object (connection)
      * @return list of user properties
      */
-    public static List<UserProperty> getUserProfile(Request request, Datastore datastore) {
+    public static List<UserProperty> getUserProfile(Request request, Datastore datastore) throws DataException {
         // Get user ID param from request URL
         String idParam = request.params("id");
         return UserProfileService.getUserProfile(idParam, datastore);
@@ -60,12 +66,6 @@ public class UserProfileService extends CoreUserProfileService {
     public static UserProperty getUserProfilePropertyById(Request request, Datastore datastore) throws DataException {
         String idParam = request.params("id");
         String propertyIdParam = request.params("property_id");
-        UserProperty property = UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, datastore);
-        if (property != null) {
-            return property;
-        } else {
-            Error error = new Error("Can not find user property by id");
-            throw new DataException("NotFound", error);
-        }
+        return UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, datastore);
     }
 }

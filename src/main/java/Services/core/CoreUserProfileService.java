@@ -67,9 +67,14 @@ public abstract class CoreUserProfileService {
      * @param datastore Morphia datastore object
      * @return list of user profile properties
      */
-    protected static List<UserProperty> getUserProfile(String idParam, Datastore datastore) {
+    protected static List<UserProperty> getUserProfile(String idParam, Datastore datastore) throws DataException {
         User user = CoreUserService.getUserById(idParam, datastore);
-        return (user != null) ? user.getProfile() : null;
+        if (user != null) {
+            return user.getProfile();
+        } else {
+            Error error = new Error("Can not find user by request params");
+            throw new DataException("NotFoun", error);
+        }
     }
 
     /**
@@ -79,7 +84,7 @@ public abstract class CoreUserProfileService {
      * @param datastore Morphia datastore object
      * @return user profile property
      */
-    protected static UserProperty getUserProfilePropertyById(String idParam, String propertyIdParam, Datastore datastore) {
+    protected static UserProperty getUserProfilePropertyById(String idParam, String propertyIdParam, Datastore datastore) throws DataException {
         List<UserProperty> profile = CoreUserProfileService.getUserProfile(idParam, datastore);
         UserProperty result = null;
         if (profile != null && propertyIdParam != null) {

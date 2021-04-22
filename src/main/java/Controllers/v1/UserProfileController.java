@@ -1,7 +1,8 @@
 package Controllers.v1;
 
+import Exceptions.DataException;
 import Models.UserProperty;
-import Responses.StandardResponse;
+import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
@@ -12,6 +13,19 @@ import static spark.Spark.*;
  * Class with routes for work with profile documents
  */
 public class UserProfileController {
+    private enum Messages {
+        PROFILE("Successfully get user profile"),
+        PROPERTY("Successfully get user profile property");
+        private final String message;
+        Messages(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
     /**
      * Method with init routes for work with profile property documents
      * @param store Morphia datastore
@@ -21,29 +35,22 @@ public class UserProfileController {
         // Route for get user profile
         get("/:id/profile", (req, res)-> {
             List<UserProperty> profile = UserProfileService.getUserProfile(req, store);
-            String status = (profile != null) ? "success" : "fail";
-            String message = (profile != null)
-                    ? "Successfully found user profile"
-                    : "Can not found user profile";
-            return new StandardResponse<List<UserProperty>>(status, message, profile);
+            return new SuccessResponse<List<UserProperty>>(Messages.PROFILE.getMessage(), profile);
         }, transformer);
         // Route for create profile property
         post("/:id/profile", (req, res) -> {
             UserProperty property = UserProfileService.createUserProfileProperty(req, store);
-            String status = (property != null) ? "success" : "fail";
-            String message = (property != null)
-                    ? "Successfully created profile property"
-                    : "Can not create profile property";
-            return new StandardResponse<UserProperty>(status, message, property);
+            return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
         }, transformer);
         // Route for get user profile property by ID
         get("/:id/profile/:property_id", (req, res) -> {
             UserProperty property = UserProfileService.getUserProfilePropertyById(req, store);
-            String status = (property != null) ? "success" : "fail";
-            String message = (property != null)
-                    ? "Founded profile property"
-                    : "Can not found profile property";
-            return new StandardResponse<UserProperty>(status, message, property);
+            if (property != null) {
+                return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
+            } else {
+                Error error = new Error("Can found property with this id");
+                throw new DataException("NotFound", error);
+            }
         }, transformer);
         // Update user profile property by property UUID (user find by UUID)
         put("/:id/profile/:property_id", (request, response) -> "Update user profile property");

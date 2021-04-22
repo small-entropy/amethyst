@@ -13,7 +13,18 @@ import spark.Request;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class for base functions for create authorization service
+ */
 public abstract class CoreAuthorizationService extends CoreService {
+
+    /**
+     * Method for login user by token
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @param findOptions options for find user
+     * @return founded user document
+     */
     protected static User autoLoginUser(Request request, Datastore datastore, FindOptions findOptions) {
         // Get user document by token
         User user = UserService.getUserByToken(request, datastore, findOptions);

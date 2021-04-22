@@ -1,8 +1,10 @@
 package Controllers.v1;
 
 import DTO.RuleDTO;
+import Exceptions.DataException;
 import Models.UserProperty;
 import Responses.StandardResponse;
+import Responses.SuccessResponse;
 import Services.v1.UserPropertyService;
 import Transformers.JsonTransformer;
 import Utils.v1.RightManager;
@@ -16,6 +18,20 @@ import static spark.Spark.*;
  * Static class with routes for work with user property documents
  */
 public class UserPropertyController {
+    private enum Messages {
+        PROPERTIES("Successfully get user properties"),
+        PROPERTY("Successfully get user property"),
+        CREATED("Successfully created user property");
+        private final String message;
+        Messages(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
     /**
      * Method with init routes for work with user property documents
      * @param store Morphia datastore
@@ -27,11 +43,7 @@ public class UserPropertyController {
         get("/:id/properties", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
             List<UserProperty> properties = UserPropertyService.getUserProperties(req, store, rule);
-            String status = (properties != null) ? "success" : "fail";
-            String message = (properties != null)
-                    ? "User properties found"
-                    : "Can not find user properties";
-            return new StandardResponse<List<UserProperty>>(status, message, properties);
+            return new SuccessResponse<List<UserProperty>>(Messages.PROPERTIES.getMessage(), properties);
         }, transformer);
         // Create new user property (user find by UUID)
         // This method only for create public property!
@@ -39,21 +51,18 @@ public class UserPropertyController {
         post("/:id/properties", (req, res) -> {
             RuleDTO ruleDTO = RightManager.getRuleByRequest_Token(req, store, "users_right", "create");
             UserProperty userProperty = UserPropertyService.createUserProperty(req, store, ruleDTO);
-            String status = (userProperty != null) ? "success" : "fail";
-            String message = (userProperty != null)
-                    ? "Successfully create user property"
-                    : "Can not create user property";
-            return new StandardResponse<UserProperty>(status, message, userProperty);
+            return new SuccessResponse<UserProperty>(Messages.CREATED.getMessage(), userProperty);
         }, transformer);
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
             UserProperty property = UserPropertyService.getUserPropertyById(req, store, rule);
-            String status = (property != null) ? "success" : "fail";
-            String message = (property != null)
-                    ? "User property found"
-                    : "Can not find user property";
-            return new StandardResponse<UserProperty>(status, message, property);
+            if (property != null) {
+                return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
+            } else {
+                Error error = new Error("Can not find user property");
+                throw new DataException("NotFound", error);
+            }
         }, transformer);
         // Update user property by property UUID (user find by UUID)
         put("/:id/properties/:property_id", (request, response) -> "Update user property");

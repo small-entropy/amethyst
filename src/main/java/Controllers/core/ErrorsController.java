@@ -1,11 +1,9 @@
 package Controllers.core;
 import Exceptions.AccessException;
+import Exceptions.AuthorizationException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Responses.ErrorResponse;
-import com.auth0.jwt.exceptions.AlgorithmMismatchException;
-import com.google.gson.Gson;
-import com.mongodb.MongoWriteException;
+
 import static spark.Spark.*;
 
 
@@ -18,7 +16,7 @@ public class ErrorsController extends CoreErrorsController {
      * Method for custom errors handlers
      */
     public static void errors_Custom() {
-                // Custom exception handler for TokenException error
+        // Custom exception handler for TokenException error
         exception(TokenException.class, (error, req, res) -> {
             // Get status code by exception message
             int statusCode = switch (error.getMessage()) {
@@ -26,22 +24,16 @@ public class ErrorsController extends CoreErrorsController {
                 case "NotEquals" -> HttpErrors.CONFLICT.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            res.status(statusCode);
-            // Get error message
-            String message = error.getCause().getMessage();
-            ErrorResponse response = new ErrorResponse(message, null);
-            res.body(ErrorsController.GSON.toJson(response));
+            ErrorsController.sendError(res, statusCode, error);
         });
         // Custom exception handler for DataException
         exception(DataException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
                 case "NotFound" -> HttpErrors.NOT_FOUND.getCode();
+                case "CanNotCreate" -> HttpErrors.CONFLICT.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            res.status(statusCode);
-            String message = error.getCause().getMessage();
-            ErrorResponse response = new ErrorResponse(message, null);
-            res.body(ErrorsController.GSON.toJson(response));
+            ErrorsController.sendError(res, statusCode, error);
         });
         // Custom exception handler for AccessException
         exception(AccessException.class, (error, req, res) -> {
@@ -49,10 +41,16 @@ public class ErrorsController extends CoreErrorsController {
                 case "CanRead", "CanCreate" -> HttpErrors.NOT_ACCEPTABLE.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            res.status(statusCode);
-            String message = error.getCause().getMessage();
-            ErrorResponse response = new ErrorResponse(message, null);
-            res.body(ErrorsController.GSON.toJson(response));
+            ErrorsController.sendError(res, statusCode, error);
         });
+        // Custom exception handler for AuthorizationExceptions
+        exception(AuthorizationException.class, (error, req, res) -> {
+            int statusCode = switch (error.getMessage()) {
+                case "UserNotFound" -> HttpErrors.NOT_FOUND.getCode();
+                default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
+            };
+            ErrorsController.sendError(res, statusCode, error);
+        });
+
     }
 }

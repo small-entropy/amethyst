@@ -31,7 +31,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @return user property
      * @throws AccessException user access exception
      */
-    public static UserProperty createUserProperty(Request request, Datastore datastore, RuleDTO rule) throws AccessException {
+    public static UserProperty createUserProperty(Request request, Datastore datastore, RuleDTO rule) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -41,7 +41,13 @@ public class UserPropertyService extends CoreUserPropertyService {
         // If user has access to create private fields - try do it.
         // If user has not access to create private fields - throw exception.
         if (hasAccess) {
-            return UserPropertyService.createUserProperty(request, datastore);
+            UserProperty property = UserPropertyService.createUserProperty(request, datastore);
+            if (property != null) {
+                return property;
+            } else {
+                Error error = new Error("Can not create user property");
+                throw new DataException("CanNotCreate", error);
+            }
         } else {
             String message = (isTrusted)
                     ? "Can crate user property for current user"
