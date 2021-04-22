@@ -83,36 +83,40 @@ public class User {
     }
 
     /**
-     *
-     * @return
+     * Getter for profile property
+     * @return value of profile property
      */
     public List<UserProperty> getProfile() {
         return profile;
     }
 
+    /**
+     * Setter for profile property
+     * @param properties new value for profile property
+     */
     public void setProperties(List<UserProperty> properties) {
         this.properties = properties;
     }
 
     /**
-     *
-     * @param property
+     * Method for add one property to profile user properties list
+     * @param property user property for profile
      */
     public void addProfileProperty(UserProperty property) {
         this.profile.add(property);
     }
 
     /**
-     *
-     * @return
+     * Method for get user properties field
+     * @return list of user properties
      */
     public List<UserProperty> getProperties() {
         return properties;
     }
 
     /**
-     *
-     * @param property
+     * Add user property to user properties list
+     * @param property new user property
      */
     public void addProperty(UserProperty property) {
         this.properties.add(property);
@@ -164,7 +168,7 @@ public class User {
 
     /**
      * Method for regenerate user hash password by current password
-     * (call if user password not enctypt)
+     * (call if user password not encrypt)
      */
     public void reGeneratePassword() {
         password = getHashedPassword(password);
@@ -180,7 +184,7 @@ public class User {
     }
 
     /**
-     * Method for ecnrypt password
+     * Method for encrypt password
      * @param password not hashed password
      * @return password hash
      */
