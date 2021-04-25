@@ -5,6 +5,8 @@ import Models.User;
 import Responses.SuccessResponse;
 import Services.v1.UserService;
 import Transformers.JsonTransformer;
+import Utils.constants.DefaultActions;
+import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
@@ -53,7 +55,7 @@ public class UserController {
         // Route for work with users list
         get("", (req, res) -> {
             // Get rule data transfer object for request
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             // Get list of users documents
             List<User> users = UserService.getList(req, store, rule);
             // Check users list size.

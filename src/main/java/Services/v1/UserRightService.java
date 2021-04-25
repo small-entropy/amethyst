@@ -7,6 +7,7 @@ import Exceptions.TokenException;
 import Models.UserRight;
 import Services.core.CoreRightService;
 import Utils.common.Comparator;
+import Utils.constants.UsersParams;
 import dev.morphia.Datastore;
 import spark.Request;
 
@@ -61,7 +62,7 @@ public class UserRightService extends CoreRightService {
      */
     public static UserRight getUserRightById(Request request, Datastore datastore) throws DataException, TokenException {
         List<UserRight> rights = UserRightService.getUserRights(request, datastore);
-        String rightId = request.params("right_id");
+        String rightId = request.params(UsersParams.RIGHT_ID.getName());
         UserRight result = null;
         if (rights != null && rightId != null) {
             for (UserRight right : rights) {

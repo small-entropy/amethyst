@@ -5,6 +5,7 @@ import Exceptions.TokenException;
 import Models.UserProperty;
 import Services.core.CoreUserProfileService;
 import Utils.common.Comparator;
+import Utils.constants.UsersParams;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
@@ -30,7 +31,7 @@ public class UserProfileService extends CoreUserProfileService {
         // If ids equals - try create user property.
         // If ids not equals - return null.
         if (isTrusted) {
-            ObjectId id = new ObjectId(request.params("id"));
+            ObjectId id = new ObjectId(request.params(UsersParams.ID.getName()));
             UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
             UserProperty property = UserProfileService.createUserProfileProperty(id, userPropertyDTO, datastore);
             if (property != null) {
@@ -53,7 +54,7 @@ public class UserProfileService extends CoreUserProfileService {
      */
     public static List<UserProperty> getUserProfile(Request request, Datastore datastore) throws DataException {
         // Get user ID param from request URL
-        String idParam = request.params("id");
+        String idParam = request.params(UsersParams.ID.getName());
         return UserProfileService.getUserProfile(idParam, datastore);
     }
 
@@ -64,8 +65,8 @@ public class UserProfileService extends CoreUserProfileService {
      * @return founded user property
      */
     public static UserProperty getUserProfilePropertyById(Request request, Datastore datastore) throws DataException {
-        String idParam = request.params("id");
-        String propertyIdParam = request.params("property_id");
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
         return UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, datastore);
     }
 }

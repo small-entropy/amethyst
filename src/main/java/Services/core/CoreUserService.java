@@ -6,6 +6,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 import Utils.common.*;
+import Utils.constants.UsersParams;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
@@ -104,7 +105,7 @@ public abstract class CoreUserService extends CoreService {
         // If token and URL haven't equals user ID - throw error.
         if (isTrusted) {
             // User id from URL params
-            String idParams = request.params("id");
+            String idParams = request.params(UsersParams.ID.getName());
             // Generate Object ID from string
             ObjectId id = new ObjectId(idParams);
             // Get find options wiwth all fields

@@ -11,6 +11,7 @@ import Services.core.CoreUserService;
 // Import GSON class
 import Utils.common.Comparator;
 import Utils.common.RequestUtils;
+import Utils.constants.UsersParams;
 import com.google.gson.Gson;
 // Import Morphia classes
 import dev.morphia.Datastore;
@@ -54,7 +55,7 @@ public class UserService extends CoreUserService {
             // If ids not equals - throw exception
             if (isEqualsIds) {
                 // Get id from query params
-                String paramId = request.params("id");
+                String paramId = request.params(UsersParams.ID.getName());
                 // Find user by id
                 User user = UserService.getUserById(paramId, datastore);
                 // Check founded user
@@ -92,7 +93,7 @@ public class UserService extends CoreUserService {
      */
     public static User getUserById(Request request, Datastore datastore) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        String idParam = request.params("id");
+        String idParam = request.params(UsersParams.ID.getName());
         String[] excludes = isTrusted
                 ? UserService.PUBLIC_AND_PRIVATE_ALLOWED
                 : UserService.PUBLIC_ALLOWED;

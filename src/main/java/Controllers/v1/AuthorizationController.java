@@ -7,6 +7,8 @@ import Responses.SuccessResponse;
 import Services.v1.AuthorizationService;
 import Transformers.JsonTransformer;
 import Utils.common.HeadersUtils;
+import Utils.constants.DefaultActions;
+import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
@@ -69,7 +71,7 @@ public class AuthorizationController extends CoreController {
         // Route for user login
         post("/login", (req, res) -> {
             // Get rule for user by request
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, "users_right", "read");
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             // Get user document
             User user = AuthorizationService.loginUser(req, store, rule);
             // Init default user issued token first index
@@ -84,14 +86,14 @@ public class AuthorizationController extends CoreController {
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.autoLoginUser(req, store, rule);
             return new SuccessResponse<User>(Messages.AUTOLOGIN.getMessage(), user);
         }, transformer);
 
         // Logout user
         get("/logout", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.logoutUser(req, store, rule);
             return new SuccessResponse<User>(Messages.LOGOUT.getMessage(), user);
         }, transformer);

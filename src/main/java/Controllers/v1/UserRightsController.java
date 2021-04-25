@@ -5,6 +5,8 @@ import Models.UserRight;
 import Responses.StandardResponse;
 import Services.v1.UserRightService;
 import Transformers.JsonTransformer;
+import Utils.constants.DefaultActions;
+import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 
@@ -25,7 +27,7 @@ public class UserRightsController {
         // Routes for work with user rights
         // Get all rights by user UUID
         get("/:id/rights", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, "users_right", "read");
+            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             List<UserRight> rights = UserRightService.getUserRights(req, store, rule);
             String status = (rights != null) ? "success" : "fail";
             String message = (rights != null)

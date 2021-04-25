@@ -4,6 +4,7 @@ import DTO.UserPropertyDTO;
 import Models.User;
 import Models.UserProperty;
 import Utils.common.Comparator;
+import Utils.constants.UsersParams;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import spark.Request;
@@ -64,7 +65,7 @@ public abstract class CoreUserPropertyService {
      */
     protected static UserProperty createUserProperty(Request request, Datastore datastore) {
         // Get user
-        User user = CoreUserService.getUserById(request.params("id"), datastore);
+        User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), datastore);
         // Return result of method for create user property from request
         return CoreUserPropertyService.createUserPropertyFromRequest(request, datastore, user);
     }
@@ -77,7 +78,7 @@ public abstract class CoreUserPropertyService {
      */
     protected static List<UserProperty> getUserProperties(Request request, Datastore datastore) {
         // Get user by id in request params
-        User user = CoreUserService.getUserById(request.params("id"), datastore);
+        User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), datastore);
         // Return value od properties field
         return (user != null) ? user.getProperties() : null;
     }
@@ -90,7 +91,7 @@ public abstract class CoreUserPropertyService {
      */
     protected static UserProperty getUserPropertyById(Request request, Datastore datastore) {
         // Get property ID from request params
-        String propertyId = request.params("property_id");
+        String propertyId = request.params(UsersParams.PROPERTY_ID.getName());
         // Get user properties from user document
         List<UserProperty> properties = CoreUserPropertyService.getUserProperties(request, datastore);
         // Init empty result

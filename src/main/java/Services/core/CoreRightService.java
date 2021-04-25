@@ -2,6 +2,8 @@ package Services.core;
 
 import Models.User;
 import Models.UserRight;
+import Utils.constants.DefaultRights;
+import Utils.constants.UsersParams;
 import dev.morphia.Datastore;
 import spark.Request;
 
@@ -15,8 +17,8 @@ public abstract class CoreRightService {
      * @return list of rights
      */
     protected static List<UserRight> getDefaultRightList() {
-        UserRight usersRight = new UserRight("users_right");
-        UserRight catalogsRight = new UserRight("catalogs_right");
+        UserRight usersRight= new UserRight(DefaultRights.USERS.getName());
+        UserRight catalogsRight = new UserRight(DefaultRights.CATALOGS.getName());
         return Arrays.asList(usersRight, catalogsRight);
     }
 
@@ -27,7 +29,7 @@ public abstract class CoreRightService {
      * @return list of user rights
      */
     protected static List<UserRight> getUserRights(Request request, Datastore datastore) {
-        User user = CoreUserService.getUserById(request.params("id"), datastore);
+        User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), datastore);
         return (user.getRights() != null) ? user.getRights() : null;
     }
 }
