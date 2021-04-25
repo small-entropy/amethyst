@@ -57,7 +57,7 @@ public class UserPropertyController {
         // Routes for work with user properties
         // Get user properties list by user UUID
         get("/:id/properties", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             List<UserProperty> properties = UserPropertyService.getUserProperties(req, store, rule);
             return new SuccessResponse<List<UserProperty>>(Messages.PROPERTIES.getMessage(), properties);
         }, transformer);
@@ -65,13 +65,13 @@ public class UserPropertyController {
         // This method only for create public property!
         // For create not public property use other method!
         post("/:id/properties", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
             UserProperty userProperty = UserPropertyService.createUserProperty(req, store, rule);
             return new SuccessResponse<UserProperty>(Messages.CREATED.getMessage(), userProperty);
         }, transformer);
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             UserProperty property = UserPropertyService.getUserPropertyById(req, store, rule);
             if (property != null) {
                 return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);

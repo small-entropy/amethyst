@@ -38,7 +38,7 @@ public class ErrorsController extends CoreErrorsController {
         // Custom exception handler for AccessException
         exception(AccessException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
-                case "CanRead", "CanCreate" -> HttpErrors.NOT_ACCEPTABLE.getCode();
+                case "CanNotRead", "CanNotCreate", "CanNotUpdate" -> HttpErrors.NOT_ACCEPTABLE.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             ErrorsController.sendError(res, statusCode, error);

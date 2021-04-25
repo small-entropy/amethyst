@@ -53,7 +53,7 @@ public class UserPropertyService extends CoreUserPropertyService {
                     ? "Can crate user property for current user"
                     : "Can create user property for user";
             Error error = new Error(message);
-            throw new AccessException("CanCreate", error);
+            throw new AccessException("CanNotCreate", error);
         }
     }
 
@@ -80,7 +80,7 @@ public class UserPropertyService extends CoreUserPropertyService {
                     ? "Can not rights for read own private fields"
                     : "Can not rights for read other private fields";
             Error error = new Error(message);
-            throw new AccessException("CanRead", error);
+            throw new AccessException("CanNotRead", error);
         }
     }
 
@@ -107,7 +107,7 @@ public class UserPropertyService extends CoreUserPropertyService {
                     ? "Can not rights for read own private fields"
                     : "Can not rights for read other private fields";
             Error error = new Error(message);
-            throw new AccessException("CanRead", error);
+            throw new AccessException("CanNotRead", error);
         }
     }
 }

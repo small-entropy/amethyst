@@ -1,10 +1,15 @@
 package Controllers.v1;
 
+import DTO.RuleDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
 import Transformers.JsonTransformer;
+import Utils.constants.DefaultActions;
+import Utils.constants.DefaultRights;
+import Utils.constants.UsersParams;
+import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import static spark.Spark.*;
@@ -67,7 +72,14 @@ public class UserProfileController {
             }
         }, transformer);
         // Update user profile property by property UUID (user find by UUID)
-        put("/:id/profile/:property_id", (request, response) -> "Update user profile property");
+        put("/:id/profile/:property_id", (req, res) -> {
+            // Get user rule for update nested users documents
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            // Try update user profile property
+            UserProperty property = UserProfileService.updateUserProperty(req, store, rule);
+            // Return successfully response
+            return new SuccessResponse<UserProperty>("Updated", property);
+        }, transformer);
         // Remove user profile property by UUID (user find by UUID)
         delete("/:id/profile/:property_id", (request, response) -> "Remove user profile property");
     }

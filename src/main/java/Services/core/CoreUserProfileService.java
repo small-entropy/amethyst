@@ -5,6 +5,7 @@ import Exceptions.DataException;
 import Models.User;
 import Models.UserProperty;
 import Utils.common.Comparator;
+import Utils.constants.UsersParams;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -14,6 +15,7 @@ import java.util.List;
 
 
 public abstract class CoreUserProfileService {
+
     /**
      * Method for get default profile properties list
      * @return list of user properties for profile
@@ -73,7 +75,7 @@ public abstract class CoreUserProfileService {
             return user.getProfile();
         } else {
             Error error = new Error("Can not find user by request params");
-            throw new DataException("NotFoun", error);
+            throw new DataException("NotFound", error);
         }
     }
 
@@ -86,6 +88,16 @@ public abstract class CoreUserProfileService {
      */
     protected static UserProperty getUserProfilePropertyById(String idParam, String propertyIdParam, Datastore datastore) throws DataException {
         List<UserProperty> profile = CoreUserProfileService.getUserProfile(idParam, datastore);
+        return getPropertyFromProfileById(propertyIdParam, profile);
+    }
+
+    /**
+     * Private method for find user profile property in list of user profile properties
+     * @param propertyIdParam property id as string
+     * @param profile profile properties list
+     * @return founded user property
+     */
+    private static UserProperty getPropertyFromProfileById(String propertyIdParam, List<UserProperty> profile) {
         UserProperty result = null;
         if (profile != null && propertyIdParam != null) {
             for (UserProperty profile_property : profile) {
@@ -95,5 +107,50 @@ public abstract class CoreUserProfileService {
             }
         }
         return result;
+    }
+
+    /**
+     * Method for update user profile property in user document
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @param userPropertyDTO user property data transfer object
+     * @return updated user property
+     * @throws DataException return exception if not founded user or user property in profile list
+     */
+    protected static UserProperty updateUserProperty(Request request, Datastore datastore, UserPropertyDTO userPropertyDTO) throws DataException {
+        // Get user ID from request params
+        String idParam = request.params(UsersParams.ID.getName());
+        // Property ID for profile properties from request params
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        // Initialize empty profile variable
+        List<UserProperty> profile = null;
+        // Get user by ID
+        User user = CoreUserService.getUserById(idParam, datastore);
+        // Check user on exist.
+        // If user exist - get profile property from document.
+        // If user not exist - throw error,
+        if (user != null) {
+            profile = user.getProfile();
+        } else {
+            Error error = new Error("Can not find user by request params");
+            throw new DataException("NotFound", error);
+        }
+        // Get profile property by ID from request
+        UserProperty property = getPropertyFromProfileById(propertyIdParam, profile);
+        // Check on exist user profile property.
+        // If property exist - set new value & save changes, then return updated value
+        // If property not exist - throw error.
+        if (property != null) {
+            // Set new value for profile property
+            property.setValue(userPropertyDTO.getValue());
+            // Save change in database.
+            // Attention! For update nested documents in Morphia you must update all document, not
+            // user update for this.
+            datastore.save(user);
+            return property;
+        } else {
+            Error error = new Error("Can not find user property by request params");
+            throw new DataException("NotFound", error);
+        }
     }
 }

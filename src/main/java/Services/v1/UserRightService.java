@@ -48,7 +48,7 @@ public class UserRightService extends CoreRightService {
                     ? "Can not rights for read own private fields"
                     : "Can not rights for read other private fields";
             Error error = new Error(message);
-            throw new AccessException("CanRead", error);
+            throw new AccessException("CanNotRead", error);
         }
     }
 

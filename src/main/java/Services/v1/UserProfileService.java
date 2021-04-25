@@ -1,5 +1,7 @@
 package Services.v1;
+import DTO.RuleDTO;
 import DTO.UserPropertyDTO;
+import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.UserProperty;
@@ -68,5 +70,23 @@ public class UserProfileService extends CoreUserProfileService {
         String idParam = request.params(UsersParams.ID.getName());
         String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
         return UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, datastore);
+    }
+
+    public static UserProperty updateUserProperty(Request request, Datastore datastore, RuleDTO rule) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
+        if (hasAccess) {
+            UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+            UserProperty userProperty = CoreUserProfileService.updateUserProperty(request, datastore, userPropertyDTO);
+            if (userProperty != null) {
+                return userProperty;
+            } else {
+                Error error = new Error("Can not find user property to update");
+                throw new DataException("NotFound", error);
+            }
+        } else {
+            Error error = new Error("Has no access to update user property");
+            throw new AccessException("CanNotUpdate", error);
+        }
     }
 }

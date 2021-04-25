@@ -55,7 +55,7 @@ public class UserController {
         // Route for work with users list
         get("", (req, res) -> {
             // Get rule data transfer object for request
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             // Get list of users documents
             List<User> users = UserService.getList(req, store, rule);
             // Check users list size.
