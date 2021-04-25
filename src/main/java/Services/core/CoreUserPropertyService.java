@@ -2,11 +2,9 @@ package Services.core;
 
 import DTO.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.User;
 import Models.UserProperty;
-import Utils.common.Comparator;
+import Services.base.BasePropertyService;
 import Utils.constants.UsersParams;
-import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import spark.Request;
 
@@ -16,7 +14,7 @@ import java.util.List;
 /**
  * Base user properties service
  */
-public abstract class CoreUserPropertyService extends CorePropertyService {
+public abstract class CoreUserPropertyService extends BasePropertyService {
 
     /**
      * Method for get default properties for create user

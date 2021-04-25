@@ -1,9 +1,10 @@
-package Services.core;
+package Services.base;
 
 import DTO.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.User;
 import Models.UserProperty;
+import Services.core.CoreUserService;
 import Utils.common.Searcher;
 import Utils.constants.UsersParams;
 import com.google.gson.Gson;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Abstract core class for owrk with user properties nested documents
  */
-public abstract class CorePropertyService {
+public abstract class BasePropertyService {
 
     /**
      * Method for get properties list from  user document by field

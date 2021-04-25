@@ -2,18 +2,16 @@ package Services.core;
 
 import DTO.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.User;
 import Models.UserProperty;
-import Utils.common.Comparator;
+import Services.base.BasePropertyService;
 import dev.morphia.Datastore;
-import org.bson.types.ObjectId;
 import spark.Request;
 
 import java.util.Arrays;
 import java.util.List;
 
 
-public abstract class CoreUserProfileService extends CorePropertyService {
+public abstract class CoreUserProfileService extends BasePropertyService {
 
     /**
      * Method for get default profile properties list
