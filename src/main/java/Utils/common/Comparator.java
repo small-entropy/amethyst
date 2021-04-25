@@ -30,22 +30,4 @@ public class Comparator {
         }
         return isTrusted;
     }
-
-    /**
-     * Method for compare key and keys from properties
-     * @param key name of new property
-     * @param user user document
-     * @return result of compare key and properties keys
-     */
-    public static boolean keyProperty_fromUser(String key, User user) {
-        boolean hasProperty = false;
-        List<UserProperty> properties = user.getProperties();
-        for (UserProperty property : properties) {
-            if (property.getKey().equals(key)) {
-                hasProperty = true;
-                break;
-            }
-        }
-        return hasProperty;
-    }
 }

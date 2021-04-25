@@ -1,6 +1,7 @@
 package Services.v1;
 // Import user model (class)
 import DTO.RuleDTO;
+import DTO.UserPropertyDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
@@ -8,6 +9,7 @@ import Exceptions.TokenException;
 import Models.UserProperty;
 import Services.core.CoreUserPropertyService;
 import Utils.common.Comparator;
+import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import spark.Request;
 
@@ -91,7 +93,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @param rule rule data transfer object
      * @return founded user property
      */
-    public static UserProperty getUserPropertyById(Request request, Datastore datastore, RuleDTO rule) throws AccessException {
+    public static UserProperty getUserPropertyById(Request request, Datastore datastore, RuleDTO rule) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -108,6 +110,18 @@ public class UserPropertyService extends CoreUserPropertyService {
                     : "Can not rights for read other private fields";
             Error error = new Error(message);
             throw new AccessException("CanNotRead", error);
+        }
+    }
+
+    public static UserProperty updateProperty(Request request, Datastore datastore, RuleDTO rule) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
+        if (hasAccess) {
+            UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+            return CoreUserPropertyService.updateUserProperty(request, datastore, userPropertyDTO);
+        } else {
+            Error error = new Error("Has no access to update user properties");
+            throw new AccessException("CanNotUpdate", error);
         }
     }
 }

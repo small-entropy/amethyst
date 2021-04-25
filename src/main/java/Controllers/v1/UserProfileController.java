@@ -24,7 +24,8 @@ public class UserProfileController {
      */
     private enum Messages {
         PROFILE("Successfully get user profile"),
-        PROPERTY("Successfully get user profile property");
+        PROPERTY("Successfully get user profile property"),
+        UPDATED("Profile property successfully updated");
         // Property for text message
         private final String message;
 
@@ -73,12 +74,12 @@ public class UserProfileController {
         }, transformer);
         // Update user profile property by property UUID (user find by UUID)
         put("/:id/profile/:property_id", (req, res) -> {
-            // Get user rule for update nested users documents
+            // Get user rule for update users documents
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
             // Try update user profile property
             UserProperty property = UserProfileService.updateUserProperty(req, store, rule);
             // Return successfully response
-            return new SuccessResponse<UserProperty>("Updated", property);
+            return new SuccessResponse<UserProperty>(Messages.UPDATED.getMessage(), property);
         }, transformer);
         // Remove user profile property by UUID (user find by UUID)
         delete("/:id/profile/:property_id", (request, response) -> "Remove user profile property");

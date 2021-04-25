@@ -27,7 +27,8 @@ public class UserPropertyController {
     private enum Messages {
         PROPERTIES("Successfully get user properties"),
         PROPERTY("Successfully get user property"),
-        CREATED("Successfully created user property");
+        CREATED("Successfully created user property"),
+        UPDATED("User property successfully updated");
         // Message property
         private final String message;
 
@@ -81,7 +82,12 @@ public class UserPropertyController {
             }
         }, transformer);
         // Update user property by property UUID (user find by UUID)
-        put("/:id/properties/:property_id", (request, response) -> "Update user property");
+        put("/:id/properties/:property_id", (req, res) -> {
+            // Get user rule for update users documents
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            UserProperty property = UserPropertyService.updateProperty(req, store, rule);
+            return new SuccessResponse<UserProperty>(Messages.UPDATED.getMessage(), property);
+        }, transformer);
         // Remove user property by UUID (user find by UUID)
         delete("/:id/properties/:property_id", (req, res) -> {
             List<UserProperty> properties = UserPropertyService.removeUserProperty(req, store);

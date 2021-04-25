@@ -26,16 +26,14 @@ public class UserProfileService extends CoreUserProfileService {
      * @param datastore Morphia datastore object
      * @return user property
      */
-    public static UserProperty createUserProfileProperty(Request request, Datastore datastore) throws TokenException, DataException {
+    public static UserProperty createUserProfileProperty(Request request, Datastore datastore) throws DataException, TokenException {
         // Check equals id from request url & id from send token
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check result compares ids.
         // If ids equals - try create user property.
         // If ids not equals - return null.
         if (isTrusted) {
-            ObjectId id = new ObjectId(request.params(UsersParams.ID.getName()));
-            UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-            UserProperty property = UserProfileService.createUserProfileProperty(id, userPropertyDTO, datastore);
+            UserProperty property = UserProfileService.createUserProfilePropertyByRequest(request, datastore);
             if (property != null) {
                 return property;
             } else {
@@ -72,18 +70,21 @@ public class UserProfileService extends CoreUserProfileService {
         return UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, datastore);
     }
 
+    /**
+     * Method for update user profile property
+     * @param request Spark request object
+     * @param datastore Morphia datastore object
+     * @param rule rule data transfer object
+     * @return updated user property
+     * @throws AccessException throw exception if request not access for update action
+     * @throws DataException throw exception if some data (property or user) not found
+     */
     public static UserProperty updateUserProperty(Request request, Datastore datastore, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
         if (hasAccess) {
             UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-            UserProperty userProperty = CoreUserProfileService.updateUserProperty(request, datastore, userPropertyDTO);
-            if (userProperty != null) {
-                return userProperty;
-            } else {
-                Error error = new Error("Can not find user property to update");
-                throw new DataException("NotFound", error);
-            }
+            return CoreUserProfileService.updateUserProperty(request, datastore, userPropertyDTO);
         } else {
             Error error = new Error("Has no access to update user property");
             throw new AccessException("CanNotUpdate", error);
