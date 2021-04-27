@@ -22,9 +22,9 @@ import static dev.morphia.query.experimental.filters.Filters.eq;
 public abstract class CoreUserService extends CoreService {
 
     // Fields for only public field by rights for users collection
-    public final static String[] PUBLIC_ALLOWED = new String[]{ "issuedToken", "password", "properties", "status", "rights" };
+    public final static String[] PUBLIC_ALLOWED = new String[]{ "issuedToken", "password", "properties", "status", "rights", "version" };
     // Fields for public and private fields by rights for users collection
-    public final static String[] PUBLIC_AND_PRIVATE_ALLOWED = new String[]{ "status", "password" };
+    public final static String[] PUBLIC_AND_PRIVATE_ALLOWED = new String[]{ "status", "password", "version" };
     // Fields for all fields by rights for users collection
     public final static String[] ALL_ALLOWED = new String[]{};
 

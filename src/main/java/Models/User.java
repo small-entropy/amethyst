@@ -18,6 +18,12 @@ public class User {
     private List<UserProperty> properties;
     private List<UserProperty> profile;
     private List<UserRight> rights;
+    @Version private Long version;
+
+    public Long getVersion() {
+        return version;
+    }
+
 
     User() {}
 

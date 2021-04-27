@@ -24,10 +24,6 @@ public class UserProperty {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public Object getValue() {
         return value;
     }

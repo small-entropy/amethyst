@@ -51,6 +51,5 @@ public class ErrorsController extends CoreErrorsController {
             };
             ErrorsController.sendError(res, statusCode, error);
         });
-
     }
 }

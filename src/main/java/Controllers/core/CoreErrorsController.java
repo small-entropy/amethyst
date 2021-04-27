@@ -93,5 +93,9 @@ public class CoreErrorsController {
         exception(AlgorithmMismatchException.class, (error, req, res) -> {
             sendError(res, HttpErrors.INTERNAL_SERVER_ERROR.getCode(), error.getMessage());
         });
+        // Custom exception handler for IllegalArgumentException
+        exception(IllegalArgumentException.class, (error, req, res) -> {
+            ErrorsController.sendError(res, HttpErrors.CONFLICT.getCode(), error.getMessage());
+        });
     }
 }
