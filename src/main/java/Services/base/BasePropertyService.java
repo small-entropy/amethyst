@@ -14,7 +14,7 @@ import spark.Request;
 import java.util.List;
 
 /**
- * Abstract core class for owrk with user properties nested documents
+ * Abstract core class for work with user properties nested documents
  */
 public abstract class BasePropertyService {
 
@@ -40,7 +40,9 @@ public abstract class BasePropertyService {
      * @return user properties list
      * @throws DataException throw exception if user can not be found by request params
      */
-    protected static List<UserProperty> getPropertiesList(String field, String idParam, Datastore datastore) throws DataException {
+    protected static List<UserProperty> getPropertiesList(String field,
+                                                          String idParam,
+                                                          Datastore datastore) throws DataException {
         User user = CoreUserService.getUserById(idParam, datastore);
         if (user != null) {
             return getPropertiesByFieldName(field, user);
@@ -69,7 +71,10 @@ public abstract class BasePropertyService {
      * @return founded user property
      * @throws DataException throw exception of some data not founded
      */
-    protected static UserProperty getPropertyById(String field, String propertyIdParam, String idParam, Datastore datastore) throws DataException {
+    protected static UserProperty getPropertyById(String field,
+                                                  String propertyIdParam,
+                                                  String idParam,
+                                                  Datastore datastore) throws DataException {
         List<UserProperty> properties = getPropertiesList(field, idParam, datastore);
         return getPropertyById(propertyIdParam, properties);
     }
@@ -82,7 +87,9 @@ public abstract class BasePropertyService {
      * @return created user property
      * @throws DataException throw exception if some data can not be founded
      */
-    protected static UserProperty createUserProperty(String field, Request request, Datastore datastore) throws DataException {
+    protected static UserProperty createUserProperty(String field,
+                                                     Request request,
+                                                     Datastore datastore) throws DataException {
         User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), datastore);
         if (user != null) {
             UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
@@ -132,12 +139,10 @@ public abstract class BasePropertyService {
      * @return updated user property
      * @throws DataException throw exception if come data can not be founded
      */
-    protected static UserProperty updateUserProperty(
-            Request request,
-            Datastore datastore,
-            UserPropertyDTO userPropertyDTO,
-            String field
-    ) throws DataException {
+    protected static UserProperty updateUserProperty(Request request,
+                                                     Datastore datastore,
+                                                     UserPropertyDTO userPropertyDTO,
+                                                     String field) throws DataException {
         String idParam = request.params(UsersParams.ID.getName());
         String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
         List<UserProperty> properties = null;
