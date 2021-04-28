@@ -1,14 +1,14 @@
 package Controllers.v1;
 
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
+import Sources.UsersSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
-import Utils.constants.UsersParams;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -52,19 +52,21 @@ public class UserProfileController {
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
+        UsersSource source = new UsersSource(store);
+        
         // Route for get user profile
         get("/:id/profile", (req, res)-> {
-            List<UserProperty> profile = UserProfileService.getUserProfile(req, store);
+            List<UserProperty> profile = UserProfileService.getUserProfile(req, source);
             return new SuccessResponse<List<UserProperty>>(Messages.PROFILE.getMessage(), profile);
         }, transformer);
         // Route for create profile property
         post("/:id/profile", (req, res) -> {
-            UserProperty property = UserProfileService.createUserProfileProperty(req, store);
+            UserProperty property = UserProfileService.createUserProfileProperty(req, source);
             return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
         }, transformer);
         // Route for get user profile property by ID
         get("/:id/profile/:property_id", (req, res) -> {
-            UserProperty property = UserProfileService.getUserProfilePropertyById(req, store);
+            UserProperty property = UserProfileService.getUserProfilePropertyById(req, source);
             if (property != null) {
                 return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
             } else {
@@ -75,9 +77,9 @@ public class UserProfileController {
         // Update user profile property by property UUID (user find by UUID)
         put("/:id/profile/:property_id", (req, res) -> {
             // Get user rule for update users documents
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
             // Try update user profile property
-            UserProperty property = UserProfileService.updateUserProperty(req, store, rule);
+            UserProperty property = UserProfileService.updateUserProperty(req, source, rule);
             // Return successfully response
             return new SuccessResponse<UserProperty>(Messages.UPDATED.getMessage(), property);
         }, transformer);

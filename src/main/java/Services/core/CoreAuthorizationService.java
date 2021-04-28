@@ -1,17 +1,15 @@
+
 package Services.core;
 
-import DTO.UserDTO;
+import DataTransferObjects.UserDTO;
+import Filters.UsersFilter;
 import Models.User;
-import Services.v1.UserService;
+import Sources.UsersSource;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;
-import dev.morphia.Datastore;
-import dev.morphia.query.FindOptions;
-import org.bson.types.ObjectId;
-import spark.Request;
-
 import java.util.Arrays;
 import java.util.List;
+import spark.Request;
 
 /**
  * Class for base functions for create authorization service
@@ -21,13 +19,13 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Method for login user by token
      * @param request Spark request object
-     * @param datastore Morphia datastore object
-     * @param findOptions options for find user
+     * @param source source for work with users collection
+     * @param filter filter object
      * @return founded user document
      */
-    protected static User autoLoginUser(Request request, Datastore datastore, FindOptions findOptions) {
+    protected static User autoLoginUser(Request request, UsersSource source, UsersFilter filter) {
         // Get user document by token
-        User user = UserService.getUserByToken(request, datastore, findOptions);
+        User user = CoreUserService.getUserByToken(request, source, filter);
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check user on exist & check issuedToken (token must be contains in this field)
@@ -45,16 +43,16 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Method for auth user
      * @param request Spark request object
-     * @param datastore datastore (morphia connection)
+     * @param source source for work with users collection
      * @return user document
      */
-    protected static User loginUser(Request request, Datastore datastore) {
+    protected static User loginUser(Request request, UsersSource source) {
         // Transform JSON object from body to Map
         UserDTO userDTO = CoreUserService.getUserDtoFromBody(request);
         // Get field "password" from map
         String password = userDTO.getPassword();
         // Find user by username from request body
-        User user = CoreUserService.getUserByUsername(userDTO, datastore);
+        User user = CoreUserService.getUserByUsername(userDTO, source);
         // Verified user password:
         // if user not find - false,
         // if user send wrong password - false,
@@ -68,10 +66,10 @@ public abstract class CoreAuthorizationService extends CoreService {
             // If user have a generated token - get it.
             // If user haven't a generated token - generate new token
             String token;
-            if (tokens == null || tokens.size() == 0) {
+            if (tokens == null || tokens.isEmpty()) {
                 token = JsonWebToken.encode(user);
                 user.setIssuedTokens(Arrays.asList(token));
-                datastore.save(user);
+                source.save(user);
             }
             return user;
         } else {
@@ -82,42 +80,32 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Base method for register user
      * @param userDTO user data transfer obejct
-     * @param datastore Morphia datastore object
+     * @param source source for work with users collection
      * @return user document
      */
-    protected static User registerUser(UserDTO userDTO, Datastore datastore) {
+    protected static User registerUser(UserDTO userDTO, UsersSource source) {
         // Create user document
-        User user = new User(
-                new ObjectId(),
-                userDTO.getUsername(),
-                userDTO.getPassword(),
-                CoreUserPropertyService.getDefaultUserProperty(),
-                CoreUserProfileService.getDefaultProfile(),
-                CoreRightService.getDefaultRightList()
-        );
-        // Generate JWT token
-        String token = JsonWebToken.encode(user);
-        // Get tokens list
-        List<String> tokens = Arrays.asList(token);
-        // Set issued tokens list
-        user.setIssuedTokens(tokens);
-        // Save user document in database
-        datastore.save(user);
-        // Return user document
-        return user;
+        userDTO.setProperties(CoreUserPropertyService.getDefaultUserProperty());
+        userDTO.setProfile(CoreUserProfileService.getDefaultProfile());
+        userDTO.setRights(CoreRightService.getDefaultRightList());
+        return source.create(userDTO);
     }
 
     /**
      * Method for remove user token
      * @param request Spark request object
-     * @param datastore datastore (Morphia connection)
+     * @param source source for work with users collection
      * @return user document
      */
-    protected static User logoutUser(Request request, Datastore datastore) {
+    protected static User logoutUser(Request request, UsersSource source) {
         // Not include in token value
         final int NOT_IN_LIST = -1;
+        // Create filter object
+        UsersFilter filter = new UsersFilter();
+        // Set exludes field for filter
+        filter.setExcludes(CoreUserService.ALL_ALLOWED);
         // Get user document from database (full document)
-        User user = CoreUserService.getUserByToken(request, datastore);
+        User user = CoreUserService.getUserByToken(request, source, filter);
         // Check user document on exist
         // If founded user document not equal null - remove token from issued token list,
         // save changes & return saved document.
@@ -135,7 +123,7 @@ public abstract class CoreAuthorizationService extends CoreService {
                 // Remove from issued tokens list token from request
                 user.getIssuedTokens().remove(tokenIndex);
                 // Save changes in database
-                datastore.save(user);
+                source.save(user);
                 // return user document
                 return user;
             } else {

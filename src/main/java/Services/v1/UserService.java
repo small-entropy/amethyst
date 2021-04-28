@@ -1,27 +1,16 @@
 package Services.v1;
 // Import models
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.User;
 import Services.core.CoreUserService;
-// Import utils for work with JWT
-// Import utils for work with query params
-// Import standard response class
-// Import GSON class
+import Sources.UsersSource;
 import Utils.common.Comparator;
 import Utils.common.RequestUtils;
 import Utils.constants.UsersParams;
-import com.google.gson.Gson;
-// Import Morphia classes
-import dev.morphia.Datastore;
-import dev.morphia.query.FindOptions;
-// Import Spark classes
-import spark.Request;
-// Import Java standard classes
 import java.util.List;
-// Import Morphia filter criteria methods
-import static dev.morphia.query.experimental.filters.Filters.eq;
+import spark.Request;
 
 /**
  * Class service for work with users collection
@@ -39,10 +28,12 @@ public class UserService extends CoreUserService {
     /**
      * Method for deactivate user account
      * @param request Spark request object
-     * @param datastore Morphia datastore (connection)
+     * @param source
      * @return user object after saving
+     * @throws TokenException
+     * @throws DataException
      */
-    public static User markToRemove(Request request, Datastore datastore) throws TokenException, DataException {
+    public static User markToRemove(Request request, UsersSource source) throws TokenException, DataException {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -57,7 +48,7 @@ public class UserService extends CoreUserService {
                 // Get id from query params
                 String paramId = request.params(UsersParams.ID.getName());
                 // Find user by id
-                User user = UserService.getUserById(paramId, datastore);
+                User user = getUserById(paramId, source);
                 // Check founded user
                 // If user found - deactivate user & save changes
                 // If user not found - return null
@@ -65,7 +56,7 @@ public class UserService extends CoreUserService {
                     // Deactivate user
                     user.deactivate();
                     // Save changes in database
-                    datastore.save(user);
+                    source.save(user);
                     // Return saved document
                     return user;
                 } else {
@@ -84,33 +75,30 @@ public class UserService extends CoreUserService {
     }
 
     /**
-     * Method for get user information by UUID.
-     * If user send token - get full document.
-     * If user not send token - get short document
+     * Method for get user information by UUID.If user send token 
+     * - get full document.If user not send token - get short document
      * @param request Spark request object
-     * @param datastore Morphia datastore (connection)
+     * @param source
      * @return founded user document
      */
-    public static User getUserById(Request request, Datastore datastore) {
+    public static User getUserById(Request request, UsersSource source) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         String idParam = request.params(UsersParams.ID.getName());
         String[] excludes = isTrusted
                 ? UserService.PUBLIC_AND_PRIVATE_ALLOWED
                 : UserService.PUBLIC_ALLOWED;
-        FindOptions findOptions = new FindOptions()
-                    .projection()
-                    .exclude(excludes);
-        return UserService.getUserById(idParam, datastore, findOptions);
+        return getUserById(idParam, excludes, source);
     }
-
-    /**
+    
+   /**
      * Method for get user list
      * @param request Spark request object
-     * @param datastore datastore (morphia connection)
-     * @param rule user rule for this action
+     * @param source
+     * @param rule
      * @return list of users documents
+     * @throws DataException
      */
-    public static List<User> getList(Request request, Datastore datastore, RuleDTO rule) throws DataException {
+    public static List<User> getList(Request request, UsersSource source, RuleDTO rule) throws DataException {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
@@ -125,6 +113,6 @@ public class UserService extends CoreUserService {
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         String[] excludes = UserService.getOtherFindOptionsArgs(rule);
         // Get users list
-        return UserService.getList(skip, limit, excludes, datastore);
+        return getList(skip, limit, excludes, source);
     }
 }

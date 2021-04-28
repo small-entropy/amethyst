@@ -1,6 +1,6 @@
 package Services.core;
 
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
 
 public abstract class CoreService {
     /**

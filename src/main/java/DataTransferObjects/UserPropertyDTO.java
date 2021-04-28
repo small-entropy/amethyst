@@ -1,4 +1,4 @@
-package DTO;
+package DataTransferObjects;
 
 public class UserPropertyDTO {
     private String key;

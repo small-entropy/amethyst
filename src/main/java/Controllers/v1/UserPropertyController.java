@@ -1,19 +1,18 @@
 package Controllers.v1;
 
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
 import Responses.StandardResponse;
 import Responses.SuccessResponse;
 import Services.v1.UserPropertyService;
+import Sources.UsersSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
-
 import java.util.List;
-
 import static spark.Spark.*;
 
 /**
@@ -55,25 +54,27 @@ public class UserPropertyController {
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
+        UsersSource source = new UsersSource(store);
+        
         // Routes for work with user properties
         // Get user properties list by user UUID
         get("/:id/properties", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            List<UserProperty> properties = UserPropertyService.getUserProperties(req, store, rule);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            List<UserProperty> properties = UserPropertyService.getUserProperties(req, source, rule);
             return new SuccessResponse<List<UserProperty>>(Messages.PROPERTIES.getMessage(), properties);
         }, transformer);
         // Create new user property (user find by UUID)
         // This method only for create public property!
         // For create not public property use other method!
         post("/:id/properties", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
-            UserProperty userProperty = UserPropertyService.createUserProperty(req, store, rule);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
+            UserProperty userProperty = UserPropertyService.createUserProperty(req, source, rule);
             return new SuccessResponse<UserProperty>(Messages.CREATED.getMessage(), userProperty);
         }, transformer);
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            UserProperty property = UserPropertyService.getUserPropertyById(req, store, rule);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            UserProperty property = UserPropertyService.getUserPropertyById(req, source, rule);
             if (property != null) {
                 return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
             } else {
@@ -84,8 +85,8 @@ public class UserPropertyController {
         // Update user property by property UUID (user find by UUID)
         put("/:id/properties/:property_id", (req, res) -> {
             // Get user rule for update users documents
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
-            UserProperty property = UserPropertyService.updateProperty(req, store, rule);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            UserProperty property = UserPropertyService.updateProperty(req, source, rule);
             return new SuccessResponse<UserProperty>(Messages.UPDATED.getMessage(), property);
         }, transformer);
         // Remove user property by UUID (user find by UUID)

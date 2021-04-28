@@ -1,10 +1,11 @@
 package Utils.v1;
 
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
+import Filters.UsersFilter;
 import Models.User;
 import Models.UserRight;
 import Services.v1.UserService;
-import dev.morphia.Datastore;
+import Sources.UsersSource;
 import spark.Request;
 
 /**
@@ -16,14 +17,14 @@ public class RightManager {
     /**
      * Method for get rule data transfer object by username of user
      * @param request Spark request object
-     * @param datastore Morphia datastore object
+     * @param source
      * @param rightName right name
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Username(Request request, Datastore datastore, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Username(Request request, UsersSource source, String rightName, String ruleName) {
         try {
-            User user = UserService.getUserByUsername(request, datastore);
+            User user = UserService.getUserByUsername(request, source);
             return RightManager.getRuleObject(user, rightName, ruleName);
         } catch (Exception exception) {
             return null;
@@ -33,14 +34,16 @@ public class RightManager {
     /**
      * Method for get rule data transfer object by user token
      * @param request Spark request object
-     * @param datastore Morphia datastore
+     * @param source
      * @param rightName right name
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Token(Request request, Datastore datastore, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Token(Request request, UsersSource source, String rightName, String ruleName) {
         try {
-            User user = UserService.getUserByToken(request, datastore);
+            UsersFilter filter = new UsersFilter();
+            filter.setExcludes(UserService.ALL_ALLOWED);
+            User user = UserService.getUserByToken(request, source, filter);
             return RightManager.getRuleObject(user, rightName, ruleName);
         } catch (Exception exception) {
             return null;

@@ -1,4 +1,4 @@
-package DTO;
+package DataTransferObjects;
 
 /**
  * Class of data transfer object for rule

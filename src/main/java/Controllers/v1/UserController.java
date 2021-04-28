@@ -1,17 +1,16 @@
 package Controllers.v1;
-import DTO.RuleDTO;
+import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Models.User;
 import Responses.SuccessResponse;
 import Services.v1.UserService;
+import Sources.UsersSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
-
 import java.util.List;
-
 import static spark.Spark.*;
 
 /**
@@ -52,12 +51,14 @@ public class UserController {
      * @param transformer transformer object (for transform answer to JSON)
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
+        UsersSource source = new UsersSource(store);
+        
         // Route for work with users list
         get("", (req, res) -> {
             // Get rule data transfer object for request
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, store, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             // Get list of users documents
-            List<User> users = UserService.getList(req, store, rule);
+            List<User> users = UserService.getList(req, source, rule);
             // Check users list size.
             // If size equal - fail method status & message
             // If size not equal - success method status & message
@@ -71,7 +72,7 @@ public class UserController {
         // Routes for work with user document
         // Get user document by UUID
         get("/:id", (req, res) -> {
-            User user = UserService.getUserById(req, store);
+            User user = UserService.getUserById(req, source);
             if (user != null) {
                 return new SuccessResponse<User>(Messages.USER.getMessage(), user);
             } else {
@@ -83,7 +84,7 @@ public class UserController {
         put("/:id", (request, response) -> UserService.updateUser());
         // Mark to remove user document by UUID
         delete("/:id", (req, res) -> {
-            User user = UserService.markToRemove(req, store);
+            User user = UserService.markToRemove(req, source);
             return new SuccessResponse<User>(Messages.MARK_TO_REMOVE.getMessage(), user);
         }, transformer);
     }

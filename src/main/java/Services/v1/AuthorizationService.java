@@ -1,13 +1,13 @@
 package Services.v1;
 
-import DTO.RuleDTO;
-import DTO.UserDTO;
+import DataTransferObjects.RuleDTO;
+import DataTransferObjects.UserDTO;
 import Exceptions.AuthorizationException;
+import Filters.UsersFilter;
 import Models.User;
 import Services.core.CoreAuthorizationService;
+import Sources.UsersSource;
 import com.google.gson.Gson;
-import dev.morphia.Datastore;
-import dev.morphia.query.FindOptions;
 import spark.Request;
 
 public class AuthorizationService extends CoreAuthorizationService {
@@ -15,17 +15,17 @@ public class AuthorizationService extends CoreAuthorizationService {
     /**
      * Method to autologin by token in header ot query params
      * @param request Spark request object
-     * @param datastore datastore to work with data (Morphia connection)
+     * @param source source for work with users collection
      * @param rule rule data transfer object
      * @return result auth user
+     * @throws AuthorizationException
+     * 
      */
-    public static User autoLoginUser(Request request, Datastore datastore, RuleDTO rule) throws AuthorizationException {
-        // Create finding options for find user with current rule
-        FindOptions findOptions = new FindOptions()
-                .projection()
-                .exclude(AuthorizationService.getMyFindOptionsArgs(rule));
+    public static User autoLoginUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
+        UsersFilter filter = new UsersFilter();
+        filter.setExcludes(AuthorizationService.getMyFindOptionsArgs(rule));
         // Get user document by token
-        User user = AuthorizationService.autoLoginUser(request, datastore, findOptions);
+        User user = autoLoginUser(request, source, filter);
         if (user != null) {
             return user;
         } else {
@@ -37,20 +37,20 @@ public class AuthorizationService extends CoreAuthorizationService {
     /**
      * Method for auth user
      * @param request Spark request object
-     * @param datastore datastore (morphia connection)
+     * @param source source for work with users collection
+     * @param rule rule data transfer object
      * @return user document
+     * @throws AuthorizationException
      */
-    public static User loginUser(Request request, Datastore datastore, RuleDTO rule) throws AuthorizationException {
+    public static User loginUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
         // Authorization user
-        User user = AuthorizationService.loginUser(request, datastore);
+        User user = AuthorizationService.loginUser(request, source);
         // Check user on exist
         if (user != null) {
             // Create find options by roles
-            FindOptions findOptions = new FindOptions()
-                    .projection()
-                    .exclude(AuthorizationService.getMyFindOptionsArgs(rule));
+            UsersFilter filter = new UsersFilter(user.getPureId(), AuthorizationService.getMyFindOptionsArgs(rule));
             // Find & return document
-            return UserService.getUserById(user.getPureId(), datastore, findOptions);
+            return UserService.getUserById(filter, source);
         } else {
             Error error = new Error("Can not find user with for authorization");
             throw new AuthorizationException("UserNotFound", error);
@@ -60,38 +60,36 @@ public class AuthorizationService extends CoreAuthorizationService {
     /**
      * Method for register user
      * @param request Spark request object
-     * @param datastore datastore (morphia connection)
+     * @param source source for work with users collection
      * @return user document
      */
-    public static User registerUser(Request request, Datastore datastore) {
+    public static User registerUser(Request request, UsersSource source) {
         // Crete user data transfer object from JSON
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
         // Create user document in database
-        User user = AuthorizationService.registerUser(userDTO, datastore);
+        User user = AuthorizationService.registerUser(userDTO, source);
         // Options for find in documents
-        FindOptions findOptions = new FindOptions()
-                .projection()
-                .exclude(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
-        // Set token in headers
-        return UserService.getUserById(user.getPureId(), datastore, findOptions);
+        UsersFilter filter = new UsersFilter();
+        filter.setId(user.getPureId());
+        filter.setExcludes(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
+        return UserService.getUserById(filter, source);
     }
 
     /**
      * Method for remove user token
      * @param request Spark request object
-     * @param datastore datastore (Morphia connection)
+     * @param source source for work with users collection
      * @param rule rule data transfer object
      * @return user document
+     * @throws AuthorizationException 
      */
-    public static User logoutUser(Request request, Datastore datastore, RuleDTO rule) throws AuthorizationException {
-        User user = AuthorizationService.logoutUser(request, datastore);
+    public static User logoutUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
+        User user = AuthorizationService.logoutUser(request, source);
         if (user != null) {
             // Crate find options
-            FindOptions findOptions = new FindOptions()
-                    .projection()
-                    .exclude(AuthorizationService.getMyFindOptionsArgs(rule));
+            UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
             // Get user document by user id with find options with rule excluded fields
-            return UserService.getUserById(user.getPureId(), datastore, findOptions);
+            return UserService.getUserById(filter, source);
         } else {
             Error error = new Error("Can not find user for logout");
             throw new AuthorizationException("UserNotFound", error);

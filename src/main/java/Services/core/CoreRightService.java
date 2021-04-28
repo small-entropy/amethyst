@@ -2,14 +2,17 @@ package Services.core;
 
 import Models.User;
 import Models.UserRight;
+import Sources.UsersSource;
 import Utils.constants.DefaultRights;
 import Utils.constants.UsersParams;
-import dev.morphia.Datastore;
-import spark.Request;
-
 import java.util.Arrays;
 import java.util.List;
+import spark.Request;
 
+/**
+ * 
+ * @author entropy
+ */
 public abstract class CoreRightService {
 
     /**
@@ -25,11 +28,11 @@ public abstract class CoreRightService {
     /**
      * Method for get user right list
      * @param request Spark request object
-     * @param datastore Morphia datastore (connection) object
+     * @param source source for work with users collection
      * @return list of user rights
      */
-    protected static List<UserRight> getUserRights(Request request, Datastore datastore) {
-        User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), datastore);
+    protected static List<UserRight> getUserRights(Request request, UsersSource source) {
+        User user = CoreUserService.getUserById(request.params(UsersParams.ID.getName()), source);
         return (user.getRights() != null) ? user.getRights() : null;
     }
 }
