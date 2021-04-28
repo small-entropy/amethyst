@@ -47,6 +47,7 @@ public class ErrorsController extends CoreErrorsController {
         exception(AuthorizationException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
                 case "UserNotFound" -> HttpErrors.NOT_FOUND.getCode();
+                case "WrongPassword" -> HttpErrors.CONFLICT.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             ErrorsController.sendError(res, statusCode, error);

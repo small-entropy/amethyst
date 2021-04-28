@@ -7,11 +7,29 @@ import java.util.List;
 public class UserDTO {
     private String username;
     private String password;
+    private String oldPassword;
+    private String newPassword;
     private List<UserRight> rights;
     private List<UserProperty> properties;
     private List<UserProperty> profile;
     
     UserDTO() {}
+    
+    public String getOldPassword() {
+        return oldPassword;
+    }
+    
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+    
+    public String getNewPassword() {
+        return newPassword;
+    }
+    
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
     public String getUsername() {
         return username;

@@ -27,7 +27,8 @@ public class AuthorizationController extends CoreController {
         REGISTERED("User successfully registered"),
         AUTOLOGIN("Successfully login by token"),
         LOGIN("Login is success"),
-        LOGOUT("User successfully logout");
+        LOGOUT("User successfully logout"),
+        PASSWORD_CHANGED("Password successfully changes");
         // Property for text message
         private final String message;
 
@@ -67,7 +68,7 @@ public class AuthorizationController extends CoreController {
             // Set response headers
             res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
             // Return response
-            return new SuccessResponse<User>(Messages.REGISTERED.getMessage(), user);
+            return new SuccessResponse<>(Messages.REGISTERED.getMessage(), user);
         }, transformer);
 
         // Route for user login
@@ -83,21 +84,27 @@ public class AuthorizationController extends CoreController {
             // Set headers for authorization
             res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
             // Return answer
-            return new SuccessResponse<User>(Messages.LOGIN.getMessage(), user);
+            return new SuccessResponse<>(Messages.LOGIN.getMessage(), user);
+        }, transformer);
+        
+        post("/change-passwowrd", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            User user = AuthorizationService.changePassword(req, source, rule);
+            return new SuccessResponse<>(Messages.PASSWORD_CHANGED.getMessage(), user);
         }, transformer);
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Username(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.autoLoginUser(req, source, rule);
-            return new SuccessResponse<User>(Messages.AUTOLOGIN.getMessage(), user);
+            return new SuccessResponse<>(Messages.AUTOLOGIN.getMessage(), user);
         }, transformer);
 
         // Logout user
         get("/logout", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Username(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.logoutUser(req, source, rule);
-            return new SuccessResponse<User>(Messages.LOGOUT.getMessage(), user);
+            return new SuccessResponse<>(Messages.LOGOUT.getMessage(), user);
         }, transformer);
     }
 }

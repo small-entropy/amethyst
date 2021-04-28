@@ -3,6 +3,8 @@ package Services.v1;
 import DataTransferObjects.RuleDTO;
 import DataTransferObjects.UserDTO;
 import Exceptions.AuthorizationException;
+import Exceptions.DataException;
+import Exceptions.TokenException;
 import Filters.UsersFilter;
 import Models.User;
 import Services.core.CoreAuthorizationService;
@@ -94,5 +96,14 @@ public class AuthorizationService extends CoreAuthorizationService {
             Error error = new Error("Can not find user for logout");
             throw new AuthorizationException("UserNotFound", error);
         }
+    }
+
+    public static User changePassword(Request request, UsersSource source, RuleDTO rule) throws TokenException, DataException, AuthorizationException {
+        User user = UserService.getUserWithTrust(request, source);
+        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        user.reGeneratePassword(userDTO.getOldPassword(), userDTO.getNewPassword());
+        source.save(user);
+        UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
+        return UserService.getUserById(filter, source);
     }
 }

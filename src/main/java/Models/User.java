@@ -1,4 +1,5 @@
 package Models;
+import Exceptions.AuthorizationException;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
@@ -178,6 +179,16 @@ public class User {
      */
     public void reGeneratePassword() {
         password = getHashedPassword(password);
+    }
+    
+    public void reGeneratePassword(String oldPassword, String newPassword) throws AuthorizationException {
+        boolean verify = verifyPassword(oldPassword).verified;
+        if (verify) {
+            password = getHashedPassword(newPassword);
+        } else {
+            Error error = new Error("Incorrect password");
+            throw new AuthorizationException("WrongPassword", error);
+        }
     }
 
     /**
