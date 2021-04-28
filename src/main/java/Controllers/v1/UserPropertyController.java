@@ -91,7 +91,7 @@ public class UserPropertyController {
         }, transformer);
         // Remove user property by UUID (user find by UUID)
         delete("/:id/properties/:property_id", (req, res) -> {
-            List<UserProperty> properties = UserPropertyService.removeUserProperty(req, store);
+            List<UserProperty> properties = UserPropertyService.removeUserProperty(req, source);
             String status = (properties != null) ? "success" : "fail";
             String message = (properties != null)
                     ? "Successfully remove user property"
