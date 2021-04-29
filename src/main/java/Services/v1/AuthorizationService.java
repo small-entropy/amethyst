@@ -12,6 +12,10 @@ import Sources.UsersSource;
 import com.google.gson.Gson;
 import spark.Request;
 
+/**
+ * Class for authorization service
+ * @author igrav
+ */
 public class AuthorizationService extends CoreAuthorizationService {
 
     /**
@@ -109,11 +113,17 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @throws AuthorizationException throw if can not authotize user by token
      */
     public static User changePassword(Request request, UsersSource source, RuleDTO rule) throws TokenException, DataException, AuthorizationException {
+        // Get user full document
         User user = UserService.getUserWithTrust(request, source);
+        // Get user data transfer object
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        // Call regenerate password for user
         user.reGeneratePassword(userDTO.getOldPassword(), userDTO.getNewPassword());
+        // Save changes in document
         source.save(user);
+        // Create filter object
         UsersFilter filter = new UsersFilter(user.getPureId(), AuthorizationService.getMyFindOptionsArgs(rule));
+        // Return user by rule
         return UserService.getUserById(filter, source);
     }
 }

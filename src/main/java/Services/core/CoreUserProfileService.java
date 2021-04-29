@@ -5,6 +5,7 @@ import Exceptions.DataException;
 import Models.UserProperty;
 import Services.base.BasePropertyService;
 import Sources.UsersSource;
+import Utils.constants.UsersParams;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -15,6 +16,10 @@ import spark.Request;
  * @author entropy
  */
 public abstract class CoreUserProfileService extends BasePropertyService {
+    
+    protected static List<UserProperty> deleteUserProfileProperty(Request request, UsersSource source) throws DataException {
+        return removeFromList("profile", request , source);
+    }
 
     /**
      * Method for get default profile properties list

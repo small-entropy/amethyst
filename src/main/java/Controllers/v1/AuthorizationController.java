@@ -17,6 +17,8 @@ import static spark.Spark.post;
 
 /**
  * Class with authorization routes
+ * @version 1
+ * @author entropy
  */
 public class AuthorizationController extends CoreController {
 

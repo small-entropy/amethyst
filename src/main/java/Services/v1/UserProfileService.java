@@ -92,4 +92,15 @@ public class UserProfileService extends CoreUserProfileService {
             throw new AccessException("CanNotUpdate", error);
         }
     }
+
+    public static List<UserProperty> deleteProfileProperty(Request request, UsersSource source, RuleDTO rule) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
+        if (hasAccess) {
+            return deleteUserProfileProperty(request, source);
+        } else {
+            Error error = new Error("Has no accesss to delete user property");
+            throw new AccessException("CanNotDelete", error);
+        }
+    }
 }

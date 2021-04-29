@@ -9,6 +9,8 @@ import Sources.UsersSource;
 import Utils.common.Searcher;
 import Utils.constants.UsersParams;
 import com.google.gson.Gson;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import spark.Request;
 
@@ -16,7 +18,10 @@ import spark.Request;
  * Abstract core class for work with user properties nested documents
  * @author entropy
  */
-public abstract class BasePropertyService {
+public abstract class BasePropertyService { 
+    
+    private static final List<String> PROFILE_BLACK_LIST = Arrays.asList("registered");
+    private static final List<String> PROPERTY_BLACK_LIST = Arrays.asList("banned");
 
     /**
      * Method for get properties list from  user document by field
@@ -48,6 +53,29 @@ public abstract class BasePropertyService {
             return getPropertiesByFieldName(field, user);
         } else {
             Error error = new Error("Can not find user by request params");
+            throw new DataException("NotFound", error);
+        }
+    }
+    
+    protected static List<UserProperty> removeFromList(String field, Request request, UsersSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        User user = CoreUserService.getUserById(idParam, source);
+        if (user != null) {
+            List<UserProperty> profile = getPropertiesByFieldName(field, user);
+            Iterator iterator = profile.iterator();
+            while (iterator.hasNext()) {
+                UserProperty property = (UserProperty)iterator.next();
+                if (property.getId().toString().equals(propertyIdParam) && 
+                        field.equals("profile") && !PROFILE_BLACK_LIST.contains(property.getKey()) || 
+                        field.equals("properties") && !PROPERTY_BLACK_LIST.contains(property.getKey())) {
+                    iterator.remove();
+                }
+            }
+            source.save(user);
+            return user.getProfile();
+        } else {
+            Error error = new Error("Can not find user by requeset params");
             throw new DataException("NotFound", error);
         }
     }
