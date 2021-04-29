@@ -60,6 +60,7 @@ public class AuthorizationController extends CoreController {
 
         // Route for register user
         post("/register", (req, res) -> {
+            System.out.println("Controllers.v1.AuthorizationController.routes()");
             // Register user by request data
             User user = AuthorizationService.registerUser(req, source);
             // Define index of current token
@@ -87,9 +88,14 @@ public class AuthorizationController extends CoreController {
             return new SuccessResponse<>(Messages.LOGIN.getMessage(), user);
         }, transformer);
         
-        post("/change-passwowrd", (req, res) -> {
+        // Route for change password for user by token
+        post("/change-password/:id", (req, res) -> {
+            // Get rule for get user data
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            // Change password
             User user = AuthorizationService.changePassword(req, source, rule);
+            System.out.println(user);
+            // Return success answer
             return new SuccessResponse<>(Messages.PASSWORD_CHANGED.getMessage(), user);
         }, transformer);
 

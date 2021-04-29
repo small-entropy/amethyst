@@ -98,12 +98,22 @@ public class AuthorizationService extends CoreAuthorizationService {
         }
     }
 
+    /**
+     * Method for change user password
+     * @param request Spark request object
+     * @param source source for users collection
+     * @param rule rule data transfer object
+     * @return user document
+     * @throws TokenException throw if token not send or token incorrect
+     * @throws DataException throw is user not found
+     * @throws AuthorizationException throw if can not authotize user by token
+     */
     public static User changePassword(Request request, UsersSource source, RuleDTO rule) throws TokenException, DataException, AuthorizationException {
         User user = UserService.getUserWithTrust(request, source);
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
         user.reGeneratePassword(userDTO.getOldPassword(), userDTO.getNewPassword());
         source.save(user);
-        UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
+        UsersFilter filter = new UsersFilter(user.getPureId(), AuthorizationService.getMyFindOptionsArgs(rule));
         return UserService.getUserById(filter, source);
     }
 }
