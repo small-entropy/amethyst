@@ -57,6 +57,14 @@ public abstract class BasePropertyService {
         }
     }
     
+    /**
+     * Method for remove user property from list field
+     * @param field name of field
+     * @param request Sparl request object
+     * @param source data source
+     * @return
+     * @throws DataException 
+     */
     protected static List<UserProperty> removeFromList(String field, Request request, UsersSource source) throws DataException {
         String idParam = request.params(UsersParams.ID.getName());
         String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
