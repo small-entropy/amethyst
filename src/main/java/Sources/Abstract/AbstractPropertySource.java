@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Sources;
+package Sources.Abstract;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
 import Filters.UsersFilter;
 import Models.User;
 import Models.UserProperty;
+import Sources.UsersSource;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;

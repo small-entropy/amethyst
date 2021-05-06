@@ -3,7 +3,7 @@ package Services.base;
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
-import Sources.AbstractPropertySource;
+import Sources.Abstract.AbstractPropertySource;
 import Utils.common.Searcher;
 import java.util.List;
 

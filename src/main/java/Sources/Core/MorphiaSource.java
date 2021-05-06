@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Sources;
+package Sources.Core;
 
+import Sources.Abstract.AbstractSource;
 import Filters.Filter;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
@@ -21,7 +22,7 @@ import org.bson.types.ObjectId;
  * @param <D> data transfer object ytpe
  */
 public class MorphiaSource<M, F extends Filter, D> extends AbstractSource<Datastore, M, ObjectId, F, D>{
-    MorphiaSource(Datastore datastore, Class<M> modelClass) {
+    public MorphiaSource(Datastore datastore, Class<M> modelClass) {
         super(datastore, modelClass);
     }
     
