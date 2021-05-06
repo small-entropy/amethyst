@@ -1,15 +1,12 @@
 package Services.v1;
 import DataTransferObjects.RuleDTO;
-import DataTransferObjects.UserPropertyDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.UserProperty;
 import Services.core.CoreUserProfileService;
-import Sources.UsersSource;
+import Sources.ProfileSource;
 import Utils.common.Comparator;
-import Utils.constants.UsersParams;
-import com.google.gson.Gson;
 import java.util.List;
 import spark.Request;
 
@@ -23,53 +20,21 @@ public class UserProfileService extends CoreUserProfileService {
      * @param request Spark request object
      * @param source source for work with users collection
      * @return user property
-     * @throws DataException
-     * @throws TokenException
+     * @throws DataException throw if user or property can not found
+     * @throws TokenException throw if token not corect or not send
      */
-    public static UserProperty createUserProfileProperty(Request request, UsersSource source) throws DataException, TokenException {
+    public static UserProperty createUserProfileProperty(Request request, ProfileSource source) throws DataException, TokenException {
         // Check equals id from request url & id from send token
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check result compares ids.
         // If ids equals - try create user property.
         // If ids not equals - return null.
         if (isTrusted) {
-            UserProperty property = UserProfileService.createUserProfilePropertyByRequest(request, source);
-            if (property != null) {
-                return property;
-            } else {
-                Error error = new Error("Can not create user profile property with this key");
-                throw new DataException("CanNotCreate", error);
-            }
+            return createUserProperty(request, source);
         } else {
             Error error = new Error("Id from request not equal id from token");
             throw new TokenException("NotEquals", error);
         }
-    }
-
-    /**
-     * Method for get user profile properties
-     * @param request Spark request object
-     * @param source source for work with users collection
-     * @return list of user properties
-     * @throws DataException
-     */
-    public static List<UserProperty> getUserProfile(Request request, UsersSource source) throws DataException {
-        // Get user ID param from request URL
-        String idParam = request.params(UsersParams.ID.getName());
-        return UserProfileService.getUserProfile(idParam, source);
-    }
-
-    /**
-     * Method for get user profile property by id
-     * @param request Spark request object
-     * @param source source for work with users collection
-     * @return founded user property
-     * @throws DataException
-     */
-    public static UserProperty getUserProfilePropertyById(Request request, UsersSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
-        return UserProfileService.getUserProfilePropertyById(idParam, propertyIdParam, source);
     }
 
     /**
@@ -81,19 +46,27 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws AccessException throw exception if request not access for update action
      * @throws DataException throw exception if some data (property or user) not found
      */
-    public static UserProperty updateUserProperty(Request request, UsersSource source, RuleDTO rule) throws AccessException, DataException {
+    public static UserProperty updateUserProperty(Request request, ProfileSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
         if (hasAccess) {
-            UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-            return CoreUserProfileService.updateUserProperty(request, source, userPropertyDTO);
+            return updateUserProperty(request, source);
         } else {
             Error error = new Error("Has no access to update user property");
             throw new AccessException("CanNotUpdate", error);
         }
     }
 
-    public static List<UserProperty> deleteProfileProperty(Request request, UsersSource source, RuleDTO rule) throws AccessException, DataException {
+    /**
+     * Method for remove user profile property by requst params with rule checks
+     * @param request Spark request object 
+     * @param source profile datasource
+     * @param rule rule data transfer object
+     * @return actual list of profile properties
+     * @throws AccessException throw if user hasn't rigth to remove profile proeprty document
+     * @throws DataException  throw if user or property can not be found
+     */
+    public static List<UserProperty> deleteProfileProperty(Request request, ProfileSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
         if (hasAccess) {

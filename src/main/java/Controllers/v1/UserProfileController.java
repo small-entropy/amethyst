@@ -5,12 +5,13 @@ import Exceptions.DataException;
 import Models.UserProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
-import Sources.UsersSource;
+import Sources.ProfileSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
+import java.util.Arrays;
 import java.util.List;
 import static spark.Spark.*;
 
@@ -18,6 +19,8 @@ import static spark.Spark.*;
  * Class with routes for work with profile documents
  */
 public class UserProfileController {
+    
+    private static final List<String> BLACK_LIST = Arrays.asList("registered");
 
     /**
      * Enum for exception messages
@@ -53,7 +56,7 @@ public class UserProfileController {
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
-        UsersSource source = new UsersSource(store);
+        ProfileSource source = new ProfileSource(store, BLACK_LIST);
         
         // Route for get user profile
         get("/:id/profile", (req, res)-> {

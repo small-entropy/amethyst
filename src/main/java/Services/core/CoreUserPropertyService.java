@@ -4,8 +4,9 @@ import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
 import Services.base.BasePropertyService;
-import Sources.UsersSource;
+import Sources.PropertiesSource;
 import Utils.constants.UsersParams;
+import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -27,44 +28,65 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
     /**
      * Method for create user property
      * @param request Spark request object
-     * @param datastore Morphia datastore object
+     * @param source user property datasource
      * @return user property
+     * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty createUserProperty(Request request, UsersSource source) throws DataException {
-        return CoreUserPropertyService.createUserProperty("properties", request, source);
+    protected static UserProperty createUserProperty(Request request, PropertiesSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+        return createUserProperty(idParam, userPropertyDTO, source);
     }
 
     /**
      * Get user properties by request
      * @param request Spark request object
-     * @param datastore Morphia datastore
+     * @param source user property datasource
      * @return user properties list
+     * @throws DataException throw if con not be found user or property document
      */
-    protected static List<UserProperty> getUserProperties(Request request, UsersSource source) throws DataException {
+    protected static List<UserProperty> getUserProperties(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(UsersParams.ID.getName());
-        return CoreUserPropertyService.getPropertiesList("properties", idParam, source);
+        return getPropertiesList(idParam, source);
     }
 
     /**
      * Method for get user property by id
      * @param request Spark request object
-     * @param datastore Morphia datastore object
+     * @param source user property datasource
      * @return founded user property
+     * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty getUserPropertyById(Request request, UsersSource source) throws DataException {
+    protected static UserProperty getUserPropertyById(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(UsersParams.ID.getName());
         String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
-        return CoreUserPropertyService.getPropertyById("properties", propertyIdParam, idParam, source);
+        return getPropertyById(propertyIdParam, idParam, source);
     }
 
     /**
      * Method for update user property in user document
      * @param request Spark request object
-     * @param datastore Morphia datastore object
-     * @param userPropertyDTO user property data transfer object
+     * @param source user property datasource
      * @return updated user property
+     * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty updateUserProperty(Request request, UsersSource source, UserPropertyDTO userPropertyDTO) throws DataException {
-        return CoreUserPropertyService.updateUserProperty(request, source, userPropertyDTO, "properties");
+    protected static UserProperty updateUserProperty(Request request, PropertiesSource source) throws DataException {
+        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        String idParams = request.params(UsersParams.ID.getName());
+        return updateUserProperty(propertyIdParam, idParams, userPropertyDTO, source);
+    }
+    
+    /**
+     * Method for remove user property by request params
+     * @param request Spark request object
+     * @param source user property datasource
+     * @return actual list of user properties
+     * @throws DataException throw if con not be found user or property document
+     */
+    protected static List<UserProperty> deleteUserProperty(Request request, PropertiesSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        return source.removeProperty(propertyIdParam, idParam);
     }
 }

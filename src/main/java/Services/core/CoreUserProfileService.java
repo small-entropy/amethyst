@@ -4,8 +4,9 @@ import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
 import Services.base.BasePropertyService;
-import Sources.UsersSource;
+import Sources.ProfileSource;
 import Utils.constants.UsersParams;
+import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -16,65 +17,80 @@ import spark.Request;
  * @author entropy
  */
 public abstract class CoreUserProfileService extends BasePropertyService {
-    
-    protected static List<UserProperty> deleteUserProfileProperty(Request request, UsersSource source) throws DataException {
-        return removeFromList("profile", request , source);
-    }
 
     /**
      * Method for get default profile properties list
      * @return list of user properties for profile
      */
-    protected static List<UserProperty> getDefaultProfile() {
+    public static List<UserProperty> getDefaultProfile() {
         Long currentDateTime = System.currentTimeMillis();
         UserProperty registered = new UserProperty("registered", currentDateTime);
         return Arrays.asList(registered);
     }
-
-
+    
     /**
-     * Mthod for create user profile property by requst daa
+     * Method for create user by reqeuet body
+     * @param request Spark request object
+     * @param source datasource for Profile
+     * @return created user property
+     * @throws DataException throw if con not be found user or property document
+     */
+    public static UserProperty createUserProperty(Request request, ProfileSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+        return createUserProperty(idParam, userPropertyDTO, source);
+    }
+    
+    /**
+     * Method for get user profile properties
      * @param request Spark request object
      * @param source source for work with users collection
-     * @return created user property document
-     * @throws DataException 
+     * @return list of user properties
+     * @throws DataException throw if con not be found user or profile field is empty
      */
-    protected static UserProperty createUserProfilePropertyByRequest(Request request, UsersSource source) throws DataException {
-        return CoreUserProfileService.createUserProperty("profile", request, source);
+    public static List<UserProperty> getUserProfile(Request request, ProfileSource source) throws DataException {
+        // Get user ID param from request URL
+        String idParam = request.params(UsersParams.ID.getName());
+        return getPropertiesList(idParam, source);
     }
-
+    
     /**
-     * Method fot get user profile nested document by request params
-     * @param idParam user id as string
-     * @param source source for work with users collection
-     * @return list of user profile properties
-     * @throws DataException
-     */
-    protected static List<UserProperty> getUserProfile(String idParam, UsersSource source) throws DataException {
-        return CoreUserProfileService.getPropertiesList("profile", idParam, source);
-    }
-
-    /**
-     * Method for get user profile property by request params (id, property_id)
-     * @param idParam user ud as string
-     * @param propertyIdParam user profile property id as string
-     * @param source source for work with users collection
-     * @return user profile property
-     * @throws DataException
-     */
-    protected static UserProperty getUserProfilePropertyById(String idParam, String propertyIdParam, UsersSource source) throws DataException {
-        return CoreUserPropertyService.getPropertyById("profile", propertyIdParam, idParam, source);
-    }
-
-    /**
-     * Method for update user profile property in user document
+     * Method for get user profile property by id
      * @param request Spark request object
      * @param source source for work with users collection
-     * @param userPropertyDTO user property data transfer object
-     * @return updated user property
-     * @throws DataException return exception if not founded user or user property in profile list
+     * @return founded user property
+     * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty updateUserProperty(Request request, UsersSource source, UserPropertyDTO userPropertyDTO) throws DataException {
-        return CoreUserProfileService.updateUserProperty(request, source, userPropertyDTO, "profile");
+    public static UserProperty getUserProfilePropertyById(Request request, ProfileSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        return getPropertyById(idParam, propertyIdParam, source);
+    }
+    
+    /**
+     * Method for update profile user property by request body
+     * @param request Spark request object
+     * @param source profile datasource object
+     * @return updated property document
+     * @throws DataException throw if con not be found user or property document
+     */
+    protected static UserProperty updateUserProperty(Request request, ProfileSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
+        return updateUserProperty(propertyIdParam, idParam, userPropertyDTO, source);
+    }
+    
+    /**
+     * Method for delete profile user property from list by request params data
+     * @param request Spark requeset object
+     * @param source profile datasource object
+     * @return actual profule value
+     * @throws DataException throw if con not be found user or property document
+     */
+    protected static List<UserProperty> deleteUserProfileProperty(Request request, ProfileSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        return source.removeProperty(propertyIdParam, idParam);
     }
 }

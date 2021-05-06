@@ -3,15 +3,15 @@ package Controllers.v1;
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Models.UserProperty;
-import Responses.StandardResponse;
 import Responses.SuccessResponse;
 import Services.v1.UserPropertyService;
-import Sources.UsersSource;
+import Sources.PropertiesSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
+import java.util.Arrays;
 import java.util.List;
 import static spark.Spark.*;
 
@@ -19,6 +19,8 @@ import static spark.Spark.*;
  * Static class with routes for work with user property documents
  */
 public class UserPropertyController {
+    
+    private static final List<String> BLACK_LIST = Arrays.asList("banned");
 
     /**
      * Enum for exception messages
@@ -54,14 +56,14 @@ public class UserPropertyController {
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
-        UsersSource source = new UsersSource(store);
+        PropertiesSource source = new PropertiesSource(store, BLACK_LIST);
         
         // Routes for work with user properties
         // Get user properties list by user UUID
         get("/:id/properties", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             List<UserProperty> properties = UserPropertyService.getUserProperties(req, source, rule);
-            return new SuccessResponse<List<UserProperty>>(Messages.PROPERTIES.getMessage(), properties);
+            return new SuccessResponse<>(Messages.PROPERTIES.getMessage(), properties);
         }, transformer);
         // Create new user property (user find by UUID)
         // This method only for create public property!
@@ -69,14 +71,14 @@ public class UserPropertyController {
         post("/:id/properties", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
             UserProperty userProperty = UserPropertyService.createUserProperty(req, source, rule);
-            return new SuccessResponse<UserProperty>(Messages.CREATED.getMessage(), userProperty);
+            return new SuccessResponse<>(Messages.CREATED.getMessage(), userProperty);
         }, transformer);
         // Get user property by UUID (user find by UUID)
         get("/:id/properties/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             UserProperty property = UserPropertyService.getUserPropertyById(req, source, rule);
             if (property != null) {
-                return new SuccessResponse<UserProperty>(Messages.PROPERTY.getMessage(), property);
+                return new SuccessResponse<>(Messages.PROPERTY.getMessage(), property);
             } else {
                 Error error = new Error("Can not find user property");
                 throw new DataException("NotFound", error);
@@ -87,16 +89,13 @@ public class UserPropertyController {
             // Get user rule for update users documents
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
             UserProperty property = UserPropertyService.updateProperty(req, source, rule);
-            return new SuccessResponse<UserProperty>(Messages.UPDATED.getMessage(), property);
+            return new SuccessResponse<>(Messages.UPDATED.getMessage(), property);
         }, transformer);
         // Remove user property by UUID (user find by UUID)
         delete("/:id/properties/:property_id", (req, res) -> {
-            List<UserProperty> properties = UserPropertyService.removeUserProperty(req, source);
-            String status = (properties != null) ? "success" : "fail";
-            String message = (properties != null)
-                    ? "Successfully remove user property"
-                    : "Can not remove user property";
-            return new StandardResponse<List<UserProperty>>(status, message, properties);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
+            List<UserProperty> properties = UserPropertyService.deleteUserProperty(req, source, rule);
+            return new SuccessResponse<>(Messages.PROPERTIES.getMessage(), properties);
         }, transformer);
     }
 }
