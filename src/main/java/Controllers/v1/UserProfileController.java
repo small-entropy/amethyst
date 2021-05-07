@@ -28,6 +28,7 @@ public class UserProfileController {
     private enum Messages {
         PROFILE("Successfully get user profile"),
         PROPERTY("Successfully get user profile property"),
+        CREATED("Successfully created profile property"),
         UPDATED("Profile property successfully updated"),
         DELETED("Profile property removed");
         // Property for text message
@@ -67,7 +68,7 @@ public class UserProfileController {
         // Route for create profile property
         post("/:id/profile", (req, res) -> {
             UserProperty property = UserProfileService.createUserProfileProperty(req, source);
-            return new SuccessResponse<>(Messages.PROPERTY.getMessage(), property);
+            return new SuccessResponse<>(Messages.CREATED.getMessage(), property);
         }, transformer);
         
         // Route for get user profile property by ID

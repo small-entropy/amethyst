@@ -7,21 +7,18 @@ package Sources.Abstract;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Filters.UsersFilter;
 import Models.User;
 import Models.UserProperty;
-import Sources.UsersSource;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;
-import org.bson.types.ObjectId;
 
 /**
  * Abstract class for source works with user properties fields
  * @author small-entropy
  */
-public class AbstractPropertySource extends UsersSource {
+public class AbstractPropertySource extends AbstractChildUserSource {
     // Property with name of field
     private final String field;
     // Black list for user proeprties
@@ -135,25 +132,6 @@ public class AbstractPropertySource extends UsersSource {
             return result;
         } else {
             Error error = new Error("Can not find user property");
-            throw new DataException("NotFound", error);
-        }
-    }
-    
-    /**
-     * Method for get full user document
-     * @param idString user id from request params
-     * @return user document
-     * @throws DataException throw if can not find list of user properties
-     */
-    private User getUserDocument(String idString) throws DataException {
-        ObjectId id = new ObjectId(idString);
-        String[] excludes = new String[]{};
-        UsersFilter filter = new UsersFilter(id, excludes);
-        User user = findOneById(filter);
-        if (user != null) {
-            return user;
-        } else {
-            Error error = new Error("Can not find user by id from request");
             throw new DataException("NotFound", error);
         }
     }

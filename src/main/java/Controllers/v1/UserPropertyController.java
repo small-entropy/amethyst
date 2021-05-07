@@ -29,7 +29,8 @@ public class UserPropertyController {
         PROPERTIES("Successfully get user properties"),
         PROPERTY("Successfully get user property"),
         CREATED("Successfully created user property"),
-        UPDATED("User property successfully updated");
+        UPDATED("User property successfully updated"),
+        DELETED("Successfully removed user property");
         // Message property
         private final String message;
 
@@ -95,7 +96,7 @@ public class UserPropertyController {
         delete("/:id/properties/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
             List<UserProperty> properties = UserPropertyService.deleteUserProperty(req, source, rule);
-            return new SuccessResponse<>(Messages.PROPERTIES.getMessage(), properties);
+            return new SuccessResponse<>(Messages.DELETED.getMessage(), properties);
         }, transformer);
     }
 }

@@ -6,9 +6,9 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.UserRight;
 import Services.core.CoreRightService;
+import Sources.RightsSource;
 import Sources.UsersSource;
 import Utils.common.Comparator;
-import Utils.constants.UsersParams;
 import java.util.List;
 import spark.Request;
 
@@ -36,10 +36,11 @@ public class UserRightService extends CoreRightService {
      * @param rule rule data transfer object
      * @return user document rights list
      * @throws AccessException no access exception
+     * @throws DataException throws if can not found user or user rights
      */
-    public static List<UserRight> getUserRights(Request request, UsersSource source, RuleDTO rule) throws AccessException {
+    public static List<UserRight> getUserRights(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
             return UserRightService.getUserRights(request, source);
         } else {
@@ -52,24 +53,26 @@ public class UserRightService extends CoreRightService {
     }
 
     /**
-     * Method for get user right by id
-     * @param request Spark request object
-     * @param source users data source
+     * Method for get user right by id from request params with rule check
+     * @param request Spark request object;
+     * @param source user right datasource
+     * @param rule rule data transfer obejct
      * @return user right document
-     * @throws DataException exception for errors with data
-     * @throws TokenException exception for errors of token
+     * @throws DataException throw if can not found user or right
+     * @throws TokenException throw if token not send or token incorrect
+     * @throws AccessException  throw if user has not access for this method
      */
-    public static UserRight getUserRightById(Request request, UsersSource source) throws DataException, TokenException {
-        List<UserRight> rights = UserRightService.getUserRights(request, source);
-        String rightId = request.params(UsersParams.RIGHT_ID.getName());
-        UserRight result = null;
-        if (rights != null && rightId != null) {
-            for (UserRight right : rights) {
-                if (right.getId().toString().equals(rightId)) {
-                    result = right;
-                }
-            }
+    public static UserRight getUserRightById(Request request, RightsSource source, RuleDTO rule) throws DataException, TokenException, AccessException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
+        if (hasAccess) {
+            return getUserRightById(request, source);
+        } else {
+            String message = (isTrusted)
+                    ? "Can not rights for read own private fields"
+                    : "Can not rights for read other private fields";
+            Error error = new Error(message);
+            throw new AccessException("CanNotRead", error);
         }
-        return result;
     }
 }
