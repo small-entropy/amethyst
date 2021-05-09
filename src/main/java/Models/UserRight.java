@@ -5,7 +5,7 @@ import dev.morphia.annotations.Embedded;
 @Embedded
 public class UserRight {
     private ObjectId id;
-    private String collection;
+    private String name;
     private String create;
     private String read;
     private String update;
@@ -15,7 +15,7 @@ public class UserRight {
 
     public UserRight(String collection) {
         this.id = new ObjectId();
-        this.collection = collection;
+        this.name = collection;
         this.create = "001000";
         this.read = "011001";
         this.update = "001000";
@@ -24,7 +24,7 @@ public class UserRight {
 
     public UserRight(String collection, String create, String read, String update, String delete) {
         this.id = new ObjectId();
-        this.collection = collection;
+        this.name = collection;
         this.create = create;
         this.read = read;
         this.update = update;
@@ -35,8 +35,8 @@ public class UserRight {
         return id;
     }
 
-    public String getCollection() {
-        return collection;
+    public String getName() {
+        return name;
     }
 
     public String getCreate() {

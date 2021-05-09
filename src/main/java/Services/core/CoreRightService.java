@@ -1,10 +1,12 @@
 package Services.core;
 
+import DataTransferObjects.UserRightDTO;
 import Exceptions.DataException;
 import Models.UserRight;
 import Sources.RightsSource;
 import Utils.constants.DefaultRights;
 import Utils.constants.UsersParams;
+import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -48,5 +50,24 @@ public abstract class CoreRightService {
        String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
        String idParam = request.params(UsersParams.ID.getName());
        return source.getRightByIdParam(rightIdParam, idParam);
+    }
+    
+    protected static UserRight createUserRight(Request request, RightsSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        UserRightDTO rightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
+        return source.createUserRight(idParam, rightDTO);
+    }
+    
+    protected static List<UserRight> deleteRights(Request request, RightsSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
+        return source.removeRight(rightIdParam, idParam);
+    }
+    
+    protected static UserRight updateRight(Request request, RightsSource source) throws DataException {
+        String idParam = request.params(UsersParams.ID.getName());
+        String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
+        UserRightDTO userRightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
+        return source.updateUserRight(rightIdParam, idParam, userRightDTO);
     }
 }

@@ -7,7 +7,6 @@ import Exceptions.TokenException;
 import Models.UserRight;
 import Services.core.CoreRightService;
 import Sources.RightsSource;
-import Sources.UsersSource;
 import Utils.common.Comparator;
 import java.util.List;
 import spark.Request;
@@ -17,16 +16,46 @@ import spark.Request;
  */
 public class UserRightService extends CoreRightService {
 
-    public static String updateRight(Request request, UsersSource source) {
-        return "Update user right";
+    public static UserRight updateRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        if (hasAccess) {
+            return updateRight(request, source);
+        } else {
+            String message = (isTrusted) 
+                    ? "Has not rights to create right document for own user document"
+                    : "Has not rughts to reate right document for other user document";
+            Error error = new Error(message);
+            throw new AccessException("CanNotCreate", error);
+        }
     }
 
-    public static String deleteRight(Request request, UsersSource source) {
-        return "Delete user right";
+    public static List<UserRight> deleteRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        if (hasAccess) {
+            return deleteRights(request, source);
+        } else {
+            String message = (isTrusted) 
+                    ? "Has not rights to create right document for own user document"
+                    : "Has not rughts to reate right document for other user document";
+            Error error = new Error(message);
+            throw new AccessException("CanNotCreate", error);
+        }
     }
 
-    public static String createRight(Request request, UsersSource source) {
-        return "Create user right";
+    public static UserRight createUserRight(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        if (hasAccess) {
+            return createUserRight(request, source);
+        } else {
+            String message = (isTrusted) 
+                    ? "Has not rights to create right document for own user document"
+                    : "Has not rughts to reate right document for other user document";
+            Error error = new Error(message);
+            throw new AccessException("CanNotCreate", error);
+        }
     }
 
     /**
@@ -42,11 +71,11 @@ public class UserRightService extends CoreRightService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            return UserRightService.getUserRights(request, source);
+            return getUserRights(request, source);
         } else {
             String message = (isTrusted)
-                    ? "Can not rights for read own private fields"
-                    : "Can not rights for read other private fields";
+                    ? "Has not rights for read own private fields"
+                    : "HAs not rights for read other private fields";
             Error error = new Error(message);
             throw new AccessException("CanNotRead", error);
         }
@@ -69,8 +98,8 @@ public class UserRightService extends CoreRightService {
             return getUserRightById(request, source);
         } else {
             String message = (isTrusted)
-                    ? "Can not rights for read own private fields"
-                    : "Can not rights for read other private fields";
+                    ? "Has not rights for read own private fields"
+                    : "Has not rights for read other private fields";
             Error error = new Error(message);
             throw new AccessException("CanNotRead", error);
         }

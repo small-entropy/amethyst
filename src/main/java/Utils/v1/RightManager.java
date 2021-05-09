@@ -60,7 +60,7 @@ public class RightManager {
         UserRight result = null;
         if (user != null) {
             for (UserRight right : user.getRights()) {
-                if (right.getCollection().equals(name)) {
+                if (right.getName().equals(name)) {
                     result = right;
                 }
             }

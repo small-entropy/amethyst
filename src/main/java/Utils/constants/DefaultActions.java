@@ -1,7 +1,7 @@
 package Utils.constants;
 
 public enum DefaultActions {
-    CREAT("create"),
+    CREATE("create"),
     READ("read"),
     UPDATE("update"),
     DELETE("delete");

@@ -10,6 +10,7 @@ import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
+import java.util.Arrays;
 import java.util.List;
 import static spark.Spark.*;
 
@@ -18,6 +19,8 @@ import static spark.Spark.*;
  * @author small-entropy
  */
 public class UserRightsController {
+    
+    private final static List<String> BLACK_LIST = Arrays.asList("users_right", "catalogs_right");
     
     /**
      * Enum with messages
@@ -55,19 +58,22 @@ public class UserRightsController {
      * @param transformer JSON response transformer
      */
     public static void routes (Datastore store, JsonTransformer transformer) {
-        RightsSource source = new RightsSource(store);
+        RightsSource source = new RightsSource(store, BLACK_LIST);
         
         // Routes for work with user rights
         // Get all rights by user UUID
         get("/:id/rights", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            System.out.println(rule);
             List<UserRight> rights = UserRightService.getUserRights(req, source, rule);
             return new SuccessResponse<>(Messages.RIGHTS.getMessage(), rights);
         }, transformer);
         
         // Create new user rights (user find by UUID)
-        post("/:id/rights", (req, res) -> UserRightService.createRight(req, source), transformer);
+        post("/:id/rights", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREATE.getName());
+            UserRight right = UserRightService.createUserRight(req, source, rule);
+            return new SuccessResponse<>(Messages.CREATED.getMessage(), right);
+        }, transformer);
         
         // Get new user right by UUID (find user by UUID)
         get("/:id/rights/:right_id", (req, res) -> {
@@ -77,9 +83,17 @@ public class UserRightsController {
         }, transformer);
         
         // Update user right by UUID (find user by UUID)
-        put("/:id/rights/:right_id", (req, res) -> UserRightService.updateRight(req, source), transformer);
+        put("/:id/rights/:right_id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            UserRight right = UserRightService.updateRight(req, source, rule);
+            return new SuccessResponse<>(Messages.UPDATED.getMessage(), right);
+        }, transformer);
         
         // Mark to remove user right (find user by UUID)
-        delete("/:id/rights/:right_id", (req, res) -> UserRightService.deleteRight(req, source), transformer);
+        delete("/:id/rights/:right_id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
+            List<UserRight> rights = UserRightService.deleteRight(req, source, rule);
+            return new SuccessResponse<>(Messages.DELETED.getMessage(), rights);
+        }, transformer);
     }
 }

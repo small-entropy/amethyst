@@ -70,7 +70,7 @@ public class UserPropertyController {
         // This method only for create public property!
         // For create not public property use other method!
         post("/:id/properties", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREAT.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREATE.getName());
             UserProperty userProperty = UserPropertyService.createUserProperty(req, source, rule);
             return new SuccessResponse<>(Messages.CREATED.getMessage(), userProperty);
         }, transformer);
