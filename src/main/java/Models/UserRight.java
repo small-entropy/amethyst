@@ -31,7 +31,11 @@ public class UserRight {
         this.delete = delete;
     }
 
-    public ObjectId getId() {
+    public String getId() {
+        return id.toString();
+    }
+    
+    public ObjectId getPureId() {
         return id;
     }
 

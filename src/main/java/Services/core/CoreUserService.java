@@ -170,7 +170,7 @@ public abstract class CoreUserService extends CoreService {
      * @param limit limit of documents
      * @param excludes excludes fields
      * @param source source of data
-     * @return 
+     * @return list with user documents
      */
     protected static List<User> getList(int skip, int limit, String[] excludes, UsersSource source) {
         UsersFilter filter = new UsersFilter(skip, limit, excludes);

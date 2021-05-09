@@ -179,7 +179,7 @@ public class AbstractPropertySource extends AbstractChildUserSource {
         Iterator iterator = properties.iterator();
         while(iterator.hasNext()) {
             UserProperty property = (UserProperty) iterator.next();
-            if (property.getId().toString().equals(propertyIdParam) &&
+            if (property.getId().equals(propertyIdParam) &&
                     !getBlackList().contains(property.getKey())) {
                 iterator.remove();
             }

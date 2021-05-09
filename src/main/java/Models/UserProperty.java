@@ -16,7 +16,11 @@ public class UserProperty {
         this.value = value;
     }
 
-    public Object getId() {
+    public String getId() {
+        return id.toString();
+    }
+    
+    public ObjectId getPureId() {
         return id;
     }
 

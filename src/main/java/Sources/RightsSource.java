@@ -10,6 +10,7 @@ import Exceptions.DataException;
 import Models.User;
 import Models.UserRight;
 import Sources.Abstract.AbstractChildUserSource;
+import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;
@@ -37,31 +38,6 @@ public class RightsSource extends AbstractChildUserSource {
     }
     
     /**
-     * Method for get user right for rights list by id
-     * @param rightIdParam right id as string
-     * @param rights rights list
-     * @return founded right
-     * @throws DataException throw if right not found
-     */
-    public UserRight getRightByIdParam(String rightIdParam, List<UserRight> rights) throws DataException {
-        UserRight result = null;
-        for (UserRight right : rights) {
-            if (right.getId().toString().equals(rightIdParam)) {
-                result = right;
-                break;
-            }
-        }
-        
-        
-        if (result != null) {
-            return result;
-        } else {
-            Error error = new Error("Can not find user right by request params");
-            throw new DataException("NotFound", error);
-        }
-    }
-    
-    /**
      * Method for get user right by id param from request
      * @param rightIdParam user right id as string
      * @param idParam user id as string
@@ -70,7 +46,7 @@ public class RightsSource extends AbstractChildUserSource {
      */
     public UserRight getRightByIdParam(String rightIdParam, String idParam) throws DataException {
         List<UserRight> rights = getList(idParam);
-        return getRightByIdParam(rightIdParam, rights);
+        return Searcher.getUserRightByIdFromList(rightIdParam, rights);
     }
     
     /**
@@ -149,7 +125,7 @@ public class RightsSource extends AbstractChildUserSource {
         Iterator iterator = rights.iterator();
         while(iterator.hasNext()) {
             UserRight right = (UserRight) iterator.next();
-            if (right.getId().toString().equals(rightIdParam) &&
+            if (right.getId().equals(rightIdParam) &&
                     !getBlackList().contains(right.getName())) {
                 iterator.remove();
             }
@@ -169,7 +145,7 @@ public class RightsSource extends AbstractChildUserSource {
     public UserRight updateUserRight(String rightIdParam, String idParam, UserRightDTO userRightDTO) throws DataException {
         User user = getUserDocument(idParam);
         List<UserRight> rights = user.getRights();
-        UserRight right = getRightByIdParam(rightIdParam, rights);
+        UserRight right = Searcher.getUserRightByIdFromList(rightIdParam, rights);
         
         if (userRightDTO.getCreate() != null && 
                 !right.getCreate().equals(userRightDTO.getCreate())) {
