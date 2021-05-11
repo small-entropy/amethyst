@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClients;
 // Import Morphia classes
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import dev.morphia.mapping.MapperOptions;
 // Import Spark classes
 import static spark.Spark.*;
 
@@ -55,8 +56,13 @@ public class Application {
      * @param args method arguments
      */
     public static void main(String[] args) {
+        MapperOptions options = MapperOptions.builder()
+                .storeNulls(true)
+                .storeEmpties(true)
+                .build();
+        
         // Create database connection
-        final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst");
+        final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst", options);
         // Map all models from package
         store.getMapper().mapPackage("Models");
         // Ensure database indexes by models
