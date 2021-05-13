@@ -7,7 +7,6 @@ import Exceptions.TokenException;
 import Models.UserProperty;
 import Services.core.CoreUserPropertyService;
 import Sources.PropertiesSource;
-import Sources.UsersSource;
 import Utils.common.Comparator;
 import java.util.List;
 import spark.Request;
@@ -16,16 +15,6 @@ import spark.Request;
  * Class controller for work with user properties
  */
 public class UserPropertyService extends CoreUserPropertyService {
-
-    /**
-     * Method for remove user property service
-     * @param request Spark requet object
-     * @param source source for work with users collection
-     * @return list of users properties
-     */
-    public static List<UserProperty> removeUserProperty(Request request, UsersSource source) {
-        return null;
-    }
 
     /**
      * Method for create user property

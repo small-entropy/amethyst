@@ -8,8 +8,8 @@ package Filters;
 import org.bson.types.ObjectId;
 
 /**
- *
- * @author entropy
+ * Class for abstract collection filter
+ * @author small-entropy
  */
 public abstract class Filter {
     private int skip;
@@ -28,6 +28,10 @@ public abstract class Filter {
     public Filter(int skip, int limit, String[] excludes) {
         this.skip = skip;
         this.limit = limit;
+        this.excludes = excludes;
+    }
+    
+    public Filter(String[] excludes) {
         this.excludes = excludes;
     }
     

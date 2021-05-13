@@ -1,40 +1,82 @@
 package Controllers.v1;
 
+import DataTransferObjects.RuleDTO;
+import Models.Catalog;
+import Responses.SuccessResponse;
+import Services.v1.CatalogService;
+import Sources.CatalogsSource;
+import Sources.UsersSource;
 import Transformers.JsonTransformer;
+import Utils.constants.DefaultActions;
+import Utils.constants.DefaultRights;
+import Utils.v1.RightManager;
 import dev.morphia.Datastore;
+import java.util.List;
 
 import static spark.Spark.*;
 
+/**
+ * Class controller for work with catalogs routes
+ * @author small-entropy
+ */
 public class CatalogsController {
+    /**
+     * Messages for success answers catalogs routes
+     */
+    private enum Messages {
+        CATALOGS("Successfully get list of catalogs"),
+        CATALOG("Successfully get catalog"),
+        CREATED("Successfully created catalog"),
+        UPDATED("Successfully catapog updated"),
+        DELETED("Successfully deleted catalog");
+        // MEssage property
+        private final String message;
+
+        /**
+         * Default contructor for message enum
+         * @param message 
+         */
+        Messages(String message) {
+            this.message = message;
+        }
+
+        /**
+         * Getter for message property
+         * @return message text
+         */
+        public String getMessage() {
+            return message;
+        }
+    }
+    
+    /**
+     * Static method for initialize catalogs routes
+     * @param store Morphia datastore object
+     * @param transformer converter to JSON
+     */
     public static void routes(Datastore store, JsonTransformer transformer) {
+        // Create catalog datastore source
+        CatalogsSource catalogsSource = new CatalogsSource(store);
+        // Create user datastore source
+        UsersSource userSource = new UsersSource(store);
+        
         // Route for work with catalog list
-        get("/catalogs", (request, response) -> "Get catalogs list");
+        get("", (req, res) -> {
+            List<Catalog> catalogs = CatalogService.getCatalogs(req, catalogsSource);
+            return new SuccessResponse<>(Messages.CATALOGS.getMessage(), catalogs);
+        }, transformer);
 
-        // Routes for work with catalog documents
-        get("/catalogs/:id", (request, response) -> "Get catalog");
-        post("/catalogs/:id", (request, response) -> "Create catalog document");
-        put("/catalogs/:id", (request, response) -> "Update catalog document");
-        delete("/catalogs/:id", (request, response) -> "Remove catalog document");
-
-        // Routes for work with catalog categories
-        get("/catalogs/:id/categories", (request, response) -> "Get categories list");
-        post("/catalogs/:id/categories", (request, response) -> "Create category");
-        get("/catalogs/:id/categories/:id", (request, response) -> "Get category document");
-        put("/catalogs/:id/categories/:id", (request, response) -> "Update category document");
-        delete("/catalogs/:id/categories/:id", (request, response) -> "Remove category document");
-
-        // Routes for work with category products
-        get("/catalogs/:id/categories/:id/products", (request, response) -> "Get product list");
-        post("/catalogs/:id/categories/:id/products", (request, response) -> "Create product document");
-        get("/catalogs/:id/categories/:id/products/:id", (request, response) -> "Get product");
-        put("/catalogs/:id/categories/:id/products/:id", (request, response) -> "Update product");
-        delete("/catalogs/:id/categories/:id/products/:id", (request, response) -> "Remove product");
-
-        // Routes for work with products properties
-        get("/catalogs/:id/categories/:id/products/:id/properties", (request, response) -> "Get product properties list");
-        post("/catalogs/:id/categories/:id/products/:id/properties", (request, response) -> "Create product properties");
-        get("/catalogs/:id/categories/:id/products/:id/properties/:id", (request, response) -> "Get product property");
-        put("/catalogs/:id/categories/:id/products/:id/properties/:id", (request, response) -> "Update product property");
-        delete("/catalogs/:id/categories/:id/products/:id/properties/:id", (request, response) -> "Remove product property");
+        // Route for create catalog
+        post("/users/:id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.CREATE.getName());
+            Catalog catalog = CatalogService.createCatalog(req, catalogsSource, userSource, rule);
+            return new SuccessResponse<>(Messages.CREATED.getMessage(), catalog);
+        }, transformer);
+        
+        // Route for create catalog document
+        get("/users/:id", (req, res) -> {
+            List<Catalog> catalogs = CatalogService.getCatalogsByUser(req, catalogsSource);
+            return new SuccessResponse<>(Messages.CATALOGS.getMessage(), catalogs);
+        }, transformer);
     }
 }

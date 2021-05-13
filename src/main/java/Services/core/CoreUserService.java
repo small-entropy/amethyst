@@ -109,7 +109,6 @@ public abstract class CoreUserService extends CoreService {
             throw new TokenException("NotEquals", error);
         }
     }
-
     
     /**
      * Method for login user by token

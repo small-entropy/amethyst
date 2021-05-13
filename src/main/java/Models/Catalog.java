@@ -2,7 +2,10 @@ package Models;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 
-
+/**
+ * Model class for work with catalog focument
+ * @author small-entropy
+ */
 @Entity("catalogs")
 public class Catalog {
     @Id
@@ -11,23 +14,51 @@ public class Catalog {
     private String name;
     private String title;
     private String description;
-    @Reference
-    private User owner;
+    private CatalogOwner owner;
+    private String status;
     @Version private Long version;
             
     Catalog() {}
     
-    public Catalog(String name, String title, User owner) {
+    public Catalog(String name, String title, CatalogOwner owner) {
         this.name = name;
         this.title = title;
         this.owner = owner;
+        this.status = "active";
     }
     
-    public Catalog(String name, String title, String description, User owner) {
+    public Catalog(ObjectId id, String name, String title, CatalogOwner owner) {
+        this.id = id;
+        this.name = name;
+        this.title = title;
+        this.owner = owner;
+        this.status = "active";
+    }
+    
+    
+    public Catalog(String name, String title, String description, CatalogOwner owner) {
         this.name = name;
         this.title = title;
         this.description = description;
         this.owner = owner;
+        this.status = "active";
+    }
+    
+    public Catalog(ObjectId id, String name, String title, String description, CatalogOwner owner) {
+        this.id = id;
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.status = "active";
+    }
+
+    public String getStatus()  {
+        return status;
+    }
+    
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setTitle(String title) {
@@ -67,11 +98,11 @@ public class Catalog {
         this.name = name;
     }
     
-    public User getOwner() {
+    public CatalogOwner getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(CatalogOwner owner) {
         this.owner = owner;
     }
     
