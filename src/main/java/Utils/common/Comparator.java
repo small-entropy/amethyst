@@ -1,11 +1,9 @@
 package Utils.common;
 
-import Models.User;
-import Models.UserProperty;
+import Utils.constants.RequestParams;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import spark.Request;
 
-import java.util.List;
 
 /**
  * Class with some compare methods
@@ -20,7 +18,7 @@ public class Comparator {
     public static boolean id_fromParam_fromToken(Request request) {
         boolean isTrusted;
         String token = RequestUtils.getTokenByRequest(request);
-        String idParam = request.params("id");
+        String idParam = request.params(RequestParams.USER_ID.getName());
         if (token != null) {
             DecodedJWT decodedJWT = JsonWebToken.decode(token);
             String decodedId = decodedJWT.getClaim("id").asString();

@@ -10,6 +10,7 @@ import Transformers.JsonTransformer;
 import Utils.common.HeadersUtils;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
+import Utils.constants.ResponseMessages;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import static spark.Spark.get;
@@ -21,36 +22,6 @@ import static spark.Spark.post;
  * @author entropy
  */
 public class AuthorizationController extends CoreController {
-
-    /**
-     * Enum for exception messages
-     */
-    private enum Messages {
-        REGISTERED("User successfully registered"),
-        AUTOLOGIN("Successfully login by token"),
-        LOGIN("Login is success"),
-        LOGOUT("User successfully logout"),
-        PASSWORD_CHANGED("Password successfully changes");
-        // Property for text message
-        private final String message;
-
-        /**
-         * Constructor fo enum
-         * @param message text of message
-         */
-        Messages(String message) {
-            this.message = message;
-        }
-
-        /**
-         * Getter for message property
-         * @return value of message property
-         */
-        public String getMessage() {
-            return message;
-        }
-    }
-
     /**
      * Method with define authorization routes
      * @param datastore Morphia datastore
@@ -62,7 +33,6 @@ public class AuthorizationController extends CoreController {
 
         // Route for register user
         post("/register", (req, res) -> {
-            System.out.println("Controllers.v1.AuthorizationController.routes()");
             // Register user by request data
             User user = AuthorizationService.registerUser(req, source);
             // Define index of current token
@@ -71,7 +41,7 @@ public class AuthorizationController extends CoreController {
             // Set response headers
             res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
             // Return response
-            return new SuccessResponse<>(Messages.REGISTERED.getMessage(), user);
+            return new SuccessResponse<>(ResponseMessages.REGISTERED.getMessage(), user);
         }, transformer);
 
         // Route for user login
@@ -87,32 +57,31 @@ public class AuthorizationController extends CoreController {
             // Set headers for authorization
             res.header(HeadersUtils.getAuthHeaderField(), HeadersUtils.getAuthHeaderValue(token));
             // Return answer
-            return new SuccessResponse<>(Messages.LOGIN.getMessage(), user);
+            return new SuccessResponse<>(ResponseMessages.LOGIN.getMessage(), user);
         }, transformer);
         
         // Route for change password for user by token
-        post("/change-password/:id", (req, res) -> {
+        post("/change-password/:user_id", (req, res) -> {
             // Get rule for get user data
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             // Change password
             User user = AuthorizationService.changePassword(req, source, rule);
-            System.out.println(user);
             // Return success answer
-            return new SuccessResponse<>(Messages.PASSWORD_CHANGED.getMessage(), user);
+            return new SuccessResponse<>(ResponseMessages.PASSWORD_CHANGED.getMessage(), user);
         }, transformer);
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.autoLoginUser(req, source, rule);
-            return new SuccessResponse<>(Messages.AUTOLOGIN.getMessage(), user);
+            return new SuccessResponse<>(ResponseMessages.AUTOLOGIN.getMessage(), user);
         }, transformer);
 
         // Logout user
         get("/logout", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Username(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             User user = AuthorizationService.logoutUser(req, source, rule);
-            return new SuccessResponse<>(Messages.LOGOUT.getMessage(), user);
+            return new SuccessResponse<>(ResponseMessages.LOGOUT.getMessage(), user);
         }, transformer);
     }
 }

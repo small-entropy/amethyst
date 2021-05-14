@@ -8,7 +8,7 @@ import Services.core.CoreUserService;
 import Sources.UsersSource;
 import Utils.common.Comparator;
 import Utils.common.RequestUtils;
-import Utils.constants.UsersParams;
+import Utils.constants.RequestParams;
 import java.util.List;
 import spark.Request;
 
@@ -16,14 +16,6 @@ import spark.Request;
  * Class service for work with users collection
  */
 public class UserService extends CoreUserService {
-
-    /**
-     * Method for update user document
-     * @return updated user document
-     */
-    public static String updateUser() {
-        return "Update user data";
-    }
 
     /**
      * Method for deactivate user account
@@ -46,7 +38,7 @@ public class UserService extends CoreUserService {
             // If ids not equals - throw exception
             if (isEqualsIds) {
                 // Get id from query params
-                String paramId = request.params(UsersParams.ID.getName());
+                String paramId = request.params(RequestParams.USER_ID.getName());
                 // Find user by id
                 User user = getUserById(paramId, source);
                 // Check founded user
@@ -83,7 +75,7 @@ public class UserService extends CoreUserService {
      */
     public static User getUserById(Request request, UsersSource source) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        String idParam = request.params(UsersParams.ID.getName());
+        String idParam = request.params(RequestParams.USER_ID.getName());
         String[] excludes = isTrusted
                 ? UserService.PUBLIC_AND_PRIVATE_ALLOWED
                 : UserService.PUBLIC_ALLOWED;

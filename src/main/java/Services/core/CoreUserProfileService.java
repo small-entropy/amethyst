@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Models.UserProperty;
 import Services.base.BasePropertyService;
 import Sources.ProfileSource;
-import Utils.constants.UsersParams;
+import Utils.constants.RequestParams;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @throws DataException throw if con not be found user or property document
      */
     public static UserProperty createUserProperty(Request request, ProfileSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
+        String idParam = request.params(RequestParams.RIGHT_ID.getName());
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
         return createUserProperty(idParam, userPropertyDTO, source);
     }
@@ -50,7 +50,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      */
     public static List<UserProperty> getUserProfile(Request request, ProfileSource source) throws DataException {
         // Get user ID param from request URL
-        String idParam = request.params(UsersParams.ID.getName());
+        String idParam = request.params(RequestParams.RIGHT_ID.getName());
         return getPropertiesList(idParam, source);
     }
     
@@ -62,8 +62,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @throws DataException throw if con not be found user or property document
      */
     public static UserProperty getUserProfilePropertyById(Request request, ProfileSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        String idParam = request.params(RequestParams.RIGHT_ID.getName());
+        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return getPropertyById(idParam, propertyIdParam, source);
     }
     
@@ -75,8 +75,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @throws DataException throw if con not be found user or property document
      */
     protected static UserProperty updateUserProperty(Request request, ProfileSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        String idParam = request.params(RequestParams.RIGHT_ID.getName());
+        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
         return updateUserProperty(propertyIdParam, idParam, userPropertyDTO, source);
     }
@@ -89,8 +89,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @throws DataException throw if con not be found user or property document
      */
     protected static List<UserProperty> deleteUserProfileProperty(Request request, ProfileSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String propertyIdParam = request.params(UsersParams.PROPERTY_ID.getName());
+        String idParam = request.params(RequestParams.RIGHT_ID.getName());
+        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return source.removeProperty(propertyIdParam, idParam);
     }
 }

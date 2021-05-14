@@ -16,11 +16,20 @@ import java.util.List;
  * @author small-entropy
  */
 public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, CatalogDTO>{
+    
+    /**
+     * Consturctor for datasource catalog collection
+     * @param datastore Morphia datastore object
+     */
     public CatalogsSource(Datastore datastore) {
         super(datastore, Catalog.class);
     }
 
-    
+    /**
+     * Method for find one document by catalog name
+     * @param filter catalogs filter object
+     * @return catalog document
+     */
     public Catalog findOneByName(CatalogsFilter filter) {
         FindOptions findOptions = new FindOptions()
                 .projection()
@@ -34,6 +43,30 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
                 .first(findOptions);
     }
     
+    /**
+     * Method for get catalog document by owner id and catalog id
+     * @param filter catalog filter object
+     * @return founded catalog document
+     */
+    public Catalog findOneByOwnerAndId(CatalogsFilter filter) {
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(filter.getExcludes());
+        return getStore()
+                .find(getModelClass())
+                .filter(and(
+                        eq("status", filter.getStatus()),
+                        eq("id", filter.getId()),
+                        eq("owner.id", filter.getOwner())
+                ))
+                .first(findOptions);
+    }
+    
+    /**
+     * Method for get all catalogs by user id
+     * @param filter catalogs filter obejct
+     * @return list of user catalogs
+     */
     public List<Catalog> findAllByOwnerId(CatalogsFilter filter) {
         // Craete find options by filter data
         FindOptions findOptions = new FindOptions()
@@ -52,6 +85,11 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
                 .toList();
     }
     
+    /**
+     * Method for create catalog document
+     * @param catalogDTO catalog data transfer object
+     * @return created catalog document
+     */
     @Override
     public Catalog create(CatalogDTO catalogDTO) {
         CatalogOwner owner = new CatalogOwner(

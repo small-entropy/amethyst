@@ -6,7 +6,7 @@ import Models.Catalog;
 import Services.core.CoreCatalogService;
 import Sources.CatalogsSource;
 import Sources.UsersSource;
-import Utils.constants.UsersParams;
+import Utils.constants.RequestParams;
 import java.util.List;
 import spark.Request;
 
@@ -24,7 +24,7 @@ public class CatalogService extends CoreCatalogService {
     public static Catalog createCatalog(Request request, CatalogsSource catalogsSource, UsersSource usersSource, RuleDTO rule) throws AccessException {
         boolean hasAccess = rule.isMyGlobal();
         if (hasAccess) {
-            String idParam = request.params(UsersParams.ID.getName());
+            String idParam = request.params(RequestParams.USER_ID.getName());
             return createCatalog(idParam, request, catalogsSource, usersSource);
         } else {
             Error error = new Error("Has no access to create catalog");

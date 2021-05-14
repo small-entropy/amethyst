@@ -8,6 +8,7 @@ import Sources.RightsSource;
 import Transformers.JsonTransformer;
 import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
+import Utils.constants.ResponseMessages;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -23,36 +24,6 @@ public class UserRightsController {
     private final static List<String> BLACK_LIST = Arrays.asList("users_right", "catalogs_right");
     
     /**
-     * Enum with messages
-     */
-    private enum Messages {
-        RIGHTS("Successfully get user rights"),
-        RIGHT("Successfullly get user rights"),
-        CREATED("Successfully create user right"),
-        UPDATED("User right successfully updated"),
-        DELETED("Successfully removed user right");
-        // Field for contain message
-        private final String message;
-        
-        /**
-         * Constructor for enum
-         * @param message current message
-         */
-        Messages(String message) {
-            this.message = message;
-        }
-
-        /**
-         * Getter for message field
-         * @return message
-         */
-        public String getMessage() {
-            return message;
-        }
-    }
-    
-    
-    /**
      * Method with init routes for work with user right documents
      * @param store Morphia datastore (connection) object
      * @param transformer JSON response transformer
@@ -62,38 +33,38 @@ public class UserRightsController {
         
         // Routes for work with user rights
         // Get all rights by user UUID
-        get("/:id/rights", (req, res) -> {
+        get("/:user_id/rights", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             List<UserRight> rights = UserRightService.getUserRights(req, source, rule);
-            return new SuccessResponse<>(Messages.RIGHTS.getMessage(), rights);
+            return new SuccessResponse<>(ResponseMessages.RIGHTS.getMessage(), rights);
         }, transformer);
         
         // Create new user rights (user find by UUID)
-        post("/:id/rights", (req, res) -> {
+        post("/:user_id/rights", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREATE.getName());
             UserRight right = UserRightService.createUserRight(req, source, rule);
-            return new SuccessResponse<>(Messages.CREATED.getMessage(), right);
+            return new SuccessResponse<>(ResponseMessages.RIGHT_CREATED.getMessage(), right);
         }, transformer);
         
         // Get new user right by UUID (find user by UUID)
-        get("/:id/rights/:right_id", (req, res) -> {
+        get("/:user_id/rights/:right_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
             UserRight right = UserRightService.getUserRightById(req, source, rule);
-            return new SuccessResponse<>(Messages.RIGHT.getMessage() ,right);
+            return new SuccessResponse<>(ResponseMessages.RIGHT.getMessage() ,right);
         }, transformer);
         
         // Update user right by UUID (find user by UUID)
-        put("/:id/rights/:right_id", (req, res) -> {
+        put("/:user_id/rights/:right_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
             UserRight right = UserRightService.updateRight(req, source, rule);
-            return new SuccessResponse<>(Messages.UPDATED.getMessage(), right);
+            return new SuccessResponse<>(ResponseMessages.RIGHT_UPDATED.getMessage(), right);
         }, transformer);
         
         // Mark to remove user right (find user by UUID)
-        delete("/:id/rights/:right_id", (req, res) -> {
+        delete("/:user_id/rights/:right_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
             List<UserRight> rights = UserRightService.deleteRight(req, source, rule);
-            return new SuccessResponse<>(Messages.DELETED.getMessage(), rights);
+            return new SuccessResponse<>(ResponseMessages.RIGHT_DELETED.getMessage(), rights);
         }, transformer);
     }
 }

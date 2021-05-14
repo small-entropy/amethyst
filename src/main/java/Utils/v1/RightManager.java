@@ -4,6 +4,7 @@ import DataTransferObjects.RuleDTO;
 import Filters.UsersFilter;
 import Models.User;
 import Models.UserRight;
+import Services.core.CoreUserService;
 import Services.v1.UserService;
 import Sources.UsersSource;
 import spark.Request;
@@ -43,7 +44,7 @@ public class RightManager {
         try {
             UsersFilter filter = new UsersFilter();
             filter.setExcludes(UserService.ALL_ALLOWED);
-            User user = UserService.getUserByToken(request, source, filter);
+            User user = CoreUserService.getUserByToken(request, source, filter);
             return RightManager.getRuleObject(user, rightName, ruleName);
         } catch (Exception exception) {
             return null;

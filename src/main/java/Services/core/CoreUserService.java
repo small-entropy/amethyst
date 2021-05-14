@@ -7,8 +7,9 @@ import Filters.UsersFilter;
 import Models.User;
 import Sources.UsersSource;
 import Utils.common.*;
-import Utils.constants.UsersParams;
+import Utils.constants.RequestParams;
 import com.google.gson.Gson;
+import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -92,7 +93,7 @@ public abstract class CoreUserService extends CoreService {
         // If token and URL haven't equals user ID - throw error.
         if (isTrusted) {
             // User id from URL params
-            String idParam = request.params(UsersParams.ID.getName());
+            String idParam = request.params(RequestParams.USER_ID.getName());
             // Get user document from database
             User user = CoreUserService.getUserById(idParam, source);
             // Check result on exist.

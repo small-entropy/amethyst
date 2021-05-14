@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Models.UserRight;
 import Sources.RightsSource;
 import Utils.constants.DefaultRights;
-import Utils.constants.UsersParams;
+import Utils.constants.RequestParams;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class CoreRightService {
      * @throws DataException throw if can not found user or rights
      */
     protected static List<UserRight> getUserRights(Request request, RightsSource source) throws DataException {
-        String idPaString = request.params(UsersParams.ID.getName());
+        String idPaString = request.params(RequestParams.USER_ID.getName());
         return source.getList(idPaString);
     }
     
@@ -47,26 +47,26 @@ public abstract class CoreRightService {
      * @throws DataException throw if can not found user or right
      */
     protected static UserRight getUserRightById(Request request, RightsSource source) throws DataException {
-       String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
-       String idParam = request.params(UsersParams.ID.getName());
+       String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
+       String idParam = request.params(RequestParams.USER_ID.getName());
        return source.getRightByIdParam(rightIdParam, idParam);
     }
     
     protected static UserRight createUserRight(Request request, RightsSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
+        String idParam = request.params(RequestParams.USER_ID.getName());
         UserRightDTO rightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
         return source.createUserRight(idParam, rightDTO);
     }
     
     protected static List<UserRight> deleteRights(Request request, RightsSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
+        String idParam = request.params(RequestParams.USER_ID.getName());
+        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
         return source.removeRight(rightIdParam, idParam);
     }
     
     protected static UserRight updateRight(Request request, RightsSource source) throws DataException {
-        String idParam = request.params(UsersParams.ID.getName());
-        String rightIdParam = request.params(UsersParams.RIGHT_ID.getName());
+        String idParam = request.params(RequestParams.USER_ID.getName());
+        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
         UserRightDTO userRightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
         return source.updateUserRight(rightIdParam, idParam, userRightDTO);
     }

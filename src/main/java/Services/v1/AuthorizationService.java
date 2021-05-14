@@ -28,10 +28,12 @@ public class AuthorizationService extends CoreAuthorizationService {
      * 
      */
     public static User autoLoginUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
-        UsersFilter filter = new UsersFilter();
-        filter.setExcludes(AuthorizationService.getMyFindOptionsArgs(rule));
+        UsersFilter filterForReturn = new UsersFilter();
+        UsersFilter filterForSearch = new UsersFilter();
+        filterForReturn.setExcludes(AuthorizationService.getMyFindOptionsArgs(rule));
+        filterForSearch.setExcludes(new String[]{});
         // Get user document by token
-        User user = autoLoginUser(request, source, filter);
+        User user = autoLoginUser(request, source, filterForReturn, filterForSearch);
         if (user != null) {
             return user;
         } else {

@@ -1,4 +1,3 @@
-
 package Services.core;
 
 import DataTransferObjects.UserDTO;
@@ -13,6 +12,7 @@ import spark.Request;
 
 /**
  * Class for base functions for create authorization service
+ * @author small-entropy
  */
 public abstract class CoreAuthorizationService extends CoreService {
 
@@ -20,12 +20,13 @@ public abstract class CoreAuthorizationService extends CoreService {
      * Method for login user by token
      * @param request Spark request object
      * @param source source for work with users collection
-     * @param filter filter object
+     * @param filterForReturn filter object for return answer
+     * @param filterForSearch filter object for search user
      * @return founded user document
      */
-    protected static User autoLoginUser(Request request, UsersSource source, UsersFilter filter) {
+    protected static User autoLoginUser(Request request, UsersSource source, UsersFilter filterForReturn, UsersFilter filterForSearch) {
         // Get user document by token
-        User user = CoreUserService.getUserByToken(request, source, filter);
+        User user = CoreUserService.getUserByToken(request, source, filterForSearch);
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check user on exist & check issuedToken (token must be contains in this field)
@@ -35,7 +36,7 @@ public abstract class CoreAuthorizationService extends CoreService {
                 && token != null
                 && user.getIssuedTokens() != null
                 && user.getIssuedTokens().contains(token))
-                ? user
+                ? CoreUserService.getUserByToken(request, source, filterForReturn)
                 : null;
     }
 
