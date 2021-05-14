@@ -9,7 +9,6 @@ import Sources.UsersSource;
 import Utils.common.*;
 import Utils.constants.RequestParams;
 import com.google.gson.Gson;
-import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
