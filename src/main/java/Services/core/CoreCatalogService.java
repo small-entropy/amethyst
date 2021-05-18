@@ -92,17 +92,16 @@ public class CoreCatalogService {
         return catalogsSource.create(catalogDTO);
     }
     
-    protected static Catalog updateCatalog(String idParam, String catalogIdParam, Request reqeust, CatalogsSource catalogsSource, UsersSource usersSource) throws DataException {
+    protected static Catalog updateCatalog(String idParam, String catalogIdParam, Request reqeust, CatalogsSource catalogsSource) throws DataException {
         // Get catalog ObjectId by string
         ObjectId catalogId = new ObjectId(catalogIdParam);
-        // Get user by id from params
-        User user = CoreUserService.getUserById(idParam, usersSource);
+        ObjectId ownerId = new ObjectId(idParam);
         // Get catalog data transfer object
         CatalogDTO catalogDTO = new Gson().fromJson(reqeust.body(), CatalogDTO.class);
         // Create filter for serach document
         CatalogsFilter filter = new CatalogsFilter(new String[]{});
         // Set catalog owner
-        filter.setOwner(user.getPureId());
+        filter.setOwner(ownerId);
         // Set catalog id
         filter.setId(catalogId);
         // Return update result
