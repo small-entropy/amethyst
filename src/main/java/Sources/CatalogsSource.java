@@ -1,6 +1,7 @@
 package Sources;
 
 import DataTransferObjects.CatalogDTO;
+import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Catalog;
 import Models.CatalogOwner;
@@ -9,6 +10,7 @@ import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -104,5 +106,24 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
         );
         save(catalog);
         return catalog;
+    }
+
+    public Catalog update(CatalogDTO catalogDTO, CatalogsFilter filter) throws DataException {
+        Catalog catalog = findOneByOwnerAndId(filter);
+        var description = catalogDTO.getDescription();
+        var title = catalogDTO.getTitle();
+        if (catalog != null) {
+            if (title != null && (catalog.getTitle() == null || !catalog.getTitle().equals(title))) {
+                catalog.setTitle(title);
+            }
+            if (description != null && (catalog.getDescription() == null || !catalog.getDescription().equals(description))) {
+                catalog.setDescription(description);
+            }
+            save(catalog);
+            return catalog;
+        } else {
+            Error error = new Error("Can not find catalog dcoument");
+            throw new DataException("NotFound", error);
+        }
     }
 }

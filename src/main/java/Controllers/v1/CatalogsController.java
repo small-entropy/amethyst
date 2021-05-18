@@ -35,7 +35,8 @@ public class CatalogsController {
         
         // Route for work with catalog list
         get("", (req, res) -> {
-            List<Catalog> catalogs = CatalogService.getCatalogs(req, catalogsSource);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.CREATE.getName());
+            List<Catalog> catalogs = CatalogService.getCatalogs(req, catalogsSource, rule);
             return new SuccessResponse<>(ResponseMessages.CATALOGS_LIST.getMessage(), catalogs);
         }, transformer);
 
@@ -48,13 +49,23 @@ public class CatalogsController {
         
         // Route for create catalog document
         get("/owner/:user_id", (req, res) -> {
-            List<Catalog> catalogs = CatalogService.getCatalogsByUser(req, catalogsSource);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.CREATE.getName());
+            List<Catalog> catalogs = CatalogService.getCatalogsByUser(req, catalogsSource, rule);
             return new SuccessResponse<>(ResponseMessages.CATALOG.getMessage(), catalogs);
         }, transformer);
         
+        // Route for get user catalog by id
         get("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            Catalog catalog = CatalogService.getCatalogById(req, catalogsSource);
+             RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.READ.getName());
+            Catalog catalog = CatalogService.getCatalogById(req, catalogsSource, rule);
             return new SuccessResponse<>(ResponseMessages.CATALOG.getMessage(), catalog);
         }, transformer);
+        
+        // Route for update catalog
+        put("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.UPDATE.getName());
+            Catalog catalog = CatalogService.updateCatalog(req, catalogsSource, userSource, rule);
+            return new SuccessResponse<>(ResponseMessages.CATALOG_UPDATED.getMessage(), catalog);
+        }, transformer); 
     }
 }

@@ -2,6 +2,7 @@ package Services.core;
 
 
 import DataTransferObjects.CatalogDTO;
+import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Catalog;
 import Models.User;
@@ -21,25 +22,32 @@ import spark.Request;
  * @author small-entropy
  */
 public class CoreCatalogService {
-    private static final String[] PUBLIC_EXLUDES = new String[]{ "owner", "status" };
-    private static final String[] PRIVATE_EXCLUDES = new String[] { "status" };
-    private static final String[] GLOBAL_EXCLUDES = new String[] {};
     
-    public static Catalog getCatalogById(Request request, CatalogsSource source) {
+    public static Catalog getCatalogById(Request request, CatalogsSource source, String[] excludes) {
         String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
         String ownerIdParam = request.params(RequestParams.USER_ID.getName());
         
         ObjectId ownerId = new ObjectId(ownerIdParam);
         ObjectId catalogId = new ObjectId(catalogIdParam);
         
+        return getCatalogById(catalogId, ownerId, source, excludes);
+    }
+    
+    protected static Catalog getCatalogByDocument(Catalog catalog, CatalogsSource source, String[] excludes) {
+        ObjectId ownerId = catalog.getOwner().getId();
+        ObjectId catalogId = catalog.getPureId();
+        return getCatalogById(catalogId, ownerId, source, excludes);
+    }
+    
+    protected static Catalog getCatalogById(ObjectId catalogId, ObjectId ownerId, CatalogsSource source, String[] excludes) {
         CatalogsFilter filter = new CatalogsFilter();
         filter.setId(catalogId);
         filter.setOwner(ownerId);
-        filter.setExcludes(PUBLIC_EXLUDES);
+        filter.setExcludes(excludes);
         return source.findOneByOwnerAndId(filter);
     }
     
-    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source) {
+    protected static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, String[] excludes) {
         String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
         int skip = (qSkip == null) ? ListConstants.SKIP.getValue() : Integer.parseInt(qSkip);
         // Set limit value from request query
@@ -51,7 +59,7 @@ public class CoreCatalogService {
         
         CatalogsFilter filter = new CatalogsFilter(skip, limit, new String[]{});
         filter.setOwner(id);
-        
+        filter.setExcludes(excludes);
         return source.findAllByOwnerId(filter);
     } 
     
@@ -59,10 +67,12 @@ public class CoreCatalogService {
      * MEthod for get catalogs list
      * @param request Spark reqeust object
      * @param source
+     * @param excludes
      * @return 
      */
-    protected static List<Catalog> getList(Request request, CatalogsSource source) {
-        CatalogsFilter filter = new CatalogsFilter(PUBLIC_EXLUDES);
+    protected static List<Catalog> getList(Request request, CatalogsSource source, String[] excludes) {
+        CatalogsFilter filter = new CatalogsFilter();
+        filter.setExcludes(excludes);
         return source.findAll(filter);
     }
     
@@ -80,5 +90,22 @@ public class CoreCatalogService {
         CatalogDTO catalogDTO = new Gson().fromJson(request.body(), CatalogDTO.class);
         catalogDTO.setOwner(user);
         return catalogsSource.create(catalogDTO);
+    }
+    
+    protected static Catalog updateCatalog(String idParam, String catalogIdParam, Request reqeust, CatalogsSource catalogsSource, UsersSource usersSource) throws DataException {
+        // Get catalog ObjectId by string
+        ObjectId catalogId = new ObjectId(catalogIdParam);
+        // Get user by id from params
+        User user = CoreUserService.getUserById(idParam, usersSource);
+        // Get catalog data transfer object
+        CatalogDTO catalogDTO = new Gson().fromJson(reqeust.body(), CatalogDTO.class);
+        // Create filter for serach document
+        CatalogsFilter filter = new CatalogsFilter(new String[]{});
+        // Set catalog owner
+        filter.setOwner(user.getPureId());
+        // Set catalog id
+        filter.setId(catalogId);
+        // Return update result
+        return catalogsSource.update(catalogDTO, filter);
     }
 }
