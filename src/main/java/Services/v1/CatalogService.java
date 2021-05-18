@@ -86,8 +86,8 @@ public class CatalogService extends CoreCatalogService {
         if (hasAccess) {
             String idParam = request.params(RequestParams.USER_ID.getName());
             Catalog catalog = createCatalog(idParam, request, catalogsSource, usersSource);
-            String[] excliudes = getExudes(request, rule);
-            return getCatalogByDocument(catalog, catalogsSource, PRIVATE_EXCLUDES);
+            String[] excludes = getExudes(request, rule);
+            return getCatalogByDocument(catalog, catalogsSource, excludes);
         } else {
             Error error = new Error("Has no access to create catalog");
             throw new AccessException("CanNotCreae", error);
