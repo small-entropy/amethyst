@@ -4,13 +4,12 @@ import DataTransferObjects.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Catalog;
-import Models.CatalogOwner;
+import Models.Owner;
 import Sources.Core.MorphiaSource;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -94,7 +93,7 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
      */
     @Override
     public Catalog create(CatalogDTO catalogDTO) {
-        CatalogOwner owner = new CatalogOwner(
+        Owner owner = new Owner(
                 catalogDTO.getOwner().getPureId(),
                 catalogDTO.getOwner().getUsername()
         );
@@ -108,6 +107,13 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
         return catalog;
     }
 
+    /**
+     * Method for update catalog document
+     * @param catalogDTO catalog data transfer object
+     * @param filter catalog filter document
+     * @return updated catalog document
+     * @throws DataException 
+     */
     public Catalog update(CatalogDTO catalogDTO, CatalogsFilter filter) throws DataException {
         Catalog catalog = findOneByOwnerAndId(filter);
         var description = catalogDTO.getDescription();
@@ -124,6 +130,23 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
         } else {
             Error error = new Error("Can not find catalog dcoument");
             throw new DataException("NotFound", error);
+        }
+    }
+
+    /**
+     * Method for deactivate catalog
+     * @param filter catalog filter object
+     * @return deactivated document
+     * @throws DataException
+     */
+    public Catalog deactivate(CatalogsFilter filter) throws DataException {
+        Catalog catalog = findOneByOwnerAndId(filter);
+        if (catalog != null) {
+            catalog.deactivate();
+            return catalog;
+        } else {
+            Error error = new Error("Can not find catalog document");
+            throw new DataException("NotDounf", error);
         }
     }
 }

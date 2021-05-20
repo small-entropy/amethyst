@@ -62,15 +62,36 @@ public class CatalogService extends CoreCatalogService {
      * @param soure datasource for catalogs collection
      * @param rule rule data transfer object
      * @return catalog document
+     * @throws DataException
      */
-    public static Catalog getCatalogById(Request request, CatalogsSource soure, RuleDTO rule) {
+    public static Catalog getCatalogById(Request request, CatalogsSource soure, RuleDTO rule) throws DataException {
         String[] excludes = getExudes(request, rule);
-        return getCatalogById(request, soure, excludes);
+        var catalog = getCatalogByRequestByUserId(request, soure, excludes);
+        if (catalog != null) {
+            return catalog;
+        } else {
+            Error error = new Error("Can not find catalog focument by user id from request params");
+            throw new DataException("NotFount", error);
+        }
     }
     
-    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, RuleDTO ruleDTO) {
+    /**
+     * Method for get list of user catalog by owner id from request params
+     * @param request Spark request obejct 
+     * @param source datasource for catalogs colletion
+     * @param ruleDTO rule data transfer object
+     * @return list of catalog documents
+     * @throws DataException throw if can not find 
+     */
+    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, RuleDTO ruleDTO) throws DataException {
         String[] exludes = getExudes(request, ruleDTO);
-        return getCatalogsByUser(request, source, exludes);
+        var catalogs = getCatalogsByRequestForUser(request, source, exludes);
+        if (catalogs != null && !catalogs.isEmpty()) {
+            return catalogs;
+        } else {
+            Error error = new Error("Can not find user catalogs by request params");
+            throw new DataException("NotFound", error);
+        }
     }
 
     /**
@@ -79,10 +100,17 @@ public class CatalogService extends CoreCatalogService {
      * @param source datasource for catalog collection
      * @param rule rule data transfer obejct
      * @return list of catalogs
+     * @throws DataException throw when can get catalogs
      */
-    public static List<Catalog> getCatalogs(Request request, CatalogsSource source, RuleDTO rule) {
+    public static List<Catalog> getCatalogs(Request request, CatalogsSource source, RuleDTO rule) throws DataException {
         String[] exludes = getExudes(request, rule);
-        return getList(request, source, exludes);
+        List<Catalog> catalogs = getList(request, source, exludes);
+        if (!catalogs.isEmpty()) {
+            return catalogs;
+        } else {
+            Error error = new Error("Can not find catalog documents");
+            throw new DataException("NotFound", error);
+        }
     }
 
     /**
@@ -104,7 +132,7 @@ public class CatalogService extends CoreCatalogService {
             return getCatalogByDocument(catalog, catalogsSource, excludes);
         } else {
             Error error = new Error("Has no access to create catalog");
-            throw new AccessException("CanNotCreae", error);
+            throw new AccessException("CanNotCreate", error);
         }
     }
 
@@ -129,6 +157,21 @@ public class CatalogService extends CoreCatalogService {
         } else {
             Error error = new Error("Has no access to update catalog document");
             throw new AccessException("CanNotUpdate", error);
+        }
+    }
+
+    public static Catalog deleteCatalog(Request request, CatalogsSource source, RuleDTO rule) throws AccessException, AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        if (hasAccess) {
+            String idParam = request.params(RequestParams.USER_ID.getName());
+            String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
+            Catalog catalog = deleteCatalog(idParam, catalogIdParam, source);
+            String[] excludes = getExudes(request, rule);
+            return getCatalogByDocument(catalog, source, excludes);
+        } else {
+            Error error = new Error("Has no access to delete catalog document");
+            throw new AccessException("CanNotCreate", error);
         }
     }
 }

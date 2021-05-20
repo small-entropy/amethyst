@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 @Embedded
-public class CatalogOwner {
+public class Owner {
     // Owner id as ObjectId
     private ObjectId id;
     // Owner username
@@ -20,14 +20,14 @@ public class CatalogOwner {
     /**
      * Default catalog owner constructor
      */
-    CatalogOwner() {}
+    Owner() {}
     
     /**
      * Constructor for create catalog owner by user id and username
      * @param id owner id as ObjectId
      * @param username owner username
      */
-    public CatalogOwner(ObjectId id, String username) {
+    public Owner(ObjectId id, String username) {
         this.id = id;
         this.username = username;
         this.time = new Date().getTime();

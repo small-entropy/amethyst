@@ -67,5 +67,12 @@ public class CatalogsController {
             Catalog catalog = CatalogService.updateCatalog(req, catalogsSource, rule);
             return new SuccessResponse<>(ResponseMessages.CATALOG_UPDATED.getMessage(), catalog);
         }, transformer); 
+        
+        // Route for delete catalog
+        delete("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.DELETE.getName());
+            Catalog catalog = CatalogService.deleteCatalog(req, catalogsSource, rule);
+            return new SuccessResponse<>(ResponseMessages.CATALOG_DELETED.getMessage(), catalog);
+        }, transformer);
     }
 }

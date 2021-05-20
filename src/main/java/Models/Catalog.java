@@ -14,20 +14,20 @@ public class Catalog {
     private String name;
     private String title;
     private String description;
-    private CatalogOwner owner;
+    private Owner owner;
     private String status;
     @Version private Long version;
             
     Catalog() {}
     
-    public Catalog(String name, String title, CatalogOwner owner) {
+    public Catalog(String name, String title, Owner owner) {
         this.name = name;
         this.title = title;
         this.owner = owner;
         this.status = "active";
     }
     
-    public Catalog(ObjectId id, String name, String title, CatalogOwner owner) {
+    public Catalog(ObjectId id, String name, String title, Owner owner) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -36,7 +36,7 @@ public class Catalog {
     }
     
     
-    public Catalog(String name, String title, String description, CatalogOwner owner) {
+    public Catalog(String name, String title, String description, Owner owner) {
         this.name = name;
         this.title = title;
         this.description = description;
@@ -44,7 +44,7 @@ public class Catalog {
         this.status = "active";
     }
     
-    public Catalog(ObjectId id, String name, String title, String description, CatalogOwner owner) {
+    public Catalog(ObjectId id, String name, String title, String description, Owner owner) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -98,11 +98,11 @@ public class Catalog {
         this.name = name;
     }
     
-    public CatalogOwner getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(CatalogOwner owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
     
@@ -112,5 +112,9 @@ public class Catalog {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public void deactivate() {
+        this.status = "inactive";
     }
 }
