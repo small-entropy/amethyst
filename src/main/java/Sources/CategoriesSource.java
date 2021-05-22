@@ -29,13 +29,11 @@ public class CategoriesSource extends MorphiaSource<Category, CatalogsFilter, Ca
                 categoryDTO.getOwner().getUsername()
         );
         // Create CatalogCategory document
-        CatalogCategory catalogCategory = new CatalogCategory(
+        CatalogCategory catalog = new CatalogCategory(
                 categoryDTO.getCatalog().getId(),
                 categoryDTO.getCatalog().getTitle(),
                 categoryDTO.getCatalog().getOwner()
         ); 
-        // Create catalogs list
-        List<CatalogCategory> catalogs = Arrays.asList(catalogCategory);
         // Create empty breadcrumbs list
         List<BreadcrumbCategory> breadcrumbs = Arrays.asList();
         // Check on exist in data transfer object on exist parent field.
@@ -54,7 +52,7 @@ public class CategoriesSource extends MorphiaSource<Category, CatalogsFilter, Ca
                 categoryDTO.getName(),
                 categoryDTO.getTitle(),
                 categoryDTO.getDescription(),
-                catalogs,
+                catalog,
                 breadcrumbs,
                 owner
         );

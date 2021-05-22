@@ -2,9 +2,7 @@ package DataTransferObjects;
 
 import Models.BreadcrumbCategory;
 import Models.Catalog;
-import Models.CatalogCategory;
 import Models.Category;
-import Models.Owner;
 import Models.User;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -20,20 +18,11 @@ public class CategoryDTO {
     private String description;
     private Catalog catalog;
     private Category parent;
-    private List<CatalogCategory> catalogs; 
     private List<BreadcrumbCategory> bradcrumbs;
     private List<BreadcrumbCategory> childs;
     private User owner;
 
     public CategoryDTO() {}
-
-    public List<CatalogCategory> getCatalogs() {
-        return catalogs;
-    }
-
-    public void setCatalogs(List<CatalogCategory> catalogs) {
-        this.catalogs = catalogs;
-    }
 
     public List<BreadcrumbCategory> getChilds() {
         return childs;

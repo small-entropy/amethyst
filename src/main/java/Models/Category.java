@@ -25,7 +25,7 @@ public class Category {
     private String name;
     private String title;
     private String description;
-    private List<CatalogCategory> catalogs;
+    private CatalogCategory catalog;
     private List<BreadcrumbCategory> breadcrumbs;
     private List<BreadcrumbCategory> childs;
     private Owner owner;
@@ -38,7 +38,7 @@ public class Category {
             String name, 
             String title, 
             String description,
-            List<CatalogCategory> catalogs,
+            CatalogCategory catalog,
             List<BreadcrumbCategory> breadcrumbs,
             Owner owner
     ) {
@@ -46,7 +46,7 @@ public class Category {
         this.name = name;
         this.title = title;
         this.description = description;
-        this.catalogs = catalogs;
+        this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
         this.owner = owner;
     }
@@ -55,14 +55,14 @@ public class Category {
             String name, 
             String title, 
             String description,
-            List<CatalogCategory> catalogs,
+            CatalogCategory catalog,
             List<BreadcrumbCategory> breadcrumbs,
             Owner owner
     ) {
         this.name = name;
         this.title = title;
         this.description = description;
-        this.catalogs = catalogs;
+        this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
         this.owner = owner;
     }
@@ -103,12 +103,12 @@ public class Category {
         this.description = description;
     }
 
-    public List<CatalogCategory> getCatalogs() {
-        return catalogs;
+    public CatalogCategory getCatalog() {
+        return catalog;
     }
 
-    public void setCatalogs(List<CatalogCategory> catalogs) {
-        this.catalogs = catalogs;
+    public void setCatalog(CatalogCategory catalog) {
+        this.catalog = catalog;
     }
 
     public List<BreadcrumbCategory> getBreadcrumbs() {

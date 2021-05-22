@@ -56,7 +56,7 @@ public class CatalogsController {
         
         // Route for get user catalog by id
         get("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-             RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATALOGS.getName(), DefaultActions.READ.getName());
             Catalog catalog = CatalogService.getCatalogById(req, catalogsSource, rule);
             return new SuccessResponse<>(ResponseMessages.CATALOG.getMessage(), catalog);
         }, transformer);

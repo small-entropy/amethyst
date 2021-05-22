@@ -14,11 +14,15 @@ public class CategoriesController {
         // Route for get categories list
         get("", (req, res) -> "Get categories list");
         
+        get("/owner/user_id", (req, res) -> "Get category by owner");
+        
+        get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
+        
         // Route for get catalog categories
-        get("/catalogs/:catalog_id", (req, res) -> "Get categories by catalog");
+        get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
        
         // Route for create category for catelog
-        post("/catalogs/:catalog_id/owner/:user_id", (req, res) -> "Create category for catalog");
+        post("/catalog/:catalog_id/owner/:user_id", (req, res) -> "Create category for catalog");
         
         // Route for get category
         get("/:category_id", (req, res) -> "Get category by id");
