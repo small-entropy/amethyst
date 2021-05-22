@@ -33,12 +33,18 @@ public enum ResponseMessages {
     USER_PROPERTY_CREATED("Successfully created user property"),
     USER_PROPERTY_UPDATED("User property successfully updated"),
     USER_PROPETY_DELETED("Successfully removed user property"),
-    // Rights message
+    // Rights messages
     RIGHTS("Successfully get user rights"),
     RIGHT("Successfullly get user rights"),
     RIGHT_CREATED("Successfully create user right"),
     RIGHT_UPDATED("User right successfully updated"),
-    RIGHT_DELETED("Successfully removed user right");
+    RIGHT_DELETED("Successfully removed user right"),
+    // Category messages
+    CATEGORIES("Successfully get categories"),
+    CATEGORY("Successfully get category"),
+    CATEGORY_CREATED("Successfully created category"),
+    CATEGORY_UPDATED("Successfully update category"),
+    CATEGORY_DELETED("Successfulle deleted category");
     
     // Property for text message
     private final String message;

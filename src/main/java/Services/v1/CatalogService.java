@@ -18,9 +18,9 @@ import spark.Request;
  * @author small-entropy
  */
 public class CatalogService extends CoreCatalogService {
-    private static final String[] PUBLIC_EXLUDES = new String[]{ "owner", "status", "version"  };
+    private static final String[] PUBLIC_EXCLUDES = new String[]{ "owner", "status", "version"  };
     private static final String[] PRIVATE_EXCLUDES = new String[] { "status", "version" };
-    private static final String[] GLOBAL_EXLUDES = new String[] {};
+    private static final String[] GLOBAL_EXCLUDES = new String[] {};
     
     /**
      * Method fot get exlude fields by rule & request
@@ -35,23 +35,23 @@ public class CatalogService extends CoreCatalogService {
         
             if (isTrusted) {
                 if (rule.isMyGlobal()) {
-                    exludes = GLOBAL_EXLUDES;
+                    exludes = GLOBAL_EXCLUDES;
                 } else if (rule.isMyPrivate()) {
                     exludes = PRIVATE_EXCLUDES;
                 } else {
-                    exludes = PUBLIC_EXLUDES;
+                    exludes = PUBLIC_EXCLUDES;
                 }
             } else {
                 if (rule.isOtherGlobal()) {
-                    exludes = GLOBAL_EXLUDES;
+                    exludes = GLOBAL_EXCLUDES;
                 } else if (rule.isOtherPrivate()) {
                     exludes = PRIVATE_EXCLUDES;
                 } else {
-                    exludes = PUBLIC_EXLUDES;
+                    exludes = PUBLIC_EXCLUDES;
                 }
             }
         } else {
-            exludes = PUBLIC_EXLUDES;
+            exludes = PUBLIC_EXCLUDES;
         }
         return exludes;
     }

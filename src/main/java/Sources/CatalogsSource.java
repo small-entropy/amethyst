@@ -94,7 +94,7 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
     @Override
     public Catalog create(CatalogDTO catalogDTO) {
         Owner owner = new Owner(
-                catalogDTO.getOwner().getPureId(),
+                catalogDTO.getOwner().getId(),
                 catalogDTO.getOwner().getUsername()
         );
         Catalog catalog = new Catalog(

@@ -141,12 +141,12 @@ public class User {
      * Getter for user id
      * @return user id (as ObjectId)
      */
-    public String getId() {
-        return id.toString();
+    public ObjectId getId() {
+        return id;
     }
 
-    public ObjectId getPureId() {
-        return id;
+    public String getStringifiedId() {
+        return id.toString();
     }
 
     /**

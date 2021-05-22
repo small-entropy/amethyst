@@ -56,7 +56,7 @@ public class AuthorizationService extends CoreAuthorizationService {
         // Check user on exist
         if (user != null) {
             // Create find options by roles
-            UsersFilter filter = new UsersFilter(user.getPureId(), AuthorizationService.getMyFindOptionsArgs(rule));
+            UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
             // Find & return document
             return UserService.getUserById(filter, source);
         } else {
@@ -78,7 +78,7 @@ public class AuthorizationService extends CoreAuthorizationService {
         User user = AuthorizationService.registerUser(userDTO, source);
         // Options for find in documents
         UsersFilter filter = new UsersFilter();
-        filter.setId(user.getPureId());
+        filter.setId(user.getId());
         filter.setExcludes(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
         return UserService.getUserById(filter, source);
     }
@@ -124,7 +124,7 @@ public class AuthorizationService extends CoreAuthorizationService {
         // Save changes in document
         source.save(user);
         // Create filter object
-        UsersFilter filter = new UsersFilter(user.getPureId(), AuthorizationService.getMyFindOptionsArgs(rule));
+        UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
         // Return user by rule
         return UserService.getUserById(filter, source);
     }

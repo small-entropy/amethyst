@@ -49,7 +49,7 @@ public class CoreCatalogService {
      */
     protected static Catalog getCatalogByDocument(Catalog catalog, CatalogsSource source, String[] excludes) {
         ObjectId ownerId = catalog.getOwner().getId();
-        ObjectId catalogId = catalog.getPureId();
+        ObjectId catalogId = catalog.getId();
         return getCatalogById(catalogId, ownerId, source, excludes);
     }
     
@@ -67,6 +67,14 @@ public class CoreCatalogService {
         filter.setOwner(ownerId);
         filter.setExcludes(excludes);
         return source.findOneByOwnerAndId(filter);
+    }
+    
+    public static Catalog getCatalogById(String catalogIdParam, CatalogsSource source) {
+        ObjectId id = new ObjectId(catalogIdParam);
+        CatalogsFilter filter = new CatalogsFilter();
+        filter.setId(id);
+        filter.setExcludes(new String[] {});
+        return source.findOneById(filter);
     }
     
     /**

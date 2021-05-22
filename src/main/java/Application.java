@@ -21,7 +21,8 @@ enum RoutesPath {
     API("/api"), // endpoint for server API
     VERSION_ONE("/v1"), // endpoint for API version 1
     USERS("/users"), // endpoint for users API
-    CATALOGS("/catalogs"); // endpoint for catalogs API
+    CATALOGS("/catalogs"), // endpoint for catalogs API
+    CATEGORIES("/categories"); //endpoint for categories API
     private String value;
     RoutesPath(String value) {
         this.value = value;
@@ -38,7 +39,7 @@ enum CORSConfigs {
     ORIGINS("*"), // default config for allowed origin
     METHODS("GET, POST, PUT, DELETE, OPTIONS"), // default config for allowed methods
     HEADERS("Content-Type, api_key, Authorization"); // default config for allowed headers
-    private String value;
+    private final String value;
     CORSConfigs(String value) {
         this.value = value;
     }
@@ -98,6 +99,8 @@ public class Application {
                 });
                 // Grouped API routes for work with catalogs
                 path(RoutesPath.CATALOGS.getValue(), () -> CatalogsController.routes(store, toJson));
+                // Groupted API routes for categories
+                path(RoutesPath.CATEGORIES.getValue(), () -> CategoriesController.routes(store, toJson));
             });
             // Callback after call all routes with /api/* pattern
             ApiController.afterCallCommon();

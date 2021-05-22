@@ -25,20 +25,54 @@ public class Category {
     private String name;
     private String title;
     private String description;
-    private CatalogCategory catalog;
+    private List<CatalogCategory> catalogs;
     private List<BreadcrumbCategory> breadcrumbs;
     private List<BreadcrumbCategory> childs;
     private Owner owner;
     @Version private Long version;
 
     Category() {}
-
-    public String getId() {
-        return id.toString();
+    
+    public Category(
+            ObjectId id, 
+            String name, 
+            String title, 
+            String description,
+            List<CatalogCategory> catalogs,
+            List<BreadcrumbCategory> breadcrumbs,
+            Owner owner
+    ) {
+        this.id = id;
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.catalogs = catalogs;
+        this.breadcrumbs = breadcrumbs;
+        this.owner = owner;
     }
     
-    public ObjectId getPureId() {
+    public Category(
+            String name, 
+            String title, 
+            String description,
+            List<CatalogCategory> catalogs,
+            List<BreadcrumbCategory> breadcrumbs,
+            Owner owner
+    ) {
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.catalogs = catalogs;
+        this.breadcrumbs = breadcrumbs;
+        this.owner = owner;
+    }
+
+    public ObjectId getId() {
         return id;
+    }
+    
+    public String getStringifiedId() {
+        return id.toString();
     }
 
     public void setId(ObjectId id) {
@@ -69,12 +103,12 @@ public class Category {
         this.description = description;
     }
 
-    public CatalogCategory getCatalog() {
-        return catalog;
+    public List<CatalogCategory> getCatalogs() {
+        return catalogs;
     }
 
-    public void setCatalog(CatalogCategory catalog) {
-        this.catalog = catalog;
+    public void setCatalogs(List<CatalogCategory> catalogs) {
+        this.catalogs = catalogs;
     }
 
     public List<BreadcrumbCategory> getBreadcrumbs() {

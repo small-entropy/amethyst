@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Filters;
 
 import org.bson.types.ObjectId;
@@ -16,7 +11,9 @@ public class CatalogsFilter extends Filter {
     private String tile;
     private ObjectId owner;
     
-    public CatalogsFilter() {}
+    public CatalogsFilter() {
+        super();
+    }
     
     public CatalogsFilter(ObjectId id, String[] excludes) {
         super(id, excludes);

@@ -36,7 +36,7 @@ public class JsonWebToken {
      */
     public static String encode(User user) {
         return JWT.create()
-                .withClaim(JsonWebToken.CLAIMS_FIELDS_ID, user.getId())
+                .withClaim(JsonWebToken.CLAIMS_FIELDS_ID, user.getStringifiedId())
                 .withClaim(JsonWebToken.CLAIMS_FIELDS_USERNAME, user.getUsername())
                 .withIssuer(JsonWebToken.AUTH_ISSUE)
                 .sign(JsonWebToken.getAlgorithm());

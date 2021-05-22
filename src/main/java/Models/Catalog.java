@@ -69,8 +69,8 @@ public class Catalog {
         return title;
     }
 
-    public String getId() {
-        return id.toString();
+    public ObjectId getId() {
+        return id;
     }
 
     public void setId(ObjectId id) {
@@ -78,8 +78,8 @@ public class Catalog {
     }
     
     
-    public ObjectId getPureId() {
-        return id;
+    public String getStringifiedId() {
+        return id.toString();
     }
 
     public String getDescription() {
