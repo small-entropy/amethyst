@@ -24,7 +24,9 @@ public abstract class CoreRightService {
     protected static List<UserRight> getDefaultRightList() {
         UserRight usersRight= new UserRight(DefaultRights.USERS.getName());
         UserRight catalogsRight = new UserRight(DefaultRights.CATALOGS.getName());
-        return Arrays.asList(usersRight, catalogsRight);
+        UserRight categoriesRight = new UserRight(DefaultRights.CATEGORIES.getName());
+        UserRight productsRight = new UserRight(DefaultRights.PRODUCTS.getName());
+        return Arrays.asList(usersRight, catalogsRight, categoriesRight, productsRight);
     }
 
     /**

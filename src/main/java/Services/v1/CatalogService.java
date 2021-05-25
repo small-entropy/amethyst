@@ -9,6 +9,7 @@ import Sources.CatalogsSource;
 import Sources.UsersSource;
 import Utils.common.Comparator;
 import Utils.constants.RequestParams;
+import Utils.v1.RightManager;
 import java.util.List;
 import spark.Request;
 
@@ -20,41 +21,6 @@ import spark.Request;
 public class CatalogService extends CoreCatalogService {
     private static final String[] PUBLIC_EXCLUDES = new String[]{ "owner", "status", "version"  };
     private static final String[] PRIVATE_EXCLUDES = new String[] { "status", "version" };
-    private static final String[] GLOBAL_EXCLUDES = new String[] {};
-    
-    /**
-     * Method fot get exlude fields by rule & request
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return exclude fields
-     */
-    private static String[] getExudes(Request request, RuleDTO rule) {
-        String[] exludes;
-        if (rule != null) {
-            boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        
-            if (isTrusted) {
-                if (rule.isMyGlobal()) {
-                    exludes = GLOBAL_EXCLUDES;
-                } else if (rule.isMyPrivate()) {
-                    exludes = PRIVATE_EXCLUDES;
-                } else {
-                    exludes = PUBLIC_EXCLUDES;
-                }
-            } else {
-                if (rule.isOtherGlobal()) {
-                    exludes = GLOBAL_EXCLUDES;
-                } else if (rule.isOtherPrivate()) {
-                    exludes = PRIVATE_EXCLUDES;
-                } else {
-                    exludes = PUBLIC_EXCLUDES;
-                }
-            }
-        } else {
-            exludes = PUBLIC_EXCLUDES;
-        }
-        return exludes;
-    }
     
     /**
      * Method for get catalog by id from request
@@ -65,7 +31,7 @@ public class CatalogService extends CoreCatalogService {
      * @throws DataException
      */
     public static Catalog getCatalogById(Request request, CatalogsSource soure, RuleDTO rule) throws DataException {
-        String[] excludes = getExudes(request, rule);
+        String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
         var catalog = getCatalogByRequestByUserId(request, soure, excludes);
         if (catalog != null) {
             return catalog;
@@ -79,13 +45,13 @@ public class CatalogService extends CoreCatalogService {
      * Method for get list of user catalog by owner id from request params
      * @param request Spark request obejct 
      * @param source datasource for catalogs colletion
-     * @param ruleDTO rule data transfer object
+     * @param rule rule data transfer object
      * @return list of catalog documents
      * @throws DataException throw if can not find 
      */
-    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, RuleDTO ruleDTO) throws DataException {
-        String[] exludes = getExudes(request, ruleDTO);
-        var catalogs = getCatalogsByRequestForUser(request, source, exludes);
+    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, RuleDTO rule) throws DataException {
+        String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+        var catalogs = getCatalogsByRequestForUser(request, source, excludes);
         if (catalogs != null && !catalogs.isEmpty()) {
             return catalogs;
         } else {
@@ -103,8 +69,8 @@ public class CatalogService extends CoreCatalogService {
      * @throws DataException throw when can get catalogs
      */
     public static List<Catalog> getCatalogs(Request request, CatalogsSource source, RuleDTO rule) throws DataException {
-        String[] exludes = getExudes(request, rule);
-        List<Catalog> catalogs = getList(request, source, exludes);
+        String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+        List<Catalog> catalogs = getList(request, source, excludes);
         if (!catalogs.isEmpty()) {
             return catalogs;
         } else {
@@ -128,7 +94,7 @@ public class CatalogService extends CoreCatalogService {
         if (hasAccess) {
             String idParam = request.params(RequestParams.USER_ID.getName());
             Catalog catalog = createCatalog(idParam, request, catalogsSource, usersSource);
-            String[] excludes = getExudes(request, rule);
+            String[] excludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
             return getCatalogByDocument(catalog, catalogsSource, excludes);
         } else {
             Error error = new Error("Has no access to create catalog");
@@ -152,22 +118,36 @@ public class CatalogService extends CoreCatalogService {
             String idParam = request.params(RequestParams.USER_ID.getName());
             String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
             Catalog catalog = updateCatalog(idParam, catalogIdParam, request, source);
-            String[] exludes = getExudes(request, rule);
-            return getCatalogByDocument(catalog, source, exludes);
+            String[] excludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+            return getCatalogByDocument(catalog, source, excludes);
         } else {
             Error error = new Error("Has no access to update catalog document");
             throw new AccessException("CanNotUpdate", error);
         }
     }
 
-    public static Catalog deleteCatalog(Request request, CatalogsSource source, RuleDTO rule) throws AccessException, AccessException, DataException {
+    /**
+     * Method for delete catalog
+     * @param request Spark request object
+     * @param source datastoure source for catalogs collection
+     * @param rule rule data transfer object
+     * @return 
+     * @throws AccessException
+     * @throws AccessException
+     * @throws DataException 
+     */
+    public static Catalog deleteCatalog(
+            Request request, 
+            CatalogsSource source, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
             String idParam = request.params(RequestParams.USER_ID.getName());
             String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
             Catalog catalog = deleteCatalog(idParam, catalogIdParam, source);
-            String[] excludes = getExudes(request, rule);
+            String[] excludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
             return getCatalogByDocument(catalog, source, excludes);
         } else {
             Error error = new Error("Has no access to delete catalog document");

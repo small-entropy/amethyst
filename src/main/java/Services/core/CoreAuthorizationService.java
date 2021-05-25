@@ -7,7 +7,6 @@ import Sources.UsersSource;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;
 import java.util.Arrays;
-import java.util.List;
 import spark.Request;
 
 /**
@@ -62,7 +61,7 @@ public abstract class CoreAuthorizationService extends CoreService {
         // Check verified result
         if (verified) {
             // Get user generated token
-            List<String> tokens = user.getIssuedTokens();
+            var tokens = user.getIssuedTokens();
             // Check list of user generated tokens.
             // If user have a generated token - get it.
             // If user haven't a generated token - generate new token

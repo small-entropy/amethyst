@@ -7,6 +7,7 @@ import Models.UserRight;
 import Services.core.CoreUserService;
 import Services.v1.UserService;
 import Sources.UsersSource;
+import Utils.common.Comparator;
 import spark.Request;
 
 /**
@@ -14,6 +15,90 @@ import spark.Request;
  * Class for checks rights
  */
 public class RightManager {
+    // Global excludes for get documents for all fields
+    public static final String[] GLOBAL_EXCLUDES = new String[] {};
+    
+    /**
+     * Method fo get excludes with default global excludes array
+     * @param request Spark request object
+     * @param rule rule data transfer object
+     * @param publicExcludes public excludes fields
+     * @param privateExcludes private excludes fields
+     * @return exudes fields
+     */
+    public static String[] getExcludes(
+            Request request,
+            RuleDTO rule,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        return getExcludes(request, rule, GLOBAL_EXCLUDES, publicExcludes, privateExcludes);
+    }
+   
+    /**
+     * Method for get exludes fields withour default global exludes fields
+     * @param request Spark requeset object
+     * @param rule rule data transfer object
+     * @param globalExcludes global exclude fields array
+     * @param publicExludes public exclude fields array
+     * @param privateExcludes private exclude fields array
+     * @return exclude fields
+     */
+    public static String[] getExcludes(
+            Request request, 
+            RuleDTO rule,
+            String[] globalExcludes,
+            String[] publicExludes,
+            String[] privateExcludes) {
+        return getExludesByRule(
+                Comparator.id_fromParam_fromToken(request),
+                rule,
+                globalExcludes,
+                publicExludes,
+                privateExcludes
+        );
+    }
+    
+    public static String[] getExludesByRule(
+            boolean isTrusted,
+            RuleDTO rule,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) { 
+        return getExludesByRule(isTrusted, rule, GLOBAL_EXCLUDES, publicExludes, privateExcludes);
+    }
+    
+    public static String[] getExludesByRule(
+            boolean isTrusted,
+            RuleDTO rule,
+            String[] globalExcludes,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        String[] excludes;
+        if (rule != null) {
+            if (isTrusted) {
+                if (rule.isMyGlobal()) {
+                    excludes = globalExcludes;
+                } else if (rule.isMyPrivate()) {
+                    excludes = privateExcludes;
+                } else {
+                    excludes = publicExludes;
+                }
+            } else {
+                if (rule.isOtherGlobal()) {
+                    excludes = globalExcludes;
+                } else if (rule.isOtherPrivate()) {
+                    excludes = privateExcludes;
+                } else {
+                    excludes = publicExludes;
+                }
+            }
+        } else {
+            return publicExludes;
+        }
+        return excludes;
+    }
 
     /**
      * Method for get rule data transfer object by username of user

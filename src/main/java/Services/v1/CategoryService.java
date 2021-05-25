@@ -10,6 +10,7 @@ import Sources.CategoriesSource;
 import Sources.UsersSource;
 import Utils.common.Comparator;
 import Utils.constants.RequestParams;
+import Utils.v1.RightManager;
 import spark.Request;
 
 /**
@@ -18,44 +19,21 @@ import spark.Request;
  * @author small-entropy
  */
 public class CategoryService extends CoreCategoryService {
-    private static final String[] PUBLIC_EXCLUDES = new String[] {};
-    private static final String[] PRIVATE_EXCLUDES = new String[] {};
-    private static final String[] GLOBAL_EXLUDES = new String[] {};
+    
+    private static final String[] PUBLIC_EXCLUDES = new String[] { "status", "owner", "version" };
+    private static final String[] PRIVATE_EXCLUDES = new String[] { "status",  "version"};
     
     /**
-     * Method fot get exlude fields by rule & request
+     * Method for create category document
      * @param request Spark request object
+     * @param categoriesSource datastore source for categories collection
+     * @param catalogsSource datastore source for catalogs collection
+     * @param usersSource datastore source for users collection
      * @param rule rule data transfer object
-     * @return exclude fields
+     * @return created category document
+     * @throws AccessException throw if user has not access for create category document
+     * @throws DataException  throw if can not find user or catelog document
      */
-    private static String[] getExudes(Request request, RuleDTO rule) {
-        String[] exludes;
-        if (rule != null) {
-            boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        
-            if (isTrusted) {
-                if (rule.isMyGlobal()) {
-                    exludes = GLOBAL_EXLUDES;
-                } else if (rule.isMyPrivate()) {
-                    exludes = PRIVATE_EXCLUDES;
-                } else {
-                    exludes = PUBLIC_EXCLUDES;
-                }
-            } else {
-                if (rule.isOtherGlobal()) {
-                    exludes = GLOBAL_EXLUDES;
-                } else if (rule.isOtherPrivate()) {
-                    exludes = PRIVATE_EXCLUDES;
-                } else {
-                    exludes = PUBLIC_EXCLUDES;
-                }
-            }
-        } else {
-            exludes = PUBLIC_EXCLUDES;
-        }
-        return exludes;
-    }
-    
     public static Category createCategory(
             Request request, 
             CategoriesSource categoriesSource, 
@@ -69,8 +47,8 @@ public class CategoryService extends CoreCategoryService {
             String idParam = request.params(RequestParams.USER_ID.getName());
             String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
             Category category = createCategory(idParam, catalogIdParam, request, categoriesSource, catalogsSource, usersSource);
-            String[] exludes = getExudes(request, rule);
-            return null;
+            String[] exludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+            return getCategoryByDocument(category, categoriesSource, exludes);
         } else {
             Error error = new Error("Has no access to create catalog");
             throw new AccessException("CanNotCreate", error);

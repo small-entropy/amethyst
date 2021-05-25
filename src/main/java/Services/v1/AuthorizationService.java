@@ -14,7 +14,7 @@ import spark.Request;
 
 /**
  * Class for authorization service
- * @author igrav
+ * @author small-entropy
  */
 public class AuthorizationService extends CoreAuthorizationService {
 
@@ -27,11 +27,15 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @throws AuthorizationException
      * 
      */
-    public static User autoLoginUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
+    public static User autoLoginUser(
+            Request request, 
+            UsersSource source, 
+            RuleDTO rule
+    ) throws AuthorizationException {
         UsersFilter filterForReturn = new UsersFilter();
         UsersFilter filterForSearch = new UsersFilter();
         filterForReturn.setExcludes(AuthorizationService.getMyFindOptionsArgs(rule));
-        filterForSearch.setExcludes(new String[]{});
+        filterForSearch.setExcludes(UserService.ALL_ALLOWED);
         // Get user document by token
         User user = autoLoginUser(request, source, filterForReturn, filterForSearch);
         if (user != null) {
@@ -50,13 +54,20 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @return user document
      * @throws AuthorizationException
      */
-    public static User loginUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
+    public static User loginUser(
+            Request request, 
+            UsersSource source, 
+            RuleDTO rule
+    ) throws AuthorizationException {
         // Authorization user
         User user = AuthorizationService.loginUser(request, source);
         // Check user on exist
         if (user != null) {
             // Create find options by roles
-            UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
+            UsersFilter filter = new UsersFilter(
+                    user.getId(), 
+                    AuthorizationService.getMyFindOptionsArgs(rule)
+            );
             // Find & return document
             return UserService.getUserById(filter, source);
         } else {
@@ -91,12 +102,20 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @return user document
      * @throws AuthorizationException 
      */
-    public static User logoutUser(Request request, UsersSource source, RuleDTO rule) throws AuthorizationException {
+    public static User logoutUser(
+            Request request, 
+            UsersSource source, 
+            RuleDTO rule
+    ) throws AuthorizationException {
         User user = AuthorizationService.logoutUser(request, source);
         if (user != null) {
             // Crate find options
-            UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
-            // Get user document by user id with find options with rule excluded fields
+            UsersFilter filter = new UsersFilter(
+                    user.getId(), 
+                    AuthorizationService.getMyFindOptionsArgs(rule)
+            );
+            // Get user document by user id with find options with rule 
+            // excluded fields
             return UserService.getUserById(filter, source);
         } else {
             Error error = new Error("Can not find user for logout");
@@ -114,17 +133,27 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @throws DataException throw is user not found
      * @throws AuthorizationException throw if can not authotize user by token
      */
-    public static User changePassword(Request request, UsersSource source, RuleDTO rule) throws TokenException, DataException, AuthorizationException {
+    public static User changePassword(
+            Request request, 
+            UsersSource source, 
+            RuleDTO rule
+    ) throws TokenException, DataException, AuthorizationException {
         // Get user full document
         User user = UserService.getUserWithTrust(request, source);
         // Get user data transfer object
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
         // Call regenerate password for user
-        user.reGeneratePassword(userDTO.getOldPassword(), userDTO.getNewPassword());
+        user.reGeneratePassword(
+                userDTO.getOldPassword(), 
+                userDTO.getNewPassword()
+        );
         // Save changes in document
         source.save(user);
         // Create filter object
-        UsersFilter filter = new UsersFilter(user.getId(), AuthorizationService.getMyFindOptionsArgs(rule));
+        UsersFilter filter = new UsersFilter(
+                user.getId(), 
+                AuthorizationService.getMyFindOptionsArgs(rule)
+        );
         // Return user by rule
         return UserService.getUserById(filter, source);
     }

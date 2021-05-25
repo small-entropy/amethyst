@@ -26,6 +26,7 @@ public class Category {
     private String title;
     private String description;
     private CatalogCategory catalog;
+    private String status;
     private List<BreadcrumbCategory> breadcrumbs;
     private List<BreadcrumbCategory> childs;
     private Owner owner;
@@ -49,6 +50,7 @@ public class Category {
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
         this.owner = owner;
+        this.status = "active";
     }
     
     public Category(
@@ -65,6 +67,15 @@ public class Category {
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
         this.owner = owner;
+        this.status = "active";
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public ObjectId getId() {
