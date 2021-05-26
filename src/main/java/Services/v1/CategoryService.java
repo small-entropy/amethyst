@@ -11,6 +11,7 @@ import Sources.UsersSource;
 import Utils.common.Comparator;
 import Utils.constants.RequestParams;
 import Utils.v1.RightManager;
+import java.util.List;
 import spark.Request;
 
 /**
@@ -22,6 +23,21 @@ public class CategoryService extends CoreCategoryService {
     
     private static final String[] PUBLIC_EXCLUDES = new String[] { "status", "owner", "version" };
     private static final String[] PRIVATE_EXCLUDES = new String[] { "status",  "version"};
+    
+    public static List<Category> getCategoriesByUser(
+            Request request, 
+            CategoriesSource categoriesSource,
+            RuleDTO rule
+    ) throws DataException {
+        String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+        var categories = getCategoriesByRequestForUser(request, categoriesSource, excludes);
+        if (categories != null && !categories.isEmpty()) {
+            return categories;
+        } else {
+            Error error = new Error("Can not find user categories by request params");
+            throw new DataException("NotFound", error);
+        }
+    }
     
     /**
      * Method for create category document

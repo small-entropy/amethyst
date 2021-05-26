@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 public class CatalogsFilter extends Filter {
     private String name;
     private String tile;
-    private ObjectId owner;
     
     public CatalogsFilter() {
         super();
@@ -46,13 +45,5 @@ public class CatalogsFilter extends Filter {
 
     public void setTile(String tile) {
         this.tile = tile;
-    }
-
-    public ObjectId getOwner() {
-        return owner;
-    }
-
-    public void setOwner(ObjectId owner) {
-        this.owner = owner;
     }
 }

@@ -7,6 +7,7 @@ package Services.core;
 
 import DataTransferObjects.CategoryDTO;
 import Exceptions.DataException;
+import Filters.CatalogsFilter;
 import Filters.CategoriesFilter;
 import Models.Catalog;
 import Models.Category;
@@ -14,7 +15,11 @@ import Models.User;
 import Sources.CatalogsSource;
 import Sources.CategoriesSource;
 import Sources.UsersSource;
+import Utils.constants.ListConstants;
+import Utils.constants.QueryParams;
+import Utils.constants.RequestParams;
 import com.google.gson.Gson;
+import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
@@ -23,6 +28,26 @@ import spark.Request;
  * @author igrav
  */
 public class CoreCategoryService {
+    
+    protected static List<Category> getCategoriesByRequestForUser(
+            Request request,
+            CategoriesSource categoriesSource,
+            String[] excludes
+    ) {
+        String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
+        int skip = (qSkip == null) ? ListConstants.SKIP.getValue() : Integer.parseInt(qSkip);
+        // Set limit value from request query
+        String qLimit = request.queryMap().get(QueryParams.LIMIT.getKey()).value();
+        int limit = (qLimit == null) ? ListConstants.LIMIT.getValue() : Integer.parseInt(qLimit);
+        // User id
+        String idParam = request.params(RequestParams.USER_ID.getName());
+        ObjectId id = new ObjectId(idParam);
+        
+        CategoriesFilter filter = new CategoriesFilter(skip, limit, new String[]{});
+        filter.setOwner(id);
+        filter.setExcludes(excludes);
+        return categoriesSource.findAllByOwnerId(filter);
+    }
     
     /**
      * Method for get category by id

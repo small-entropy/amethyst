@@ -8,7 +8,6 @@ import org.bson.types.ObjectId;
  */
 public class CategoriesFilter extends Filter {
     private ObjectId catalog;
-    private ObjectId owner;
     
     public CategoriesFilter() {
         super();
@@ -28,13 +27,5 @@ public class CategoriesFilter extends Filter {
 
     public void setCatalog(ObjectId catalog) {
         this.catalog = catalog;
-    }
-
-    public ObjectId getOwner() {
-        return owner;
-    }
-
-    public void setOwner(ObjectId owner) {
-        this.owner = owner;
     }
 }

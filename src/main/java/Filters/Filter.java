@@ -14,8 +14,10 @@ import org.bson.types.ObjectId;
 public abstract class Filter {
     private int skip;
     private int limit;
+    private String name;
     private String status = "active";
     private ObjectId id;
+    private ObjectId owner;
     private String[] excludes;
     
     public Filter() {}
@@ -33,6 +35,22 @@ public abstract class Filter {
     
     public Filter(String[] excludes) {
         this.excludes = excludes;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ObjectId getOwner() {
+        return owner;
+    }
+
+    public void setOwner(ObjectId owner) {
+        this.owner = owner;
     }
     
     public int getSkip() {

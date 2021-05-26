@@ -13,6 +13,7 @@ import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;
 import Utils.v1.RightManager;
 import dev.morphia.Datastore;
+import java.util.List;
 import static spark.Spark.*;
 
 /**
@@ -31,7 +32,24 @@ public class CategoriesController {
         // Route for get categories list
         get("", (req, res) -> "Get categories list");
         
-        get("/owner/user_id", (req, res) -> "Get category by owner");
+        // Route for get all categories by owner id
+        get("/owner/:user_id", (req, res) -> {
+            RuleDTO rule = RightManager.getRuleByRequest_Token(
+                    req, 
+                    userSource, 
+                    DefaultRights.CATEGORIES.getName(), 
+                    DefaultActions.READ.getName()
+            );
+            List<Category> categories = CategoryService.getCategoriesByUser(
+                    req, 
+                    categoriesSource, 
+                    rule
+            );
+            return new SuccessResponse<>(
+                    ResponseMessages.CATEGORIES.getMessage(),
+                    categories
+            );
+        }, transformer);
         
         get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
         
@@ -40,9 +58,23 @@ public class CategoriesController {
        
         // Route for create category for catelog
         post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, userSource, DefaultRights.CATEGORIES.getName(), DefaultActions.CREATE.getName());
-            Category category = CategoryService.createCategory(req, categoriesSource, catalogsSource, userSource, rule);
-            return new SuccessResponse<>(ResponseMessages.CATEGORY_CREATED.getMessage(), category);
+            RuleDTO rule = RightManager.getRuleByRequest_Token(
+                    req, 
+                    userSource, 
+                    DefaultRights.CATEGORIES.getName(), 
+                    DefaultActions.CREATE.getName()
+            );
+            Category category = CategoryService.createCategory(
+                    req, 
+                    categoriesSource, 
+                    catalogsSource, 
+                    userSource, 
+                    rule
+            );
+            return new SuccessResponse<>(
+                    ResponseMessages.CATEGORY_CREATED.getMessage(), 
+                    category
+            );
         }, transformer);
         
         // Route for get category
