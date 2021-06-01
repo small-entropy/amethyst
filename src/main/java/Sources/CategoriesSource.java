@@ -8,6 +8,9 @@ import Models.Category;
 import Models.Owner;
 import Sources.Core.MorphiaSource;
 import dev.morphia.Datastore;
+import dev.morphia.query.FindOptions;
+import static dev.morphia.query.experimental.filters.Filters.and;
+import static dev.morphia.query.experimental.filters.Filters.eq;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,5 +73,21 @@ public class CategoriesSource extends MorphiaSource<Category, CategoriesFilter, 
         save(category);
         // Return saved document
         return category;
+    }
+
+    public List<Category> findAllByCatalogId(CategoriesFilter filter) {
+        FindOptions findOptions = new FindOptions()
+                .projection()
+                .exclude(filter.getExcludes())
+                .skip(filter.getSkip())
+                .limit(filter.getLimit());
+        return getStore()
+                .find(getModelClass())
+                .filter(and(
+                        eq("status", filter.getStatus()),
+                        eq("catalog.id", filter.getCatalog())
+                ))
+                .iterator(findOptions)
+                .toList();
     }
 }

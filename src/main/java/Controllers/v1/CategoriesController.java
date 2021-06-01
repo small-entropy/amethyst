@@ -1,5 +1,6 @@
 package Controllers.v1;
 
+import Controllers.core.CoreController;
 import DataTransferObjects.RuleDTO;
 import Models.Category;
 import Responses.SuccessResponse;
@@ -8,10 +9,8 @@ import Sources.CatalogsSource;
 import Sources.CategoriesSource;
 import Sources.UsersSource;
 import Transformers.JsonTransformer;
-import Utils.constants.DefaultActions;
 import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;
-import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import static spark.Spark.*;
@@ -20,7 +19,18 @@ import static spark.Spark.*;
  * Class-controller for categories
  * @author small-entropy
  */
-public class CategoriesController {
+public class CategoriesController extends CoreController {
+    
+    /** Property with name of right */
+    private static final String RIGHT = DefaultRights.CATEGORIES.getName();
+    
+    /** Property with message for success get categories */
+    private static final String MSG_LIST = ResponseMessages.CATEGORIES.getMessage();
+    /** Property with message for success create category document */
+    private static final String MSG_CREATED = ResponseMessages.CATEGORY_CREATED.getMessage();
+    /** Property with message for success get category document */
+    private static final String MSG_ENTITY = ResponseMessages.CATEGORY.getMessage();
+    
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
         CatalogsSource catalogsSource = new CatalogsSource(store);
@@ -34,36 +44,31 @@ public class CategoriesController {
         
         // Route for get all categories by owner id
         get("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(
-                    req, 
-                    userSource, 
-                    DefaultRights.CATEGORIES.getName(), 
-                    DefaultActions.READ.getName()
-            );
+            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
             List<Category> categories = CategoryService.getCategoriesByUser(
                     req, 
                     categoriesSource, 
                     rule
             );
-            return new SuccessResponse<>(
-                    ResponseMessages.CATEGORIES.getMessage(),
-                    categories
-            );
+            return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
-        get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
+        get("/catalog/:catalog_id", (req, res) -> {
+            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            List<Category> categories = CategoryService.getCatalogCategories(
+                    req,
+                    categoriesSource,
+                    rule
+            );
+            return new SuccessResponse<>(MSG_LIST, categories);
+        }, transformer);
         
         // Route for get catalog categories
         get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
        
         // Route for create category for catelog
         post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(
-                    req, 
-                    userSource, 
-                    DefaultRights.CATEGORIES.getName(), 
-                    DefaultActions.CREATE.getName()
-            );
+            RuleDTO rule = getRule(req, userSource, RIGHT, CREATE);
             Category category = CategoryService.createCategory(
                     req, 
                     categoriesSource, 
@@ -71,14 +76,19 @@ public class CategoriesController {
                     userSource, 
                     rule
             );
-            return new SuccessResponse<>(
-                    ResponseMessages.CATEGORY_CREATED.getMessage(), 
-                    category
-            );
+            return new SuccessResponse<>(MSG_CREATED, category);
         }, transformer);
         
         // Route for get category
-        get("/:category_id", (req, res) -> "Get category by id");
+        get("/:category_id", (req, res) -> {
+            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            Category category = CategoryService.getCategoryById(
+                    req, 
+                    categoriesSource,
+                    rule
+            );
+            return new SuccessResponse<>(MSG_ENTITY, category);
+        }, transformer);
         
         // Route for update category
         put("/:category_id", (req, res) -> "Update category");

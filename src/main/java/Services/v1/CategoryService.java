@@ -21,15 +21,55 @@ import spark.Request;
  */
 public class CategoryService extends CoreCategoryService {
     
+    /** Property witg public excludes fields */
     private static final String[] PUBLIC_EXCLUDES = new String[] { "status", "owner", "version" };
+    /** Property witg private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = new String[] { "status",  "version"};
     
+    /**
+     * Method for get exludes fields by rule * request
+     * @param request Spark request object
+     * @param rule rule data transfer object
+     * @return excludes fields
+     */
+    private static String[] getExcludes(Request request, RuleDTO rule) {
+        return RightManager.getExcludes(
+                request, 
+                rule, 
+                PUBLIC_EXCLUDES, 
+                PRIVATE_EXCLUDES
+        );
+    }
+    
+    /**
+     * Method fot get excludes fields by rule
+     * @param isTrusted trusted param
+     * @param rule rule data transfer obejct
+     * @return excludes fields
+     */
+    private static String[] getExludesByRule(boolean isTrusted, RuleDTO rule) {
+        return RightManager.getExludesByRule(
+                isTrusted, 
+                rule, 
+                PUBLIC_EXCLUDES, 
+                PRIVATE_EXCLUDES
+        );
+    }
+    
+    /**
+     * Methodo for get user categories
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories collections
+     * @param rule rule data transfer object
+     * @return list of categories
+     * @throws DataException throw if categories not founded
+     */
     public static List<Category> getCategoriesByUser(
             Request request, 
             CategoriesSource categoriesSource,
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+        String[] excludes = getExcludes(request, rule);
         var categories = getCategoriesByRequestForUser(request, categoriesSource, excludes);
         if (categories != null && !categories.isEmpty()) {
             return categories;
@@ -63,11 +103,60 @@ public class CategoryService extends CoreCategoryService {
             String idParam = request.params(RequestParams.USER_ID.getName());
             String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
             Category category = createCategory(idParam, catalogIdParam, request, categoriesSource, catalogsSource, usersSource);
-            String[] exludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
+            String[] exludes = getExludesByRule(isTrusted, rule);
             return getCategoryByDocument(category, categoriesSource, exludes);
         } else {
             Error error = new Error("Has no access to create catalog");
             throw new AccessException("CanNotCreate", error);
         }
     } 
+
+    /**
+     * Method for get categories by catalog
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories collection
+     * @param rule rule data transfer object
+     * @return dounded categories
+     * @throws DataException  throw if categories ca not be found
+     */
+    public static List<Category> getCatalogCategories(
+            Request request, 
+            CategoriesSource categoriesSource, 
+            RuleDTO rule
+    ) throws DataException {
+        String[] excludes = getExcludes(request, rule);
+        String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
+        var categories = getCategoriesByCatalogId(
+                request,
+                catalogIdParam,
+                categoriesSource, 
+                excludes
+        );
+        if (categories != null && !categories.isEmpty()) {
+            return categories;
+        } else {
+            Error error = new Error("Can not find categories in catalog");
+            throw new DataException("NotFound", error);
+        }
+    }
+    
+    /**
+     * Mehtod for get category by requst params (ID)
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories collection
+     * @param rule rule data transfer object
+     * @return category document
+     * @throws DataException throw if category document not found
+     */
+    public static Category getCategoryById(Request request, CategoriesSource categoriesSource, RuleDTO rule) throws DataException {
+        String[] exludes = getExcludes(request, rule);
+        String catalogIdParam = request.params(RequestParams.CATAGORY_ID.getName());
+        var category = getCategoryById(catalogIdParam, categoriesSource, exludes);
+        if (category != null) {
+            return category;
+        } else {
+            Error error = new Error("Can not find categories in catalog");
+            throw new DataException("NotFound", error);
+        }
+    }
 }

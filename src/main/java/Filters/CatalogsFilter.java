@@ -7,7 +7,6 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 public class CatalogsFilter extends Filter {
-    private String name;
     private String tile;
     
     public CatalogsFilter() {
@@ -24,19 +23,11 @@ public class CatalogsFilter extends Filter {
     
     public CatalogsFilter(String name, String[] excludes) {
         super(excludes);
-        this.name = name;
+        setName(name);
     }
     
     public CatalogsFilter(String[] excludes) {
         super(excludes);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getTile() {

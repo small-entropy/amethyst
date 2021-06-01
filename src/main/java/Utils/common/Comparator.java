@@ -19,7 +19,7 @@ public class Comparator {
         boolean isTrusted;
         String token = RequestUtils.getTokenByRequest(request);
         String idParam = request.params(RequestParams.USER_ID.getName());
-        if (token != null) {
+        if (token != null && idParam != null) {
             DecodedJWT decodedJWT = JsonWebToken.decode(token);
             String decodedId = decodedJWT.getClaim("id").asString();
             isTrusted = idParam.equals(decodedId);

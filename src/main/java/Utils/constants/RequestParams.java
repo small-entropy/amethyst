@@ -11,6 +11,7 @@ package Utils.constants;
  */
 public enum RequestParams {
     CATALOG_ID("catalog_id"),
+    CATAGORY_ID("category_id"),
     USER_ID("user_id"),
     PROPERTY_ID("property_id"),
     RIGHT_ID("right_id");

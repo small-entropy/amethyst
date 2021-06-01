@@ -29,6 +29,13 @@ import spark.Request;
  */
 public class CoreCategoryService {
     
+    /**
+     * Method for get list of categories by user id from request params
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories collection
+     * @param excludes arrya of exludes fields
+     * @return list of category documents
+     */
     protected static List<Category> getCategoriesByRequestForUser(
             Request request,
             CategoriesSource categoriesSource,
@@ -98,15 +105,60 @@ public class CoreCategoryService {
             UsersSource usersSource
     ) throws DataException {
         User user = CoreUserService.getUserById(idParam, usersSource);
-        Catalog catelog = CoreCatalogService.getCatalogById(catalogIdParam, catalogsSource);
+        Catalog catalog = CoreCatalogService.getCatalogById(catalogIdParam, catalogsSource);
         if (user != null) {
             CategoryDTO categoryDTO = new Gson().fromJson(request.body(), CategoryDTO.class);
-            categoryDTO.setCatalog(catelog);
+            categoryDTO.setCatalog(catalog);
             categoryDTO.setOwner(user);
             return categoriesSource.create(categoryDTO);
         } else {
             Error error = new Error("Can not find user");
             throw new DataException("NotFound", error);
         }
+    }
+    
+    /**
+     * Method fot get categories by catalog id fom request params
+     * @param request Spark reqeuset object
+     * @param idCatalogParam catalog id from request params (as string)
+     * @param categoriesSource datastoure source for categories collection
+     * @param excludes array of exludes fields
+     * @return list of categories documents
+     */
+    protected static List<Category> getCategoriesByCatalogId(
+            Request request, 
+            String idCatalogParam,
+            CategoriesSource categoriesSource,
+            String[] excludes
+    ) {
+        String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
+        int skip = (qSkip == null) ? ListConstants.SKIP.getValue() : Integer.parseInt(qSkip);
+        // Set limit value from request query
+        String qLimit = request.queryMap().get(QueryParams.LIMIT.getKey()).value();
+        int limit = (qLimit == null) ? ListConstants.LIMIT.getValue() : Integer.parseInt(qLimit);
+        
+        ObjectId idCatalog = new ObjectId(idCatalogParam);
+        
+        CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
+        filter.setCatalog(idCatalog);
+        
+        return categoriesSource.findAllByCatalogId(filter);
+    }
+    
+    /**
+     * Method for get category document by id from request params
+     * @param categoryIdParam catagory ID from request params (as string)
+     * @param categoriesSource datastore source for categories collection
+     * @param exludes array of excludes fields
+     * @return category document
+     */
+    protected static Category getCategoryById(
+            String categoryIdParam, 
+            CategoriesSource categoriesSource,
+            String[] exludes
+    ) {
+        ObjectId catalogId = new ObjectId(categoryIdParam);
+        CategoriesFilter filter = new CategoriesFilter(catalogId, exludes);
+        return categoriesSource.findOneById(filter);
     }
 }
