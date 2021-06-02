@@ -1,6 +1,6 @@
 package Controllers.v1;
 
-import Controllers.core.CoreController;
+import Controllers.core.AbstractController;
 import DataTransferObjects.RuleDTO;
 import Models.Category;
 import Responses.SuccessResponse;
@@ -19,7 +19,7 @@ import static spark.Spark.*;
  * Class-controller for categories
  * @author small-entropy
  */
-public class CategoriesController extends CoreController {
+public class CategoriesController extends AbstractController {
     
     /** Property with name of right */
     private static final String RIGHT = DefaultRights.CATEGORIES.getName();
@@ -30,6 +30,9 @@ public class CategoriesController extends CoreController {
     private static final String MSG_CREATED = ResponseMessages.CATEGORY_CREATED.getMessage();
     /** Property with message for success get category document */
     private static final String MSG_ENTITY = ResponseMessages.CATEGORY.getMessage();
+    /** Property with emssage for scucess update category document */
+    private static final String MSG_UPDATED = ResponseMessages.CATEGORY_UPDATED.getMessage();
+    private static final String MSG_DELETED = ResponseMessages.CATEGORY_DELETED.getMessage();
     
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
@@ -80,7 +83,7 @@ public class CategoriesController extends CoreController {
         }, transformer);
         
         // Route for get category
-        get("/:category_id", (req, res) -> {
+        get("/owner/:user_id/category/:category_id", (req, res) -> {
             RuleDTO rule = getRule(req, userSource, RIGHT, READ);
             Category category = CategoryService.getCategoryById(
                     req, 
@@ -91,9 +94,25 @@ public class CategoriesController extends CoreController {
         }, transformer);
         
         // Route for update category
-        put("/:category_id", (req, res) -> "Update category");
+        put("/owner/:user_id/category/:category_id", (req, res) -> {
+            RuleDTO rule = getRule(req, userSource, RIGHT, UPDATE);
+            Category category = CategoryService.updateCategory(
+                    req,
+                    categoriesSource,
+                    rule
+            );
+            return new SuccessResponse<>(MSG_UPDATED, category);
+        }, transformer);
         
         // Routt for mark to delete category
-        delete("/:category_id", (req, res) -> "Mark to delete category");
+        delete("/owner/:user_id/category/:category_id", (req, res) -> {
+            RuleDTO rule = getRule(req, userSource, RIGHT, DELETE);
+            Category category = CategoryService.deleteCategory(
+                    req, 
+                    categoriesSource, 
+                    rule
+            );
+            return new SuccessResponse<>(MSG_DELETED, category);
+        }, transformer);
     }
 }

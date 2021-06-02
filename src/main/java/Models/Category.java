@@ -150,5 +150,7 @@ public class Category {
         this.owner = owner;
     }
     
-    
+    public void deactivate() {
+        this.status = "inactive";
+    }
 }

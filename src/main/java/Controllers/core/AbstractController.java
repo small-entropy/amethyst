@@ -10,7 +10,7 @@ import spark.Request;
  * Core class for server controller
  * @author small-entropy
  */
-public class CoreController {
+public class AbstractController {
     
     /** Property with name of create action */
     public static final String CREATE = DefaultActions.CREATE.getName();

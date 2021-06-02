@@ -21,6 +21,10 @@ public class CategoriesFilter extends Filter {
         super(skip, limit, excludes);
     }
 
+    public CategoriesFilter(String[] excludes) {
+        super(excludes);
+    }
+
     public ObjectId getCatalog() {
         return catalog;
     }

@@ -1,6 +1,6 @@
 package Controllers.v1;
 
-import Controllers.core.CoreController;
+import Controllers.core.AbstractController;
 import DataTransferObjects.RuleDTO;
 import Models.User;
 import Responses.SuccessResponse;
@@ -21,7 +21,7 @@ import static spark.Spark.post;
  * @version 1
  * @author entropy
  */
-public class AuthorizationController extends CoreController {
+public class AuthorizationController extends AbstractController {
     /**
      * Method with define authorization routes
      * @param datastore Morphia datastore

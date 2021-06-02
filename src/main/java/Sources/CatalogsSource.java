@@ -80,6 +80,7 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
         Catalog catalog = findOneByOwnerAndId(filter);
         if (catalog != null) {
             catalog.deactivate();
+            save(catalog);
             return catalog;
         } else {
             Error error = new Error("Can not find catalog document");

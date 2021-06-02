@@ -1,6 +1,7 @@
 package Sources;
 
 import DataTransferObjects.CategoryDTO;
+import Exceptions.DataException;
 import Filters.CategoriesFilter;
 import Models.BreadcrumbCategory;
 import Models.CatalogCategory;
@@ -89,5 +90,47 @@ public class CategoriesSource extends MorphiaSource<Category, CategoriesFilter, 
                 ))
                 .iterator(findOptions)
                 .toList();
+    }
+
+    public Category update(CategoryDTO categoryDTO, CategoriesFilter filter) 
+            throws DataException {
+        Category category = findOneByOwnerAndId(filter);
+        var title = categoryDTO.getTitle();
+        var description = categoryDTO.getDescription();
+        var breadcrumbs = categoryDTO.getBradcrumbs();
+        if (category != null) {
+            if (title != null && (category.getTitle() == null || !category.getTitle().equals(title))) {
+                category.setTitle(title);
+            }
+            if (description != null && (category.getDescription() == null || !category.getDescription().equals(description))) {
+                category.setDescription(description);
+            }
+            if (breadcrumbs != null) {
+                category.setBreadcrumbs(breadcrumbs);
+            }
+            save(category);
+            return category;
+        } else {
+            Error error = new Error("Can not find category document");
+            throw new DataException("NotFound", error);
+        }
+    }
+        
+    /**
+     * 
+     * @param filer
+     * @return
+     * @throws DataException 
+     */
+    public Category deactivated(CategoriesFilter filer) throws DataException {
+        Category category = findOneByOwnerAndId(filer);
+        if (category != null) {
+            category.deactivate();
+            save(category);
+            return category;
+        } else {
+            Error error = new Error("Can not find category document");
+            throw new DataException("NotFound", error);
+        }
     }
 }

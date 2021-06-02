@@ -133,7 +133,6 @@ public class CatalogService extends CoreCatalogService {
      * @param rule rule data transfer object
      * @return 
      * @throws AccessException
-     * @throws AccessException
      * @throws DataException 
      */
     public static Catalog deleteCatalog(
@@ -146,12 +145,10 @@ public class CatalogService extends CoreCatalogService {
         if (hasAccess) {
             String idParam = request.params(RequestParams.USER_ID.getName());
             String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
-            Catalog catalog = deleteCatalog(idParam, catalogIdParam, source);
-            String[] excludes = RightManager.getExludesByRule(isTrusted, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
-            return getCatalogByDocument(catalog, source, excludes);
+            return deleteCatalog(idParam, catalogIdParam, source);
         } else {
             Error error = new Error("Has no access to delete catalog document");
-            throw new AccessException("CanNotCreate", error);
+            throw new AccessException("CanNotDelete", error);
         }
     }
 }

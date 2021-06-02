@@ -9,7 +9,6 @@ import Sources.CatalogsSource;
 import Sources.CategoriesSource;
 import Sources.UsersSource;
 import Utils.common.Comparator;
-import Utils.constants.RequestParams;
 import Utils.v1.RightManager;
 import java.util.List;
 import spark.Request;
@@ -21,9 +20,9 @@ import spark.Request;
  */
 public class CategoryService extends CoreCategoryService {
     
-    /** Property witg public excludes fields */
+    /** Property with public excludes fields */
     private static final String[] PUBLIC_EXCLUDES = new String[] { "status", "owner", "version" };
-    /** Property witg private excludes fields */
+    /** Property with private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = new String[] { "status",  "version"};
     
     /**
@@ -100,8 +99,8 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            String idParam = request.params(RequestParams.USER_ID.getName());
-            String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
+            String idParam = request.params(PARAM_USER_ID);
+            String catalogIdParam = request.params(PARAM_CATEGORY_ID);
             Category category = createCategory(idParam, catalogIdParam, request, categoriesSource, catalogsSource, usersSource);
             String[] exludes = getExludesByRule(isTrusted, rule);
             return getCategoryByDocument(category, categoriesSource, exludes);
@@ -125,7 +124,7 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
-        String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
+        String catalogIdParam = request.params(PARAM_CATEGORY_ID);
         var categories = getCategoriesByCatalogId(
                 request,
                 catalogIdParam,
@@ -150,13 +149,54 @@ public class CategoryService extends CoreCategoryService {
      */
     public static Category getCategoryById(Request request, CategoriesSource categoriesSource, RuleDTO rule) throws DataException {
         String[] exludes = getExcludes(request, rule);
-        String catalogIdParam = request.params(RequestParams.CATAGORY_ID.getName());
-        var category = getCategoryById(catalogIdParam, categoriesSource, exludes);
+        String categoryIdParam = request.params(PARAM_CATEGORY_ID);
+        var category = getCategoryById(categoryIdParam, categoriesSource, exludes);
         if (category != null) {
             return category;
         } else {
             Error error = new Error("Can not find categories in catalog");
             throw new DataException("NotFound", error);
+        }
+    }
+
+    public static Category updateCategory(
+            Request request, 
+            CategoriesSource categoriesSource, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
+        if (hasAccess) {
+            String ownerIdParam = request.params(PARAM_USER_ID);
+            String categoryIdParam = request.params(PARAM_CATEGORY_ID);
+            Category category = updateCategory(
+                    ownerIdParam, 
+                    categoryIdParam,
+                    request,
+                    categoriesSource
+            );
+            String[] excludes = getExludesByRule(isTrusted, rule);
+            return getCategoryByDocument(category, categoriesSource, excludes);
+        } else {
+            Error error = new Error("Has no access to update cateogry document");
+            throw new AccessException("CanNotUpdate", error);
+        }
+    }
+    
+    public static Category deleteCategory(
+            Request request,
+            CategoriesSource categoriesSource,
+            RuleDTO rule
+    ) throws AccessException, DataException {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        if (hasAccess) {
+            String ownerIdParam = request.params(PARAM_USER_ID);
+            String categoryIdParam = request.params(PARAM_CATEGORY_ID);
+            return deleteCategory(ownerIdParam, categoryIdParam, categoriesSource);
+        } else {
+            Error error = new Error("Has no access to delete category document");
+            throw new AccessException("CanNotDelete", error);
         }
     }
 }

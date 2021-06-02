@@ -27,7 +27,7 @@ import spark.Request;
  *
  * @author igrav
  */
-public class CoreCategoryService {
+public class CoreCategoryService extends AbstractService {
     
     /**
      * Method for get list of categories by user id from request params
@@ -160,5 +160,50 @@ public class CoreCategoryService {
         ObjectId catalogId = new ObjectId(categoryIdParam);
         CategoriesFilter filter = new CategoriesFilter(catalogId, exludes);
         return categoriesSource.findOneById(filter);
+    }
+    
+    /**
+     * Method for update category document
+     * @param ownerIdParam owner id from request params
+     * @param categoryIdParam category id from requeset params
+     * @param request Spark request objecet
+     * @param categoriesSource datastoure source for categories collection
+     * @return category document
+     * @throws DataException throw if can not find category document
+     */
+    protected static Category updateCategory(
+            String ownerIdParam,
+            String categoryIdParam,
+            Request request,
+            CategoriesSource categoriesSource
+    ) throws DataException {
+        ObjectId ownerId = new ObjectId(ownerIdParam);
+        ObjectId categoryId = new ObjectId(categoryIdParam);
+        CategoryDTO categoryDTO = new Gson().fromJson(request.body(), CategoryDTO.class);
+        CategoriesFilter filter = new CategoriesFilter(new String[]{});
+        filter.setOwner(ownerId);
+        filter.setId(categoryId);
+        return categoriesSource.update(categoryDTO, filter);
+    }
+    
+    /**
+     * Method for delete (deactivate) category document
+     * @param ownerIdParam owner id from request params
+     * @param categoryIdParam category id from requeset params
+     * @param categoriesSource datastoure source for categories collection
+     * @return category document
+     * @throws DataException throw if can not found category document
+     */
+    protected static Category deleteCategory(
+            String ownerIdParam,
+            String categoryIdParam,
+            CategoriesSource categoriesSource
+    ) throws DataException {
+        ObjectId ownerId = new ObjectId(ownerIdParam);
+        ObjectId categoryId = new ObjectId(categoryIdParam);
+        CategoriesFilter filter = new CategoriesFilter(new String[] {});
+        filter.setOwner(ownerId);
+        filter.setId(categoryId);
+        return categoriesSource.deactivated(filter);
     }
 }
