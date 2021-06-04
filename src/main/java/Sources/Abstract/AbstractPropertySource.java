@@ -7,8 +7,8 @@ package Sources.Abstract;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.User;
-import Models.UserProperty;
+import Models.Standalones.User;
+import Models.Embeddeds.UserProperty;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;

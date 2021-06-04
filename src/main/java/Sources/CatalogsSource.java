@@ -3,8 +3,8 @@ package Sources;
 import DataTransferObjects.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
-import Models.Catalog;
-import Models.Owner;
+import Models.Standalones.Catalog;
+import Models.Embeddeds.Owner;
 import Sources.Core.MorphiaSource;
 import dev.morphia.Datastore;
 

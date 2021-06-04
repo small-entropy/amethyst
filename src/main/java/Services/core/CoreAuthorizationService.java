@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.UserDTO;
 import Filters.UsersFilter;
-import Models.User;
+import Models.Standalones.User;
 import Sources.UsersSource;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;

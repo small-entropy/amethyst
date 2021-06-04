@@ -1,7 +1,7 @@
 package Controllers.v1;
 
 import DataTransferObjects.RuleDTO;
-import Models.Catalog;
+import Models.Standalones.Catalog;
 import Responses.SuccessResponse;
 import Services.v1.CatalogService;
 import Sources.CatalogsSource;

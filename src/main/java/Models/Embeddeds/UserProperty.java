@@ -1,4 +1,4 @@
-package Models;
+package Models.Embeddeds;
 import dev.morphia.annotations.Embedded;
 import org.bson.types.ObjectId;
 

@@ -3,7 +3,7 @@ package Sources;
 import Sources.Core.MorphiaSource;
 import DataTransferObjects.UserDTO;
 import Filters.UsersFilter;
-import Models.User;
+import Models.Standalones.User;
 import Utils.common.JsonWebToken;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;

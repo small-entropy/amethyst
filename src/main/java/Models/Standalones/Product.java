@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Models;
+package Models.Standalones;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;

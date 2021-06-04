@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.UserProperty;
+import Models.Embeddeds.UserProperty;
 import Services.base.BasePropertyService;
 import Sources.PropertiesSource;
 import Utils.constants.RequestParams;

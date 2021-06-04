@@ -7,7 +7,7 @@ package Sources.Abstract;
 
 import Exceptions.DataException;
 import Filters.UsersFilter;
-import Models.User;
+import Models.Standalones.User;
 import Sources.UsersSource;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;

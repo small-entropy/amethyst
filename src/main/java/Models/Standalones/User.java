@@ -1,9 +1,10 @@
-package Models;
+package Models.Standalones;
+import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.UserRight;
 import Exceptions.AuthorizationException;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
-import java.lang.String;
 import java.util.List;
 
 

@@ -1,7 +1,7 @@
 package Controllers.v1;
 
 import DataTransferObjects.RuleDTO;
-import Models.UserRight;
+import Models.Embeddeds.UserRight;
 import Responses.SuccessResponse;
 import Services.v1.UserRightService;
 import Sources.RightsSource;

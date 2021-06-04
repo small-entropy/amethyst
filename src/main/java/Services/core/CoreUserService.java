@@ -4,7 +4,7 @@ import DataTransferObjects.UserDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Filters.UsersFilter;
-import Models.User;
+import Models.Standalones.User;
 import Sources.UsersSource;
 import Utils.common.*;
 import Utils.constants.RequestParams;

@@ -2,8 +2,8 @@ package Sources;
 
 import DataTransferObjects.UserRightDTO;
 import Exceptions.DataException;
-import Models.User;
-import Models.UserRight;
+import Models.Standalones.User;
+import Models.Embeddeds.UserRight;
 import Sources.Abstract.AbstractChildUserSource;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;

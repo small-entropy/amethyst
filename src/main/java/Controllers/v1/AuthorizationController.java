@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import Controllers.core.AbstractController;
 import DataTransferObjects.RuleDTO;
-import Models.User;
+import Models.Standalones.User;
 import Responses.SuccessResponse;
 import Services.v1.AuthorizationService;
 import Sources.UsersSource;

@@ -1,9 +1,9 @@
 package DataTransferObjects;
 
-import Models.BreadcrumbCategory;
-import Models.Catalog;
-import Models.Category;
-import Models.User;
+import Models.Embeddeds.BreadcrumbCategory;
+import Models.Standalones.Catalog;
+import Models.Standalones.Category;
+import Models.Standalones.User;
 import java.util.List;
 import org.bson.types.ObjectId;
 

@@ -1,7 +1,7 @@
 package Controllers.v1;
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
-import Models.User;
+import Models.Standalones.User;
 import Responses.SuccessResponse;
 import Services.v1.UserService;
 import Sources.UsersSource;

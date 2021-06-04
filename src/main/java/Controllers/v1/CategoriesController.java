@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import Controllers.core.AbstractController;
 import DataTransferObjects.RuleDTO;
-import Models.Category;
+import Models.Standalones.Category;
 import Responses.SuccessResponse;
 import Services.v1.CategoryService;
 import Sources.CatalogsSource;

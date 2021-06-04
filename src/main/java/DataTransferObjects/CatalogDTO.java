@@ -5,7 +5,7 @@
  */
 package DataTransferObjects;
 
-import Models.User;
+import Models.Standalones.User;
 
 /**
  * Class data transfer object for catalog model data

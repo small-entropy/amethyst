@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Models;
+package Models.Embeddeds;
 
+import Models.Embeddeds.Owner;
 import dev.morphia.annotations.Embedded;
 import org.bson.types.ObjectId;
 

@@ -6,7 +6,7 @@ import Exceptions.AuthorizationException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Filters.UsersFilter;
-import Models.User;
+import Models.Standalones.User;
 import Services.core.CoreAuthorizationService;
 import Sources.UsersSource;
 import com.google.gson.Gson;

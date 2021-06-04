@@ -4,7 +4,7 @@ import DataTransferObjects.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.UserProperty;
+import Models.Embeddeds.UserProperty;
 import Services.core.CoreUserPropertyService;
 import Sources.PropertiesSource;
 import Utils.common.Comparator;

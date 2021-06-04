@@ -6,7 +6,7 @@
 package Datasources;
 
 import DataTransferObjects.UserDTO;
-import Models.User;
+import Models.Standalones.User;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.eq;

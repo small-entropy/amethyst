@@ -3,7 +3,7 @@ package Services.v1;
 import DataTransferObjects.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
-import Models.Catalog;
+import Models.Standalones.Catalog;
 import Services.core.CoreCatalogService;
 import Sources.CatalogsSource;
 import Sources.UsersSource;

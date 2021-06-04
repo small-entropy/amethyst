@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
-import Models.UserProperty;
+import Models.Embeddeds.UserProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
 import Sources.ProfileSource;

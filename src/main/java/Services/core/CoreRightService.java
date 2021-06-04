@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.UserRightDTO;
 import Exceptions.DataException;
-import Models.UserRight;
+import Models.Embeddeds.UserRight;
 import Sources.RightsSource;
 import Utils.constants.DefaultRights;
 import Utils.constants.RequestParams;

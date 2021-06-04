@@ -1,4 +1,5 @@
-package Models;
+package Models.Standalones;
+import Models.Embeddeds.Owner;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 

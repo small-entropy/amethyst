@@ -3,7 +3,7 @@ import DataTransferObjects.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.UserProperty;
+import Models.Embeddeds.UserProperty;
 import Services.core.CoreUserProfileService;
 import Sources.ProfileSource;
 import Utils.common.Comparator;

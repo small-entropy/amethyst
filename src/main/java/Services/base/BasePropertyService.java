@@ -2,7 +2,7 @@ package Services.base;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.UserProperty;
+import Models.Embeddeds.UserProperty;
 import Sources.Abstract.AbstractPropertySource;
 import Utils.common.Searcher;
 import java.util.List;

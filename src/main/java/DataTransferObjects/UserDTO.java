@@ -1,7 +1,7 @@
 package DataTransferObjects;
 
-import Models.UserProperty;
-import Models.UserRight;
+import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.UserRight;
 import java.util.List;
 
 public class UserDTO {

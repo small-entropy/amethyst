@@ -3,7 +3,7 @@ package Services.v1;
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.User;
+import Models.Standalones.User;
 import Services.core.CoreUserService;
 import Sources.UsersSource;
 import Utils.common.Comparator;
