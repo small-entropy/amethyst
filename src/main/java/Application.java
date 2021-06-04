@@ -65,7 +65,7 @@ public class Application {
         // Create database connection
         final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst", options);
         // Map all models from package
-        store.getMapper().mapPackage("Models");
+        store.getMapper().mapPackage("Models.Standalones");
         // Ensure database indexes by models
         store.ensureIndexes();
 

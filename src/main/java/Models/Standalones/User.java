@@ -9,10 +9,15 @@ import java.util.List;
 
 
 @Entity("users")
+@Indexes({
+    @Index(
+            fields = { @Field("username")}, 
+            options = @IndexOptions(unique = true)
+    )
+})
 public class User {
     @Id
     private ObjectId id;
-    @Indexed(options = @IndexOptions(unique = true))
     private String username;
     private String password;
     private List<String> issuedToken;
