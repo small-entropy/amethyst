@@ -8,7 +8,7 @@ package Sources.Abstract;
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Standalones.User;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
@@ -59,15 +59,15 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw exception if can not find user document
      */
-    public UserProperty createUserProperty(String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
+    public EmbeddedProperty createUserProperty(String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
         User user = getUserDocument(idParam);
         boolean hasProperty = hasProperty(userPropertyDTO.getKey(), user);
         if (!hasProperty) {
-            UserProperty userProperty = new UserProperty(
+            EmbeddedProperty userProperty = new EmbeddedProperty(
                         userPropertyDTO.getKey(),
                         userPropertyDTO.getValue()
                 );
-            List<UserProperty> properties = getPropertiesByUser(user);
+            List<EmbeddedProperty> properties = getPropertiesByUser(user);
             properties.add(userProperty);
             save(user);
             return userProperty;
@@ -85,8 +85,8 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      */
     private boolean hasProperty(String key, User user) {
         boolean hasProperty = false;
-        List<UserProperty> properties = getPropertiesByUser(user);
-        for (UserProperty property : properties) {
+        List<EmbeddedProperty> properties = getPropertiesByUser(user);
+        for (EmbeddedProperty property : properties) {
             if (property.getKey().equals(key)) {
                 hasProperty = true;
                 break;
@@ -102,8 +102,8 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if can not find list of user properties
      */
-    public UserProperty getUserPropertyById(String propertyIdParam, String idParam) throws DataException {
-        List<UserProperty> properties = getList(idParam);
+    public EmbeddedProperty getUserPropertyById(String propertyIdParam, String idParam) throws DataException {
+        List<EmbeddedProperty> properties = getList(idParam);
         return getUserPropertyById(propertyIdParam, properties);
     }
 
@@ -114,8 +114,8 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
-    private UserProperty getUserPropertyById(String propertyIdParam, User user) throws DataException {
-        List<UserProperty> properties = getPropertiesByUser(user);
+    private EmbeddedProperty getUserPropertyById(String propertyIdParam, User user) throws DataException {
+        List<EmbeddedProperty> properties = getPropertiesByUser(user);
         return getUserPropertyById(propertyIdParam, properties);
     }
     
@@ -126,8 +126,8 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
-    private UserProperty getUserPropertyById(String propertyIdParam, List<UserProperty> properties) throws DataException {
-        UserProperty result = Searcher.getUserPropertyByIdFromList(propertyIdParam, properties);
+    private EmbeddedProperty getUserPropertyById(String propertyIdParam, List<EmbeddedProperty> properties) throws DataException {
+        EmbeddedProperty result = Searcher.getUserPropertyByIdFromList(propertyIdParam, properties);
         if (result != null) {
             return result;
         } else {
@@ -142,9 +142,9 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return list of user properties
      * @throws DataException throw if can not find list of user properties
      */
-    public List<UserProperty> getList(String idParam) throws DataException {
+    public List<EmbeddedProperty> getList(String idParam) throws DataException {
         User user = getUserDocument(idParam);
-        List<UserProperty> properties = getPropertiesByUser(user);
+        List<EmbeddedProperty> properties = getPropertiesByUser(user);
         if (properties != null) {
             return properties;
         } else {
@@ -158,7 +158,7 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @param user user document
      * @return properties list
      */
-    private List<UserProperty> getPropertiesByUser(User user) {
+    private List<EmbeddedProperty> getPropertiesByUser(User user) {
         return switch (field) {
             case "profile" -> user.getProfile();
             case "properties" -> user.getProperties();
@@ -173,12 +173,12 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return list of user properties
      * @throws DataException throw if can not find list of user properties
      */
-    public List<UserProperty> removeProperty(String propertyIdParam, String idParam) throws DataException {
+    public List<EmbeddedProperty> removeProperty(String propertyIdParam, String idParam) throws DataException {
         User user = getUserDocument(idParam);
-        List<UserProperty> properties = getPropertiesByUser(user);
+        List<EmbeddedProperty> properties = getPropertiesByUser(user);
         Iterator iterator = properties.iterator();
         while(iterator.hasNext()) {
-            UserProperty property = (UserProperty) iterator.next();
+            EmbeddedProperty property = (EmbeddedProperty) iterator.next();
             if (property.getId().equals(propertyIdParam) &&
                     !getBlackList().contains(property.getKey())) {
                 iterator.remove();
@@ -196,9 +196,9 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return updated user property document
      * @throws DataException throw if not found user or property
      */
-    public UserProperty updateUserProperty(String propertyIdParam, String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
+    public EmbeddedProperty updateUserProperty(String propertyIdParam, String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
         User user = getUserDocument(idParam);
-        UserProperty property = getUserPropertyById(propertyIdParam, user);
+        EmbeddedProperty property = getUserPropertyById(propertyIdParam, user);
         property.setValue(userPropertyDTO.getValue());
         save(user);
         return property;

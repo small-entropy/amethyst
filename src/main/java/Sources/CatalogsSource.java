@@ -4,7 +4,7 @@ import DataTransferObjects.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
-import Models.Embeddeds.Owner;
+import Models.Embeddeds.EmbeddedOwner;
 import Sources.Core.MorphiaSource;
 import dev.morphia.Datastore;
 
@@ -30,7 +30,7 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
      */
     @Override
     public Catalog create(CatalogDTO catalogDTO) {
-        Owner owner = new Owner(
+        EmbeddedOwner owner = new EmbeddedOwner(
                 catalogDTO.getOwner().getId(),
                 catalogDTO.getOwner().getUsername()
         );

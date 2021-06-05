@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
 import Sources.ProfileSource;
@@ -33,19 +33,19 @@ public class UserProfileController {
         
         // Route for get user profile
         get("/:user_id/profile", (req, res)-> {
-            List<UserProperty> profile = UserProfileService.getUserProfile(req, source);
+            List<EmbeddedProperty> profile = UserProfileService.getUserProfile(req, source);
             return new SuccessResponse<>(ResponseMessages.PROFILE.getMessage(), profile);
         }, transformer);
         
         // Route for create profile property
         post("/:user_id/profile", (req, res) -> {
-            UserProperty property = UserProfileService.createUserProfileProperty(req, source);
+            EmbeddedProperty property = UserProfileService.createUserProfileProperty(req, source);
             return new SuccessResponse<>(ResponseMessages.PROFILE_CREATED.getMessage(), property);
         }, transformer);
         
         // Route for get user profile property by ID
         get("/:user_id/profile/:property_id", (req, res) -> {
-            UserProperty property = UserProfileService.getUserProfilePropertyById(req, source);
+            EmbeddedProperty property = UserProfileService.getUserProfilePropertyById(req, source);
             if (property != null) {
                 return new SuccessResponse<>(ResponseMessages.PROFILE_PROPERTY.getMessage(), property);
             } else {
@@ -59,7 +59,7 @@ public class UserProfileController {
             // Get user rule for update users documents
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
             // Try update user profile property
-            UserProperty property = UserProfileService.updateUserProperty(req, source, rule);
+            EmbeddedProperty property = UserProfileService.updateUserProperty(req, source, rule);
             // Return successfully response
             return new SuccessResponse<>(ResponseMessages.PROFILE_UPDATED.getMessage(), property);
         }, transformer);
@@ -67,7 +67,7 @@ public class UserProfileController {
         // Remove user profile property by UUID (user find by UUID)
         delete("/:user_id/profile/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
-            List<UserProperty> profile = UserProfileService.deleteProfileProperty(req, source, rule);
+            List<EmbeddedProperty> profile = UserProfileService.deleteProfileProperty(req, source, rule);
             return new SuccessResponse<>(ResponseMessages.PROFILE_DELETED.getMessage(), profile);
         }, transformer);
     }

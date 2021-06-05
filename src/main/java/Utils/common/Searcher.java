@@ -1,8 +1,8 @@
 package Utils.common;
 
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
-import Models.Embeddeds.UserRight;
+import Models.Embeddeds.EmbeddedProperty;
+import Models.Embeddeds.EmbeddedRight;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public class Searcher {
      * @param properties list of user properties
      * @return user property
      */
-    public static UserProperty getUserPropertyByIdFromList(String propertyId, List<UserProperty> properties) {
-        UserProperty result = null;
+    public static EmbeddedProperty getUserPropertyByIdFromList(String propertyId, List<EmbeddedProperty> properties) {
+        EmbeddedProperty result = null;
         if (properties != null && propertyId != null) {
-            for (UserProperty property : properties) {
+            for (EmbeddedProperty property : properties) {
                 if (property.getId().equals(propertyId)) {
                     result = property;
                     break;
@@ -37,9 +37,9 @@ public class Searcher {
      * @return founded right
      * @throws DataException throw if right not found
      */
-    public static UserRight getUserRightByIdFromList(String rightIdParam, List<UserRight> rights) throws DataException {
-        UserRight result = null;
-        for (UserRight right : rights) {
+    public static EmbeddedRight getUserRightByIdFromList(String rightIdParam, List<EmbeddedRight> rights) throws DataException {
+        EmbeddedRight result = null;
+        for (EmbeddedRight right : rights) {
             if (right.getId().equals(rightIdParam)) {
                 result = right;
                 break;

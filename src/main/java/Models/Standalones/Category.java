@@ -1,18 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Models.Standalones;
 
-import Models.Embeddeds.BreadcrumbCategory;
-import Models.Embeddeds.CatalogCategory;
-import Models.Embeddeds.Owner;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.IndexOptions;
-import dev.morphia.annotations.Indexed;
-import dev.morphia.annotations.Version;
+import Models.Embeddeds.EmbeddedBreadcrumb;
+import Models.Embeddeds.EmbeddedCatalog;
+import Models.Embeddeds.EmbeddedOwner;
+import dev.morphia.annotations.*;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -21,18 +12,26 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 @Entity("categories")
+@Indexes({
+    @Index(
+            fields = @Field("name"),
+            options = @IndexOptions(unique = true)
+    ),
+    @Index(fields = @Field("title")),
+    @Index(fields = @Field("catalog")),
+    @Index(fields = @Field("owner"))
+})
 public class Category {
     @Id
     private ObjectId id;
-    @Indexed(options = @IndexOptions(unique = true))
     private String name;
     private String title;
     private String description;
-    private CatalogCategory catalog;
+    private EmbeddedCatalog catalog;
     private String status;
-    private List<BreadcrumbCategory> breadcrumbs;
-    private List<BreadcrumbCategory> childs;
-    private Owner owner;
+    private List<EmbeddedBreadcrumb> breadcrumbs;
+    private List<EmbeddedBreadcrumb> childs;
+    private EmbeddedOwner owner;
     @Version private Long version;
 
     Category() {}
@@ -42,9 +41,9 @@ public class Category {
             String name, 
             String title, 
             String description,
-            CatalogCategory catalog,
-            List<BreadcrumbCategory> breadcrumbs,
-            Owner owner
+            EmbeddedCatalog catalog,
+            List<EmbeddedBreadcrumb> breadcrumbs,
+            EmbeddedOwner owner
     ) {
         this.id = id;
         this.name = name;
@@ -60,9 +59,9 @@ public class Category {
             String name, 
             String title, 
             String description,
-            CatalogCategory catalog,
-            List<BreadcrumbCategory> breadcrumbs,
-            Owner owner
+            EmbeddedCatalog catalog,
+            List<EmbeddedBreadcrumb> breadcrumbs,
+            EmbeddedOwner owner
     ) {
         this.name = name;
         this.title = title;
@@ -117,27 +116,27 @@ public class Category {
         this.description = description;
     }
 
-    public CatalogCategory getCatalog() {
+    public EmbeddedCatalog getCatalog() {
         return catalog;
     }
 
-    public void setCatalog(CatalogCategory catalog) {
+    public void setCatalog(EmbeddedCatalog catalog) {
         this.catalog = catalog;
     }
 
-    public List<BreadcrumbCategory> getBreadcrumbs() {
+    public List<EmbeddedBreadcrumb> getBreadcrumbs() {
         return breadcrumbs;
     }
 
-    public void setBreadcrumbs(List<BreadcrumbCategory> breadcrumbs) {
+    public void setBreadcrumbs(List<EmbeddedBreadcrumb> breadcrumbs) {
         this.breadcrumbs = breadcrumbs;
     }
 
-    public List<BreadcrumbCategory> getChilds() {
+    public List<EmbeddedBreadcrumb> getChilds() {
         return childs;
     }
 
-    public void setChilds(List<BreadcrumbCategory> childs) {
+    public void setChilds(List<EmbeddedBreadcrumb> childs) {
         this.childs = childs;
     }
 
@@ -145,11 +144,11 @@ public class Category {
         return version;
     }
 
-    public Owner getOwner() {
+    public EmbeddedOwner getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(EmbeddedOwner owner) {
         this.owner = owner;
     }
     

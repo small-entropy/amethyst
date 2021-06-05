@@ -2,7 +2,7 @@ package Services.base;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Sources.Abstract.AbstractPropertySource;
 import Utils.common.Searcher;
 import java.util.List;
@@ -21,7 +21,7 @@ public abstract class BasePropertyService {
      * @return user properties list
      * @throws DataException throw exception if user can not be found by request params
      */
-    protected static <S extends AbstractPropertySource> List<UserProperty> getPropertiesList(String idParam, S source) throws DataException {
+    protected static <S extends AbstractPropertySource> List<EmbeddedProperty> getPropertiesList(String idParam, S source) throws DataException {
         return source.getList(idParam);
     }
     
@@ -32,7 +32,7 @@ public abstract class BasePropertyService {
      * @return current list of user properties
      * @throws DataException 
      */
-    protected static <S extends AbstractPropertySource> List<UserProperty> removeFromList(String propertyIdParam, String idParam, S source) throws DataException {
+    protected static <S extends AbstractPropertySource> List<EmbeddedProperty> removeFromList(String propertyIdParam, String idParam, S source) throws DataException {
         return source.removeProperty(propertyIdParam, idParam);
     }
 
@@ -42,7 +42,7 @@ public abstract class BasePropertyService {
      * @param properties properties list
      * @return founded property
      */
-    protected static UserProperty getPropertyById(String propertyIdParam, List<UserProperty> properties) {
+    protected static EmbeddedProperty getPropertyById(String propertyIdParam, List<EmbeddedProperty> properties) {
         return Searcher.getUserPropertyByIdFromList(propertyIdParam, properties);
     }
 
@@ -55,7 +55,7 @@ public abstract class BasePropertyService {
      * @return founded user property
      * @throws DataException throw exception of some data not founded
      */
-    protected static <S extends AbstractPropertySource> UserProperty getPropertyById(String propertyIdParam, String idParam, S source) throws DataException {
+    protected static <S extends AbstractPropertySource> EmbeddedProperty getPropertyById(String propertyIdParam, String idParam, S source) throws DataException {
         return source.getUserPropertyById(propertyIdParam, idParam);
     }
 
@@ -68,7 +68,7 @@ public abstract class BasePropertyService {
      * @return created user property
      * @throws DataException throw exception if some data can not be founded
      */
-    protected static <S extends AbstractPropertySource> UserProperty createUserProperty(String idParam, UserPropertyDTO userPropertyDTO, S source) throws DataException {
+    protected static <S extends AbstractPropertySource> EmbeddedProperty createUserProperty(String idParam, UserPropertyDTO userPropertyDTO, S source) throws DataException {
         return source.createUserProperty(idParam, userPropertyDTO);
     }
 
@@ -82,7 +82,7 @@ public abstract class BasePropertyService {
      * @return updated user property
      * @throws DataException throw exception if come data can not be founded
      */
-    protected static <S extends AbstractPropertySource> UserProperty updateUserProperty(String propertyIdParam, String idParam, UserPropertyDTO userPropertyDTO, S source) throws DataException {
+    protected static <S extends AbstractPropertySource> EmbeddedProperty updateUserProperty(String propertyIdParam, String idParam, UserPropertyDTO userPropertyDTO, S source) throws DataException {
         return source.updateUserProperty(propertyIdParam, idParam, userPropertyDTO);
     }
 }

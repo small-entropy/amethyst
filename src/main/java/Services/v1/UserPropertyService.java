@@ -4,7 +4,7 @@ import DataTransferObjects.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Services.core.CoreUserPropertyService;
 import Sources.PropertiesSource;
 import Utils.common.Comparator;
@@ -25,7 +25,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @throws AccessException user access exception
      * @throws DataException throw if some data can not found or can not create user property
      */
-    public static UserProperty createUserProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty createUserProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -55,7 +55,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @throws DataException throw if some data can not found
      * @throws AccessException throw if user han't access to field
      */
-    public static List<UserProperty> getUserProperties(Request request, PropertiesSource source, RuleDTO rule) throws TokenException, DataException, AccessException {
+    public static List<EmbeddedProperty> getUserProperties(Request request, PropertiesSource source, RuleDTO rule) throws TokenException, DataException, AccessException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -84,7 +84,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @throws AccessException throw if user han't access to field
      * @throws DataException throw if user or property can not found
      */
-    public static UserProperty getUserPropertyById(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty getUserPropertyById(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -113,7 +113,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @throws AccessException throw if user han't access to field
      * @throws DataException throw if user or property can not found
      */
-    public static UserProperty updateProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty updateProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
@@ -133,7 +133,7 @@ public class UserPropertyService extends CoreUserPropertyService {
      * @throws AccessException throw if user hasn't access to remove document
      * @throws DataException throw if user or property can not found
      */
-    public static List<UserProperty> deleteUserProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
+    public static List<EmbeddedProperty> deleteUserProperty(Request request, PropertiesSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {

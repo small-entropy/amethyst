@@ -2,7 +2,7 @@ package Controllers.v1;
 
 import DataTransferObjects.RuleDTO;
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserPropertyService;
 import Sources.PropertiesSource;
@@ -35,7 +35,7 @@ public class UserPropertyController {
         // Get user properties list by user UUID
         get("/:user_id/properties", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            List<UserProperty> properties = UserPropertyService.getUserProperties(req, source, rule);
+            List<EmbeddedProperty> properties = UserPropertyService.getUserProperties(req, source, rule);
             return new SuccessResponse<>(ResponseMessages.USER_PROPERTIES.getMessage(), properties);
         }, transformer);
         
@@ -44,14 +44,14 @@ public class UserPropertyController {
         // For create not public property use other method!
         post("/:user_id/properties", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREATE.getName());
-            UserProperty userProperty = UserPropertyService.createUserProperty(req, source, rule);
+            EmbeddedProperty userProperty = UserPropertyService.createUserProperty(req, source, rule);
             return new SuccessResponse<>(ResponseMessages.USER_PROPERTY_CREATED.getMessage(), userProperty);
         }, transformer);
         
         // Get user property by UUID (user find by UUID)
         get("/:user_id/properties/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            UserProperty property = UserPropertyService.getUserPropertyById(req, source, rule);
+            EmbeddedProperty property = UserPropertyService.getUserPropertyById(req, source, rule);
             if (property != null) {
                 return new SuccessResponse<>(ResponseMessages.USER_PROPERTY.getMessage(), property);
             } else {
@@ -64,14 +64,14 @@ public class UserPropertyController {
         put("/:user_id/properties/:property_id", (req, res) -> {
             // Get user rule for update users documents
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
-            UserProperty property = UserPropertyService.updateProperty(req, source, rule);
+            EmbeddedProperty property = UserPropertyService.updateProperty(req, source, rule);
             return new SuccessResponse<>(ResponseMessages.USER_PROPERTY_UPDATED.getMessage(), property);
         }, transformer);
         
         // Remove user property by UUID (user find by UUID)
         delete("/:user_id/properties/:property_id", (req, res) -> {
             RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
-            List<UserProperty> properties = UserPropertyService.deleteUserProperty(req, source, rule);
+            List<EmbeddedProperty> properties = UserPropertyService.deleteUserProperty(req, source, rule);
             return new SuccessResponse<>(ResponseMessages.USER_PROPETY_DELETED.getMessage(), properties);
         }, transformer);
     }

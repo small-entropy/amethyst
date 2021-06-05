@@ -4,7 +4,7 @@ import DataTransferObjects.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Models.Embeddeds.UserRight;
+import Models.Embeddeds.EmbeddedRight;
 import Services.core.CoreRightService;
 import Sources.RightsSource;
 import Utils.common.Comparator;
@@ -16,7 +16,7 @@ import spark.Request;
  */
 public class UserRightService extends CoreRightService {
 
-    public static UserRight updateRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
+    public static EmbeddedRight updateRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
@@ -30,7 +30,7 @@ public class UserRightService extends CoreRightService {
         }
     }
 
-    public static List<UserRight> deleteRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
+    public static List<EmbeddedRight> deleteRight(Request request, RightsSource source, RuleDTO rule) throws DataException, AccessException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
@@ -44,7 +44,7 @@ public class UserRightService extends CoreRightService {
         }
     }
 
-    public static UserRight createUserRight(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedRight createUserRight(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
@@ -67,7 +67,7 @@ public class UserRightService extends CoreRightService {
      * @throws AccessException no access exception
      * @throws DataException throws if can not found user or user rights
      */
-    public static List<UserRight> getUserRights(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
+    public static List<EmbeddedRight> getUserRights(Request request, RightsSource source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
@@ -91,7 +91,7 @@ public class UserRightService extends CoreRightService {
      * @throws TokenException throw if token not send or token incorrect
      * @throws AccessException  throw if user has not access for this method
      */
-    public static UserRight getUserRightById(Request request, RightsSource source, RuleDTO rule) throws DataException, TokenException, AccessException {
+    public static EmbeddedRight getUserRightById(Request request, RightsSource source, RuleDTO rule) throws DataException, TokenException, AccessException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
         if (hasAccess) {

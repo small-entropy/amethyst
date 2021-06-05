@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Services.base.BasePropertyService;
 import Sources.ProfileSource;
 import Utils.constants.RequestParams;
@@ -22,9 +22,9 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * Method for get default profile properties list
      * @return list of user properties for profile
      */
-    public static List<UserProperty> getDefaultProfile() {
+    public static List<EmbeddedProperty> getDefaultProfile() {
         Long currentDateTime = System.currentTimeMillis();
-        UserProperty registered = new UserProperty("registered", currentDateTime);
+        EmbeddedProperty registered = new EmbeddedProperty("registered", currentDateTime);
         return Arrays.asList(registered);
     }
     
@@ -35,7 +35,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return created user property
      * @throws DataException throw if con not be found user or property document
      */
-    public static UserProperty createUserProperty(Request request, ProfileSource source) throws DataException {
+    public static EmbeddedProperty createUserProperty(Request request, ProfileSource source) throws DataException {
         String idParam = request.params(RequestParams.RIGHT_ID.getName());
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
         return createUserProperty(idParam, userPropertyDTO, source);
@@ -48,7 +48,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return list of user properties
      * @throws DataException throw if con not be found user or profile field is empty
      */
-    public static List<UserProperty> getUserProfile(Request request, ProfileSource source) throws DataException {
+    public static List<EmbeddedProperty> getUserProfile(Request request, ProfileSource source) throws DataException {
         // Get user ID param from request URL
         String idParam = request.params(RequestParams.RIGHT_ID.getName());
         return getPropertiesList(idParam, source);
@@ -61,7 +61,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return founded user property
      * @throws DataException throw if con not be found user or property document
      */
-    public static UserProperty getUserProfilePropertyById(Request request, ProfileSource source) throws DataException {
+    public static EmbeddedProperty getUserProfilePropertyById(Request request, ProfileSource source) throws DataException {
         String idParam = request.params(RequestParams.RIGHT_ID.getName());
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return getPropertyById(idParam, propertyIdParam, source);
@@ -74,7 +74,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return updated property document
      * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty updateUserProperty(Request request, ProfileSource source) throws DataException {
+    protected static EmbeddedProperty updateUserProperty(Request request, ProfileSource source) throws DataException {
         String idParam = request.params(RequestParams.RIGHT_ID.getName());
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
@@ -88,7 +88,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return actual profule value
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<UserProperty> deleteUserProfileProperty(Request request, ProfileSource source) throws DataException {
+    protected static List<EmbeddedProperty> deleteUserProfileProperty(Request request, ProfileSource source) throws DataException {
         String idParam = request.params(RequestParams.RIGHT_ID.getName());
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return source.removeProperty(propertyIdParam, idParam);

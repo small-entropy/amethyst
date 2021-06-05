@@ -1,6 +1,6 @@
 package Models.Standalones;
-import Models.Embeddeds.UserProperty;
-import Models.Embeddeds.UserRight;
+import Models.Embeddeds.EmbeddedProperty;
+import Models.Embeddeds.EmbeddedRight;
 import Exceptions.AuthorizationException;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
@@ -11,20 +11,22 @@ import java.util.List;
 @Entity("users")
 @Indexes({
     @Index(
-            fields = { @Field("username")}, 
+            fields = @Field("username"), 
             options = @IndexOptions(unique = true)
-    )
+    ),
+    @Index(fields = @Field("profile"))
 })
 public class User {
     @Id
     private ObjectId id;
+    
     private String username;
     private String password;
     private List<String> issuedToken;
     private String status;
-    private List<UserProperty> properties;
-    private List<UserProperty> profile;
-    private List<UserRight> rights;
+    private List<EmbeddedProperty> properties;
+    private List<EmbeddedProperty> profile;
+    private List<EmbeddedRight> rights;
     @Version private Long version;
 
     public Long getVersion() {
@@ -58,9 +60,9 @@ public class User {
             ObjectId id,
             String username,
             String password,
-            List<UserProperty> properties,
-            List<UserProperty> profile,
-            List<UserRight> rights
+            List<EmbeddedProperty> properties,
+            List<EmbeddedProperty> profile,
+            List<EmbeddedRight> rights
     ) {
         this.id = id;
         this.username = username;
@@ -75,7 +77,7 @@ public class User {
      * Setter for profile field
      * @param profile list of user properties for profile
      */
-    public void setProfile(List<UserProperty> profile) {
+    public void setProfile(List<EmbeddedProperty> profile) {
         this.profile = profile;
     }
 
@@ -83,7 +85,7 @@ public class User {
      * Getter for user right
      * @return list of user right
      */
-    public List<UserRight> getRights() {
+    public List<EmbeddedRight> getRights() {
         return rights;
     }
 
@@ -91,7 +93,7 @@ public class User {
      * Setter for user right property
      * @param rights new user list
      */
-    public void setRights(List<UserRight> rights) {
+    public void setRights(List<EmbeddedRight> rights) {
         this.rights = rights;
     }
 
@@ -99,7 +101,7 @@ public class User {
      * Getter for profile property
      * @return value of profile property
      */
-    public List<UserProperty> getProfile() {
+    public List<EmbeddedProperty> getProfile() {
         return profile;
     }
 
@@ -107,7 +109,7 @@ public class User {
      * Setter for profile property
      * @param properties new value for profile property
      */
-    public void setProperties(List<UserProperty> properties) {
+    public void setProperties(List<EmbeddedProperty> properties) {
         this.properties = properties;
     }
 
@@ -115,7 +117,7 @@ public class User {
      * Method for add one property to profile user properties list
      * @param property user property for profile
      */
-    public void addProfileProperty(UserProperty property) {
+    public void addProfileProperty(EmbeddedProperty property) {
         this.profile.add(property);
     }
 
@@ -123,7 +125,7 @@ public class User {
      * Method for get user properties field
      * @return list of user properties
      */
-    public List<UserProperty> getProperties() {
+    public List<EmbeddedProperty> getProperties() {
         return properties;
     }
 
@@ -131,7 +133,7 @@ public class User {
      * Add user property to user properties list
      * @param property new user property
      */
-    public void addProperty(UserProperty property) {
+    public void addProperty(EmbeddedProperty property) {
         this.properties.add(property);
     }
 

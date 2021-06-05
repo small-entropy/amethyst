@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
-import Models.Embeddeds.UserProperty;
+import Models.Embeddeds.EmbeddedProperty;
 import Services.base.BasePropertyService;
 import Sources.PropertiesSource;
 import Utils.constants.RequestParams;
@@ -20,8 +20,8 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * Method for get default properties for create user
      * @return list of default user properties
      */
-    protected static List<UserProperty> getDefaultUserProperty() {
-        UserProperty banned = new UserProperty("banned", false);
+    protected static List<EmbeddedProperty> getDefaultUserProperty() {
+        EmbeddedProperty banned = new EmbeddedProperty("banned", false);
         return Arrays.asList(banned);
     }
 
@@ -32,7 +32,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * @return user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty createUserProperty(Request request, PropertiesSource source) throws DataException {
+    protected static EmbeddedProperty createUserProperty(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
         return createUserProperty(idParam, userPropertyDTO, source);
@@ -45,7 +45,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * @return user properties list
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<UserProperty> getUserProperties(Request request, PropertiesSource source) throws DataException {
+    protected static List<EmbeddedProperty> getUserProperties(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         return getPropertiesList(idParam, source);
     }
@@ -57,7 +57,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * @return founded user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty getUserPropertyById(Request request, PropertiesSource source) throws DataException {
+    protected static EmbeddedProperty getUserPropertyById(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return getPropertyById(propertyIdParam, idParam, source);
@@ -70,7 +70,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * @return updated user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static UserProperty updateUserProperty(Request request, PropertiesSource source) throws DataException {
+    protected static EmbeddedProperty updateUserProperty(Request request, PropertiesSource source) throws DataException {
         UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         String idParams = request.params(RequestParams.USER_ID.getName());
@@ -84,7 +84,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
      * @return actual list of user properties
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<UserProperty> deleteUserProperty(Request request, PropertiesSource source) throws DataException {
+    protected static List<EmbeddedProperty> deleteUserProperty(Request request, PropertiesSource source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
         return source.removeProperty(propertyIdParam, idParam);

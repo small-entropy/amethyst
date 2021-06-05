@@ -1,27 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Models.Embeddeds;
 
-import dev.morphia.annotations.Embedded;
 import org.bson.types.ObjectId;
 
 /**
  *
- * @author igrav
+ * @author small-entropy
  */
-@Embedded
-public class BreadcrumbCategory {
+public class EmbeddedCategory {
     private ObjectId id;
     private String title;
-    
-    BreadcrumbCategory() {}
+    private String owner;
 
-    public BreadcrumbCategory(ObjectId id, String title) {
+    EmbeddedCategory() {}
+    
+    public EmbeddedCategory(
+            ObjectId id,
+            String title,
+            String owner
+    ) {
         this.id = id;
         this.title = title;
+        this.owner = owner;
     }
 
     public ObjectId getId() {
@@ -38,5 +37,13 @@ public class BreadcrumbCategory {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

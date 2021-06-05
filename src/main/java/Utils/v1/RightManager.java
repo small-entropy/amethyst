@@ -3,7 +3,7 @@ package Utils.v1;
 import DataTransferObjects.RuleDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
-import Models.Embeddeds.UserRight;
+import Models.Embeddeds.EmbeddedRight;
 import Services.core.CoreUserService;
 import Services.v1.UserService;
 import Sources.UsersSource;
@@ -142,10 +142,10 @@ public class RightManager {
      * @param user user document
      * @return right document
      */
-    private static UserRight getRight(String name, User user) {
-        UserRight result = null;
+    private static EmbeddedRight getRight(String name, User user) {
+        EmbeddedRight result = null;
         if (user != null) {
-            for (UserRight right : user.getRights()) {
+            for (EmbeddedRight right : user.getRights()) {
                 if (right.getName().equals(name)) {
                     result = right;
                 }
@@ -160,7 +160,7 @@ public class RightManager {
      * @param action action name
      * @return rule string
      */
-    private static String getRule(UserRight right, String action) {
+    private static String getRule(EmbeddedRight right, String action) {
         return switch (action) {
             case "create" -> right.getCreate();
             case "read" -> right.getRead();
@@ -178,7 +178,7 @@ public class RightManager {
      * @return rule data transfer object
      */
     public static RuleDTO getRuleObject(User user, String rightName, String ruleName) {
-        UserRight right = RightManager.getRight(rightName, user);
+        EmbeddedRight right = RightManager.getRight(rightName, user);
         String rule = (right != null) ? RightManager.getRule(right, ruleName) : null;
         return (rule != null) ? new RuleDTO(rule) : null;
     }

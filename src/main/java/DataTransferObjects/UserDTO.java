@@ -1,7 +1,7 @@
 package DataTransferObjects;
 
-import Models.Embeddeds.UserProperty;
-import Models.Embeddeds.UserRight;
+import Models.Embeddeds.EmbeddedProperty;
+import Models.Embeddeds.EmbeddedRight;
 import java.util.List;
 
 public class UserDTO {
@@ -9,9 +9,9 @@ public class UserDTO {
     private String password;
     private String oldPassword;
     private String newPassword;
-    private List<UserRight> rights;
-    private List<UserProperty> properties;
-    private List<UserProperty> profile;
+    private List<EmbeddedRight> rights;
+    private List<EmbeddedProperty> properties;
+    private List<EmbeddedProperty> profile;
     
     UserDTO() {}
     
@@ -39,27 +39,27 @@ public class UserDTO {
         return password;
     }
     
-    public List<UserRight> getRights() {
+    public List<EmbeddedRight> getRights() {
         return rights;
     }
     
-    public void setRights(List<UserRight> rights) {
+    public void setRights(List<EmbeddedRight> rights) {
         this.rights = rights;
     }
     
-    public List<UserProperty> getProperties() {
+    public List<EmbeddedProperty> getProperties() {
         return properties;
     }
     
-    public void setProperties(List<UserProperty> properties) {
+    public void setProperties(List<EmbeddedProperty> properties) {
         this.properties = properties;
     }
     
-    public List<UserProperty> getProfile() {
+    public List<EmbeddedProperty> getProfile() {
         return profile;
     }
     
-    public void setProfile(List<UserProperty> profile) {
+    public void setProfile(List<EmbeddedProperty> profile) {
         this.profile = profile;
     }
 }

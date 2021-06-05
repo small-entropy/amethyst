@@ -3,7 +3,7 @@ import org.bson.types.ObjectId;
 import dev.morphia.annotations.Embedded;
 
 @Embedded
-public class UserRight {
+public class EmbeddedRight {
     private ObjectId id;
     private String name;
     private String create;
@@ -11,9 +11,9 @@ public class UserRight {
     private String update;
     private String delete;
 
-    UserRight() {}
+    EmbeddedRight() {}
 
-    public UserRight(String collection) {
+    public EmbeddedRight(String collection) {
         this.id = new ObjectId();
         this.name = collection;
         this.create = "001000";
@@ -22,7 +22,7 @@ public class UserRight {
         this.delete = "001000";
     }
 
-    public UserRight(String collection, String create, String read, String update, String delete) {
+    public EmbeddedRight(String collection, String create, String read, String update, String delete) {
         this.id = new ObjectId();
         this.name = collection;
         this.create = create;

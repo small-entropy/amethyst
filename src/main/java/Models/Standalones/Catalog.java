@@ -1,5 +1,6 @@
 package Models.Standalones;
-import Models.Embeddeds.Owner;
+
+import Models.Embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
 
@@ -8,27 +9,34 @@ import dev.morphia.annotations.*;
  * @author small-entropy
  */
 @Entity("catalogs")
+@Indexes({
+    @Index(
+            fields = @Field("name"),
+            options = @IndexOptions(unique = true)
+    ),
+    @Index(fields = @Field("title")),
+    @Index(fields = @Field("owner"))
+})
 public class Catalog {
     @Id
     private ObjectId id;
-    @Indexed(options = @IndexOptions(unique = true))
     private String name;
     private String title;
     private String description;
-    private Owner owner;
+    private EmbeddedOwner owner;
     private String status;
     @Version private Long version;
             
     Catalog() {}
     
-    public Catalog(String name, String title, Owner owner) {
+    public Catalog(String name, String title, EmbeddedOwner owner) {
         this.name = name;
         this.title = title;
         this.owner = owner;
         this.status = "active";
     }
     
-    public Catalog(ObjectId id, String name, String title, Owner owner) {
+    public Catalog(ObjectId id, String name, String title, EmbeddedOwner owner) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -37,7 +45,7 @@ public class Catalog {
     }
     
     
-    public Catalog(String name, String title, String description, Owner owner) {
+    public Catalog(String name, String title, String description, EmbeddedOwner owner) {
         this.name = name;
         this.title = title;
         this.description = description;
@@ -45,7 +53,7 @@ public class Catalog {
         this.status = "active";
     }
     
-    public Catalog(ObjectId id, String name, String title, String description, Owner owner) {
+    public Catalog(ObjectId id, String name, String title, String description, EmbeddedOwner owner) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -99,11 +107,11 @@ public class Catalog {
         this.name = name;
     }
     
-    public Owner getOwner() {
+    public EmbeddedOwner getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(EmbeddedOwner owner) {
         this.owner = owner;
     }
     

@@ -1,6 +1,6 @@
 package DataTransferObjects;
 
-import Models.Embeddeds.BreadcrumbCategory;
+import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Standalones.Catalog;
 import Models.Standalones.Category;
 import Models.Standalones.User;
@@ -18,25 +18,25 @@ public class CategoryDTO {
     private String description;
     private Catalog catalog;
     private Category parent;
-    private List<BreadcrumbCategory> bradcrumbs;
-    private List<BreadcrumbCategory> childs;
+    private List<EmbeddedBreadcrumb> bradcrumbs;
+    private List<EmbeddedBreadcrumb> childs;
     private User owner;
 
     public CategoryDTO() {}
 
-    public List<BreadcrumbCategory> getChilds() {
+    public List<EmbeddedBreadcrumb> getChilds() {
         return childs;
     }
 
-    public void setChilds(List<BreadcrumbCategory> childs) {
+    public void setChilds(List<EmbeddedBreadcrumb> childs) {
         this.childs = childs;
     }
 
-    public List<BreadcrumbCategory> getBradcrumbs() {
+    public List<EmbeddedBreadcrumb> getBradcrumbs() {
         return bradcrumbs;
     }
 
-    public void setBradcrumbs(List<BreadcrumbCategory> bradcrumbs) {
+    public void setBradcrumbs(List<EmbeddedBreadcrumb> bradcrumbs) {
         this.bradcrumbs = bradcrumbs;
     }
 

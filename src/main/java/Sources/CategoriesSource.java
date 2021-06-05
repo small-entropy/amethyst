@@ -3,10 +3,10 @@ package Sources;
 import DataTransferObjects.CategoryDTO;
 import Exceptions.DataException;
 import Filters.CategoriesFilter;
-import Models.Embeddeds.BreadcrumbCategory;
-import Models.Embeddeds.CatalogCategory;
+import Models.Embeddeds.EmbeddedBreadcrumb;
+import Models.Embeddeds.EmbeddedCatalog;
 import Models.Standalones.Category;
-import Models.Embeddeds.Owner;
+import Models.Embeddeds.EmbeddedOwner;
 import Sources.Core.MorphiaSource;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
@@ -38,24 +38,24 @@ public class CategoriesSource extends MorphiaSource<Category, CategoriesFilter, 
     public Category create(CategoryDTO categoryDTO) {
         // Create owner document
         // Attention! Owner of category may be not equeal owner of catalog!
-        Owner owner = new Owner(
+        EmbeddedOwner owner = new EmbeddedOwner(
                 categoryDTO.getOwner().getId(),
                 categoryDTO.getOwner().getUsername()
         );
         // Create CatalogCategory document
-        CatalogCategory catalog = new CatalogCategory(
+        EmbeddedCatalog catalog = new EmbeddedCatalog(
                 categoryDTO.getCatalog().getId(),
                 categoryDTO.getCatalog().getTitle(),
                 categoryDTO.getCatalog().getOwner()
         ); 
         // Create empty breadcrumbs list
-        List<BreadcrumbCategory> breadcrumbs = Arrays.asList();
+        List<EmbeddedBreadcrumb> breadcrumbs = Arrays.asList();
         // Check on exist in data transfer object on exist parent field.
         // If field exist - create BreadcrumbCategory document and add it to
         // breadcrumbs list. 
         // If field not exist - no do anything.
         if (categoryDTO.getParent() != null) {
-            BreadcrumbCategory breadcrumb = new BreadcrumbCategory(
+            EmbeddedBreadcrumb breadcrumb = new EmbeddedBreadcrumb(
                     categoryDTO.getParent().getId(),
                     categoryDTO.getParent().getTitle()
             );

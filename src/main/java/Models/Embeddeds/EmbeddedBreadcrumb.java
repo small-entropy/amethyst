@@ -5,26 +5,23 @@
  */
 package Models.Embeddeds;
 
-import Models.Embeddeds.Owner;
 import dev.morphia.annotations.Embedded;
 import org.bson.types.ObjectId;
 
 /**
- * 
- * @author small-entropy
+ *
+ * @author igrav
  */
 @Embedded
-public class CatalogCategory {
+public class EmbeddedBreadcrumb {
     private ObjectId id;
     private String title;
-    private Owner owner;
     
-    CatalogCategory() {}
-    
-    public CatalogCategory(ObjectId id, String title, Owner owner) {
+    EmbeddedBreadcrumb() {}
+
+    public EmbeddedBreadcrumb(ObjectId id, String title) {
         this.id = id;
         this.title = title;
-        this.owner = owner;
     }
 
     public ObjectId getId() {
@@ -34,21 +31,12 @@ public class CatalogCategory {
     public void setId(ObjectId id) {
         this.id = id;
     }
-    
-    
+
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
     }
 }

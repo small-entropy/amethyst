@@ -3,14 +3,14 @@ import dev.morphia.annotations.Embedded;
 import org.bson.types.ObjectId;
 
 @Embedded
-public class UserProperty {
+public class EmbeddedProperty {
     private ObjectId id;
     private String key;
     private Object value;
 
-    UserProperty() {}
+    EmbeddedProperty() {}
 
-    public UserProperty(String key, Object value) {
+    public EmbeddedProperty(String key, Object value) {
         this.id = new ObjectId();
         this.key = key;
         this.value = value;
