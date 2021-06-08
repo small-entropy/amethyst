@@ -43,7 +43,15 @@ public class CategoriesController extends AbstractController {
         CategoriesSource categoriesSource = new CategoriesSource(store);
         
         // Route for get categories list
-        get("", (req, res) -> "Get categories list");
+        get("", (req, res) -> {
+            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            List<Category> categories = CategoryService.getCategoriesList(
+                    req,
+                    categoriesSource,
+                    rule
+            );
+            return new SuccessResponse<>(MSG_LIST, categories);
+        }, transformer);
         
         // Route for get all categories by owner id
         get("/owner/:user_id", (req, res) -> {
@@ -66,9 +74,6 @@ public class CategoriesController extends AbstractController {
             return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
-        // Route for get catalog categories
-        get("/catalog/:catalog_id", (req, res) -> "Get categories by catalog");
-       
         // Route for create category for catelog
         post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
             RuleDTO rule = getRule(req, userSource, RIGHT, CREATE);

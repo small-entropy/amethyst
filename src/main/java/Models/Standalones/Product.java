@@ -3,6 +3,7 @@ package Models.Standalones;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Embeddeds.EmbeddedCategory;
 import Models.Embeddeds.EmbeddedOwner;
+import Models.Embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Version;
@@ -22,6 +23,8 @@ public class Product {
     private String description;
     private EmbeddedCatalog catalog;
     private List<EmbeddedCategory> categories;
+    private List<EmbeddedProperty> properties;
+    private List<EmbeddedProperty> requirements;
     private EmbeddedOwner owner;
     @Version private Long version;
 
@@ -74,6 +77,30 @@ public class Product {
 
     public void setCategories(List<EmbeddedCategory> categories) {
         this.categories = categories;
+    }
+
+    public EmbeddedOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(EmbeddedOwner owner) {
+        this.owner = owner;
+    }
+
+    public List<EmbeddedProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<EmbeddedProperty> properties) {
+        this.properties = properties;
+    }
+
+    public List<EmbeddedProperty> getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(List<EmbeddedProperty> requirements) {
+        this.requirements = requirements;
     }
 
     public Long getVersion() {

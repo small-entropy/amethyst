@@ -43,9 +43,14 @@ public enum ResponseMessages {
     CATEGORIES("Successfully get categories"),
     CATEGORY("Successfully get category"),
     CATEGORY_CREATED("Successfully created category"),
-    CATEGORY_UPDATED("Successfully update category"),
-    CATEGORY_DELETED("Successfulle deleted category");
-    
+    CATEGORY_UPDATED("Successfully updated category"),
+    CATEGORY_DELETED("Successfulle deleted category"),
+    // Products messages
+    PRODUCTS("Successfully get products"),
+    PRODUCT("Successfully get product"),
+    PRODUCT_CREATED("Successfully created product"),
+    PRODUCT_UPDATED("Successfully updated product"),
+    PRODUCT_DELETED("Successfully deleted product");
     // Property for text message
     private final String message;
 

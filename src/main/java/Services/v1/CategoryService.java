@@ -140,6 +140,33 @@ public class CategoryService extends CoreCategoryService {
     }
     
     /**
+     * Method for get categories documents list
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories collection
+     * @param rule rule data transfer object
+     * @return categories list
+     * @throws DataException throw if can not found categories documents
+     */
+    public static List<Category> getCategoriesList(
+            Request request, 
+            CategoriesSource categoriesSource, 
+            RuleDTO rule
+    ) throws DataException {
+        String[] excludes = getExcludes(request, rule);
+        var categories = getList(
+                request,
+                categoriesSource,
+                excludes
+        );
+        if (categories != null && !categories.isEmpty()) {
+            return categories;
+        } else {
+            Error error = new Error("Can not find categories in catalog");
+            throw new DataException("NotFound", error);
+        }
+    }
+    
+    /**
      * Mehtod for get category by requst params (ID)
      * @param request Spark request object
      * @param categoriesSource datastore source for categories collection

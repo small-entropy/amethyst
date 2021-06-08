@@ -22,8 +22,9 @@ enum RoutesPath {
     VERSION_ONE("/v1"), // endpoint for API version 1
     USERS("/users"), // endpoint for users API
     CATALOGS("/catalogs"), // endpoint for catalogs API
-    CATEGORIES("/categories"); //endpoint for categories API
-    private String value;
+    CATEGORIES("/categories"),
+    PRODUCTS("/products"); //endpoint for categories API
+    private final String value;
     RoutesPath(String value) {
         this.value = value;
     }
@@ -63,7 +64,11 @@ public class Application {
                 .build();
         
         // Create database connection
-        final Datastore store = Morphia.createDatastore(MongoClients.create(), "Amethyst", options);
+        final Datastore store = Morphia.createDatastore(
+                MongoClients.create(), 
+                "Amethyst", 
+                options
+        );
         // Map all models from package
         store.getMapper().mapPackage("Models.Standalones");
         // Ensure database indexes by models
@@ -98,9 +103,20 @@ public class Application {
                     UserRightsController.routes(store, toJson);
                 });
                 // Grouped API routes for work with catalogs
-                path(RoutesPath.CATALOGS.getValue(), () -> CatalogsController.routes(store, toJson));
+                path(
+                        RoutesPath.CATALOGS.getValue(), 
+                        () -> CatalogsController.routes(store, toJson)
+                );
                 // Groupted API routes for categories
-                path(RoutesPath.CATEGORIES.getValue(), () -> CategoriesController.routes(store, toJson));
+                path(
+                        RoutesPath.CATEGORIES.getValue(), 
+                        () -> CategoriesController.routes(store, toJson)
+                );
+                // Grouped API routes for work with products
+                path(
+                        RoutesPath.PRODUCTS.getValue(), 
+                        () -> ProductsController.routes(store, toJson)
+                );
             });
             // Callback after call all routes with /api/* pattern
             ApiController.afterCallCommon();

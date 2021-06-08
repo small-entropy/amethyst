@@ -7,7 +7,6 @@ package Services.core;
 
 import DataTransferObjects.CategoryDTO;
 import Exceptions.DataException;
-import Filters.CatalogsFilter;
 import Filters.CategoriesFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.Category;
@@ -50,10 +49,31 @@ public class CoreCategoryService extends AbstractService {
         String idParam = request.params(RequestParams.USER_ID.getName());
         ObjectId id = new ObjectId(idParam);
         
-        CategoriesFilter filter = new CategoriesFilter(skip, limit, new String[]{});
+        CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
         filter.setOwner(id);
-        filter.setExcludes(excludes);
         return categoriesSource.findAllByOwnerId(filter);
+    }
+    
+    /**
+     * Method for get categories list of documents
+     * @param request Spark request object
+     * @param categoriesSource datastore source for categories documents
+     * @param excludes excludes fields
+     * @return founded categories list
+     */
+    protected static List<Category> getList(
+            Request request,
+            CategoriesSource categoriesSource,
+            String[] excludes
+    ) {
+        String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
+        int skip = (qSkip == null) ? ListConstants.SKIP.getValue() : Integer.parseInt(qSkip);
+        // Set limit value from request query
+        String qLimit = request.queryMap().get(QueryParams.LIMIT.getKey()).value();
+        int limit = (qLimit == null) ? ListConstants.LIMIT.getValue() : Integer.parseInt(qLimit);
+        
+        CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
+        return  categoriesSource.findAll(filter);
     }
     
     /**
