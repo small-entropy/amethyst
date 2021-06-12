@@ -1,15 +1,12 @@
 package Controllers.v1;
 
+import Controllers.base.BaseUserRightsController;
 import DataTransferObjects.RuleDTO;
 import Models.Embeddeds.EmbeddedRight;
 import Responses.SuccessResponse;
 import Services.v1.UserRightService;
 import Sources.RightsSource;
 import Transformers.JsonTransformer;
-import Utils.constants.DefaultActions;
-import Utils.constants.DefaultRights;
-import Utils.constants.ResponseMessages;
-import Utils.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +16,7 @@ import static spark.Spark.*;
  * Static class for work with user right document
  * @author small-entropy
  */
-public class UserRightsController {
+public class UserRightsController extends BaseUserRightsController {
     
     private final static List<String> BLACK_LIST = Arrays.asList("users_right", "catalogs_right");
     
@@ -34,37 +31,40 @@ public class UserRightsController {
         // Routes for work with user rights
         // Get all rights by user UUID
         get("/:user_id/rights", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
-            List<EmbeddedRight> rights = UserRightService.getUserRights(req, source, rule);
-            return new SuccessResponse<>(ResponseMessages.RIGHTS.getMessage(), rights);
+            RuleDTO rule = getRule(req, source, RULE, READ);
+            List<EmbeddedRight> rights = UserRightService
+                    .getUserRights(req, source, rule);
+            return new SuccessResponse<>(MSG_LIST, rights);
         }, transformer);
         
         // Create new user rights (user find by UUID)
         post("/:user_id/rights", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.CREATE.getName());
-            EmbeddedRight right = UserRightService.createUserRight(req, source, rule);
-            return new SuccessResponse<>(ResponseMessages.RIGHT_CREATED.getMessage(), right);
+            RuleDTO rule = getRule(req, source, RULE, CREATE);
+            EmbeddedRight right = UserRightService
+                    .createUserRight(req, source, rule);
+            return new SuccessResponse<>(MSG_CREATED, right);
         }, transformer);
         
         // Get new user right by UUID (find user by UUID)
         get("/:user_id/rights/:right_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.READ.getName());
+            RuleDTO rule = getRule(req, source, RULE, READ);
             EmbeddedRight right = UserRightService.getUserRightById(req, source, rule);
-            return new SuccessResponse<>(ResponseMessages.RIGHT.getMessage() ,right);
+            return new SuccessResponse<>(MSG_ENTITY ,right);
         }, transformer);
         
         // Update user right by UUID (find user by UUID)
         put("/:user_id/rights/:right_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.UPDATE.getName());
+            RuleDTO rule = getRule(req, source, RULE, UPDATE);
             EmbeddedRight right = UserRightService.updateRight(req, source, rule);
-            return new SuccessResponse<>(ResponseMessages.RIGHT_UPDATED.getMessage(), right);
+            return new SuccessResponse<>(MSG_UPDATED, right);
         }, transformer);
         
         // Mark to remove user right (find user by UUID)
         delete("/:user_id/rights/:right_id", (req, res) -> {
-            RuleDTO rule = RightManager.getRuleByRequest_Token(req, source, DefaultRights.USERS.getName(), DefaultActions.DELETE.getName());
-            List<EmbeddedRight> rights = UserRightService.deleteRight(req, source, rule);
-            return new SuccessResponse<>(ResponseMessages.RIGHT_DELETED.getMessage(), rights);
+            RuleDTO rule = getRule(req, source, RULE, DELETE);
+            List<EmbeddedRight> rights = UserRightService
+                    .deleteRight(req, source, rule);
+            return new SuccessResponse<>(MSG_DELETED, rights);
         }, transformer);
     }
 }

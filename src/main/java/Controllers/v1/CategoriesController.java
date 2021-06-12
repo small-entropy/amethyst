@@ -1,6 +1,6 @@
 package Controllers.v1;
 
-import Controllers.core.AbstractController;
+import Controllers.base.BaseCategoriesController;
 import DataTransferObjects.RuleDTO;
 import Models.Standalones.Category;
 import Responses.SuccessResponse;
@@ -9,8 +9,6 @@ import Sources.CatalogsSource;
 import Sources.CategoriesSource;
 import Sources.UsersSource;
 import Transformers.JsonTransformer;
-import Utils.constants.DefaultRights;
-import Utils.constants.ResponseMessages;
 import dev.morphia.Datastore;
 import java.util.List;
 import static spark.Spark.*;
@@ -19,20 +17,7 @@ import static spark.Spark.*;
  * Class-controller for categories
  * @author small-entropy
  */
-public class CategoriesController extends AbstractController {
-    
-    /** Property with name of right */
-    private static final String RIGHT = DefaultRights.CATEGORIES.getName();
-    
-    /** Property with message for success get categories */
-    private static final String MSG_LIST = ResponseMessages.CATEGORIES.getMessage();
-    /** Property with message for success create category document */
-    private static final String MSG_CREATED = ResponseMessages.CATEGORY_CREATED.getMessage();
-    /** Property with message for success get category document */
-    private static final String MSG_ENTITY = ResponseMessages.CATEGORY.getMessage();
-    /** Property with emssage for scucess update category document */
-    private static final String MSG_UPDATED = ResponseMessages.CATEGORY_UPDATED.getMessage();
-    private static final String MSG_DELETED = ResponseMessages.CATEGORY_DELETED.getMessage();
+public class CategoriesController extends BaseCategoriesController {
     
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source

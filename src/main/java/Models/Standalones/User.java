@@ -216,6 +216,15 @@ public class User {
     private static String getHashedPassword(String password) {
         return BCrypt.withDefaults().hashToString(12, password.toCharArray());
     }
+    
+    /**
+     * Getter for first token from issued tokens list
+     * @return first token from list
+     */
+    public String getFirstToken() {
+        final int index = 0;
+        return this.issuedToken.get(index);
+    }
 
     /**
      * Getter for active state user

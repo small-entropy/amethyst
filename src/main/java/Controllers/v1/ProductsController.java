@@ -1,9 +1,7 @@
 package Controllers.v1;
 
-import Controllers.core.AbstractController;
+import Controllers.core.v1.AbstractController;
 import Transformers.JsonTransformer;
-import Utils.constants.DefaultRights;
-import Utils.constants.ResponseMessages;
 import dev.morphia.Datastore;
 import static spark.Spark.*;
 
@@ -12,15 +10,7 @@ import static spark.Spark.*;
  * @author small-entropy
  */
 public class ProductsController extends AbstractController {
-    
-    private static final String RULE = DefaultRights.PRODUCTS.getName();
-
-    private static final String MSG_LIST = ResponseMessages.PRODUCTS.getMessage();
-    private static final String MSG_ENTITY = ResponseMessages.PRODUCT.getMessage();
-    private static final String MSG_CREATED = ResponseMessages.PRODUCT_CREATED.getMessage();
-    private static final String MSG_UPDATED = ResponseMessages.PRODUCT_UPDATED.getMessage();
-    private static final String MSG_DELETED = ResponseMessages.PRODUCT_DELETED.getMessage();
-
+ 
     public static void routes(Datastore store, JsonTransformer transformer) {
         get("", (req, res) -> "Get products list");
         get("/:product_id", (req, res) -> "Get product document");

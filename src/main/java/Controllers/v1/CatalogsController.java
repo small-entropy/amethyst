@@ -1,6 +1,6 @@
 package Controllers.v1;
 
-import Controllers.core.AbstractController;
+import Controllers.base.BaseCatalogsController;
 import DataTransferObjects.RuleDTO;
 import Models.Standalones.Catalog;
 import Responses.SuccessResponse;
@@ -8,8 +8,6 @@ import Services.v1.CatalogService;
 import Sources.CatalogsSource;
 import Sources.UsersSource;
 import Transformers.JsonTransformer;
-import Utils.constants.DefaultRights;
-import Utils.constants.ResponseMessages;
 import dev.morphia.Datastore;
 import java.util.List;
 
@@ -19,15 +17,7 @@ import static spark.Spark.*;
  * Class controller for work with catalogs routes
  * @author small-entropy
  */
-public class CatalogsController extends AbstractController {
-    
-    private static final String RIGHT = DefaultRights.CATALOGS.getName();
-    
-    private static final String MSG_LIST = ResponseMessages.CATALOGS_LIST.getMessage();
-    private static final String MSG_ENTITY = ResponseMessages.CATALOG.getMessage();
-    private static final String MSG_CREATED = ResponseMessages.CATALOG_CREATED.getMessage();
-    private static final String MSG_UPDATED = ResponseMessages.CATALOG_UPDATED.getMessage();
-    private static final String MSG_DELETED = ResponseMessages.CATALOG_DELETED.getMessage();
+public class CatalogsController extends BaseCatalogsController {
     
     /**
      * Static method for initialize catalogs routes
