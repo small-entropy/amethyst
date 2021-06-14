@@ -21,18 +21,18 @@ public class CategoriesController extends BaseCategoriesController {
     
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
-        CatalogsRepository catalogsSource = new CatalogsRepository(store);
+        CatalogsRepository catalogsRepository = new CatalogsRepository(store);
         // Create user datastore source
-        UsersRepository userSource = new UsersRepository(store);
+        UsersRepository usersRepository = new UsersRepository(store);
         // Create categories datastore source
-        CategoriesRepository categoriesSource = new CategoriesRepository(store);
+        CategoriesRepository categoriesRepository = new CategoriesRepository(store);
         
         // Route for get categories list
         get("", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             List<Category> categories = CategoryService.getCategoriesList(
                     req,
-                    categoriesSource,
+                    categoriesRepository,
                     rule
             );
             return new SuccessResponse<>(MSG_LIST, categories);
@@ -40,20 +40,20 @@ public class CategoriesController extends BaseCategoriesController {
         
         // Route for get all categories by owner id
         get("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             List<Category> categories = CategoryService.getCategoriesByUser(
                     req, 
-                    categoriesSource, 
+                    categoriesRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
         get("/catalog/:catalog_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             List<Category> categories = CategoryService.getCatalogCategories(
                     req,
-                    categoriesSource,
+                    categoriesRepository,
                     rule
             );
             return new SuccessResponse<>(MSG_LIST, categories);
@@ -61,12 +61,12 @@ public class CategoriesController extends BaseCategoriesController {
         
         // Route for create category for catelog
         post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, CREATE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, CREATE);
             Category category = CategoryService.createCategory(
                     req, 
-                    categoriesSource, 
-                    catalogsSource, 
-                    userSource, 
+                    categoriesRepository, 
+                    catalogsRepository, 
+                    usersRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_CREATED, category);
@@ -74,10 +74,10 @@ public class CategoriesController extends BaseCategoriesController {
         
         // Route for get category
         get("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             Category category = CategoryService.getCategoryById(
                     req, 
-                    categoriesSource,
+                    categoriesRepository,
                     rule
             );
             return new SuccessResponse<>(MSG_ENTITY, category);
@@ -85,21 +85,21 @@ public class CategoriesController extends BaseCategoriesController {
         
         // Route for update category
         put("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, UPDATE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, UPDATE);
             Category category = CategoryService.updateCategory(
                     req,
-                    categoriesSource,
+                    categoriesRepository,
                     rule
             );
             return new SuccessResponse<>(MSG_UPDATED, category);
         }, transformer);
         
-        // Routt for mark to delete category
+        // Route for mark to delete category
         delete("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, DELETE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, DELETE);
             Category category = CategoryService.deleteCategory(
                     req, 
-                    categoriesSource, 
+                    categoriesRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_DELETED, category);

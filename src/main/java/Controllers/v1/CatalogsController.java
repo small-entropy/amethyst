@@ -26,16 +26,16 @@ public class CatalogsController extends BaseCatalogsController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
-        CatalogsRepository catalogsSource = new CatalogsRepository(store);
+        CatalogsRepository catalogsRepository = new CatalogsRepository(store);
         // Create user datastore source
-        UsersRepository userSource = new UsersRepository(store);
+        UsersRepository usersRepository = new UsersRepository(store);
         
         // Route for work with catalog list
         get("", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             List<Catalog> catalogs = CatalogService.getCatalogs(
                     req, 
-                    catalogsSource, 
+                    catalogsRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_LIST, catalogs);
@@ -43,11 +43,11 @@ public class CatalogsController extends BaseCatalogsController {
 
         // Route for create catalog
         post("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, CREATE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, CREATE);
             Catalog catalog = CatalogService.createCatalog(
                     req, 
-                    catalogsSource, 
-                    userSource, 
+                    catalogsRepository, 
+                    usersRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_CREATED, catalog);
@@ -55,10 +55,10 @@ public class CatalogsController extends BaseCatalogsController {
         
         // Route for create catalog document
         get("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             List<Catalog> catalogs = CatalogService.getCatalogsByUser(
                     req, 
-                    catalogsSource, 
+                    catalogsRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_LIST, catalogs);
@@ -66,10 +66,10 @@ public class CatalogsController extends BaseCatalogsController {
         
         // Route for get user catalog by id
         get("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, READ);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
             Catalog catalog = CatalogService.getCatalogById(
                     req, 
-                    catalogsSource, 
+                    catalogsRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_ENTITY, catalog);
@@ -77,10 +77,10 @@ public class CatalogsController extends BaseCatalogsController {
         
         // Route for update catalog
         put("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, UPDATE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, UPDATE);
             Catalog catalog = CatalogService.updateCatalog(
                     req, 
-                    catalogsSource, 
+                    catalogsRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_UPDATED, catalog);
@@ -88,10 +88,10 @@ public class CatalogsController extends BaseCatalogsController {
         
         // Route for delete catalog
         delete("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            RuleDTO rule = getRule(req, userSource, RIGHT, DELETE);
+            RuleDTO rule = getRule(req, usersRepository, RIGHT, DELETE);
             Catalog catalog = CatalogService.deleteCatalog(
                     req, 
-                    catalogsSource, 
+                    catalogsRepository, 
                     rule
             );
             return new SuccessResponse<>(MSG_DELETED, catalog);

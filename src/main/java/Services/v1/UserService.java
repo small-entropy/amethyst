@@ -20,12 +20,15 @@ public class UserService extends CoreUserService {
     /**
      * Method for deactivate user account
      * @param request Spark request object
-     * @param source
+     * @param usersRepository
      * @return user object after saving
      * @throws TokenException
      * @throws DataException
      */
-    public static User markToRemove(Request request, UsersRepository source) throws TokenException, DataException {
+    public static User markToRemove(
+            Request request, 
+            UsersRepository usersRepository
+    ) throws TokenException, DataException {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -40,7 +43,7 @@ public class UserService extends CoreUserService {
                 // Get id from query params
                 String paramId = request.params(RequestParams.USER_ID.getName());
                 // Find user by id
-                User user = getUserById(paramId, source);
+                User user = getUserById(paramId, usersRepository);
                 // Check founded user
                 // If user found - deactivate user & save changes
                 // If user not found - return null
@@ -48,7 +51,7 @@ public class UserService extends CoreUserService {
                     // Deactivate user
                     user.deactivate();
                     // Save changes in database
-                    source.save(user);
+                    usersRepository.save(user);
                     // Return saved document
                     return user;
                 } else {
@@ -70,27 +73,34 @@ public class UserService extends CoreUserService {
      * Method for get user information by UUID.If user send token 
      * - get full document.If user not send token - get short document
      * @param request Spark request object
-     * @param source
+     * @param usersRepository
      * @return founded user document
      */
-    public static User getUserById(Request request, UsersRepository source) {
+    public static User getUserById(
+            Request request, 
+            UsersRepository usersRepository
+    ) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         String idParam = request.params(RequestParams.USER_ID.getName());
         String[] excludes = isTrusted
                 ? UserService.PUBLIC_AND_PRIVATE_ALLOWED
                 : UserService.PUBLIC_ALLOWED;
-        return getUserById(idParam, excludes, source);
+        return getUserById(idParam, excludes, usersRepository);
     }
     
    /**
      * Method for get user list
      * @param request Spark request object
-     * @param source
+     * @param usersRepository
      * @param rule
      * @return list of users documents
      * @throws DataException
      */
-    public static List<User> getList(Request request, UsersRepository source, RuleDTO rule) throws DataException {
+    public static List<User> getList(
+            Request request, 
+            UsersRepository usersRepository, 
+            RuleDTO rule
+    ) throws DataException {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;
@@ -105,6 +115,6 @@ public class UserService extends CoreUserService {
         int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
         String[] excludes = UserService.getOtherFindOptionsArgs(rule);
         // Get users list
-        return getList(skip, limit, excludes, source);
+        return getList(skip, limit, excludes, usersRepository);
     }
 }

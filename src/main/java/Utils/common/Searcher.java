@@ -17,7 +17,10 @@ public class Searcher {
      * @param properties list of user properties
      * @return user property
      */
-    public static EmbeddedProperty getUserPropertyByIdFromList(String propertyId, List<EmbeddedProperty> properties) {
+    public static EmbeddedProperty getUserPropertyByIdFromList(
+            String propertyId, 
+            List<EmbeddedProperty> properties
+    ) {
         EmbeddedProperty result = null;
         if (properties != null && propertyId != null) {
             for (EmbeddedProperty property : properties) {
@@ -37,7 +40,10 @@ public class Searcher {
      * @return founded right
      * @throws DataException throw if right not found
      */
-    public static EmbeddedRight getUserRightByIdFromList(String rightIdParam, List<EmbeddedRight> rights) throws DataException {
+    public static EmbeddedRight getUserRightByIdFromList(
+            String rightIdParam, 
+            List<EmbeddedRight> rights
+    ) throws DataException {
         EmbeddedRight result = null;
         for (EmbeddedRight right : rights) {
             if (right.getId().equals(rightIdParam)) {

@@ -17,7 +17,8 @@ import org.bson.types.ObjectId;
  * Source for work with user collection
  * @author small-entropy
  */
-public class UsersRepository extends MorphiaRpository<User, UsersFilter, UserDTO> {
+public class UsersRepository 
+        extends MorphiaRpository<User, UsersFilter, UserDTO> {
     
     /**
      * Constuctor users collection sources

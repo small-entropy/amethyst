@@ -12,24 +12,24 @@ import spark.Request;
  * @version 1
  */
 public class AbstractController extends BaseController {
-    
+        
     /**
      * Method for get rule data transfer object
      * @param request Spark reqeust object
-     * @param usersSource users datastore source
+     * @param usersRepository users datastore source
      * @param right right name
      * @param action action name
      * @return 
      */
     protected static RuleDTO getRule(
             Request request,
-            UsersRepository usersSource,
+            UsersRepository usersRepository,
             String right,
             String action
     ) {
         return RightManager.getRuleByRequest_Token(
                 request,
-                usersSource,
+                usersRepository,
                 right,
                 action
         );

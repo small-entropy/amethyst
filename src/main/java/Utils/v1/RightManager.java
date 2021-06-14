@@ -32,7 +32,13 @@ public class RightManager {
             String[] publicExcludes,
             String[] privateExcludes
     ) {
-        return getExcludes(request, rule, GLOBAL_EXCLUDES, publicExcludes, privateExcludes);
+        return getExcludes(
+                request, 
+                rule, 
+                GLOBAL_EXCLUDES, 
+                publicExcludes, 
+                privateExcludes
+        );
     }
    
     /**
@@ -65,7 +71,13 @@ public class RightManager {
             String[] publicExludes,
             String[] privateExcludes
     ) { 
-        return getExludesByRule(isTrusted, rule, GLOBAL_EXCLUDES, publicExludes, privateExcludes);
+        return getExludesByRule(
+                isTrusted, 
+                rule, 
+                GLOBAL_EXCLUDES, 
+                publicExludes, 
+                privateExcludes
+        );
     }
     
     public static String[] getExludesByRule(
@@ -103,14 +115,19 @@ public class RightManager {
     /**
      * Method for get rule data transfer object by username of user
      * @param request Spark request object
-     * @param source
+     * @param usersRepository
      * @param rightName right name
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Username(Request request, UsersRepository source, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Username(
+            Request request, 
+            UsersRepository usersRepository, 
+            String rightName, 
+            String ruleName
+    ) {
         try {
-            User user = UserService.getUserByUsername(request, source);
+            User user = UserService.getUserByUsername(request, usersRepository);
             return RightManager.getRuleObject(user, rightName, ruleName);
         } catch (Exception exception) {
             return null;
@@ -120,16 +137,25 @@ public class RightManager {
     /**
      * Method for get rule data transfer object by user token
      * @param request Spark request object
-     * @param source
+     * @param usersRepository
      * @param rightName right name
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Token(Request request, UsersRepository source, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Token(
+            Request request, 
+            UsersRepository usersRepository, 
+            String rightName, 
+            String ruleName
+    ) {
         try {
             UsersFilter filter = new UsersFilter();
             filter.setExcludes(UserService.ALL_ALLOWED);
-            User user = CoreUserService.getUserByToken(request, source, filter);
+            User user = CoreUserService.getUserByToken(
+                    request, 
+                    usersRepository, 
+                    filter
+            );
             return RightManager.getRuleObject(user, rightName, ruleName);
         } catch (Exception exception) {
             return null;

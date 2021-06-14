@@ -18,24 +18,38 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Method for login user by token
      * @param request Spark request object
-     * @param source source for work with users collection
+     * @param usersRepository source for work with users collection
      * @param filterForReturn filter object for return answer
      * @param filterForSearch filter object for search user
      * @return founded user document
      */
-    protected static User autoLoginUser(Request request, UsersRepository source, UsersFilter filterForReturn, UsersFilter filterForSearch) {
+    protected static User autoLoginUser(
+            Request request, 
+            UsersRepository usersRepository, 
+            UsersFilter filterForReturn, 
+            UsersFilter filterForSearch
+    ) {
         // Get user document by token
-        User user = CoreUserService.getUserByToken(request, source, filterForSearch);
+        User user = CoreUserService.getUserByToken(
+                request,
+                usersRepository,
+                filterForSearch
+        );
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
-        // Check user on exist & check issuedToken (token must be contains in this field)
+        // Check user on exist & check issuedToken (token must be contains 
+        // in this field)
         // If all check right - return user object,
         // else - return null.
         return (user != null
                 && token != null
                 && user.getIssuedTokens() != null
                 && user.getIssuedTokens().contains(token))
-                ? CoreUserService.getUserByToken(request, source, filterForReturn)
+                ? CoreUserService.getUserByToken(
+                        request, 
+                        usersRepository, 
+                        filterForReturn
+                )
                 : null;
     }
 
@@ -43,16 +57,19 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Method for auth user
      * @param request Spark request object
-     * @param source source for work with users collection
+     * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User loginUser(Request request, UsersRepository source) {
+    protected static User loginUser(
+            Request request,
+            UsersRepository usersRepository
+    ) {
         // Transform JSON object from body to Map
         UserDTO userDTO = CoreUserService.getUserDtoFromBody(request);
         // Get field "password" from map
         String password = userDTO.getPassword();
         // Find user by username from request body
-        User user = CoreUserService.getUserByUsername(userDTO, source);
+        User user = CoreUserService.getUserByUsername(userDTO, usersRepository);
         // Verified user password:
         // if user not find - false,
         // if user send wrong password - false,
@@ -69,7 +86,7 @@ public abstract class CoreAuthorizationService extends CoreService {
             if (tokens == null || tokens.isEmpty()) {
                 token = JsonWebToken.encode(user);
                 user.setIssuedTokens(Arrays.asList(token));
-                source.save(user);
+                usersRepository.save(user);
             }
             return user;
         } else {
@@ -80,24 +97,30 @@ public abstract class CoreAuthorizationService extends CoreService {
     /**
      * Base method for register user
      * @param userDTO user data transfer obejct
-     * @param source source for work with users collection
+     * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User registerUser(UserDTO userDTO, UsersRepository source) {
+    protected static User registerUser(
+            UserDTO userDTO,
+            UsersRepository usersRepository
+    ) {
         // Create user document
         userDTO.setProperties(CoreUserPropertyService.getDefaultUserProperty());
         userDTO.setProfile(CoreUserProfileService.getDefaultProfile());
         userDTO.setRights(CoreRightService.getDefaultRightList());
-        return source.create(userDTO);
+        return usersRepository.create(userDTO);
     }
 
     /**
      * Method for remove user token
      * @param request Spark request object
-     * @param source source for work with users collection
+     * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User logoutUser(Request request, UsersRepository source) {
+    protected static User logoutUser(
+            Request request,
+            UsersRepository usersRepository
+    ) {
         // Not include in token value
         final int NOT_IN_LIST = -1;
         // Create filter object
@@ -105,10 +128,14 @@ public abstract class CoreAuthorizationService extends CoreService {
         // Set exludes field for filter
         filter.setExcludes(CoreUserService.ALL_ALLOWED);
         // Get user document from database (full document)
-        User user = CoreUserService.getUserByToken(request, source, filter);
+        User user = CoreUserService.getUserByToken(
+                request, 
+                usersRepository, 
+                filter
+        );
         // Check user document on exist
-        // If founded user document not equal null - remove token from issued token list,
-        // save changes & return saved document.
+        // If founded user document not equal null - remove token from issued
+        // token list, save changes & return saved document.
         // If founded user document equal null - return null.
         if (user != null) {
             // Get token from request
@@ -123,7 +150,7 @@ public abstract class CoreAuthorizationService extends CoreService {
                 // Remove from issued tokens list token from request
                 user.getIssuedTokens().remove(tokenIndex);
                 // Save changes in database
-                source.save(user);
+                usersRepository.save(user);
                 // return user document
                 return user;
             } else {

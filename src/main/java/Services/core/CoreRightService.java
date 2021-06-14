@@ -32,44 +32,65 @@ public abstract class CoreRightService {
     /**
      * Method for get user right list
      * @param request Spark request object
-     * @param source source for work with users collection
+     * @param rightsRepository source for work with users collection
      * @return list of user rights
      * @throws DataException throw if can not found user or rights
      */
-    protected static List<EmbeddedRight> getUserRights(Request request, RightsRepository source) throws DataException {
+    protected static List<EmbeddedRight> getUserRights(
+            Request request, 
+            RightsRepository rightsRepository
+    ) throws DataException {
         String idPaString = request.params(RequestParams.USER_ID.getName());
-        return source.getList(idPaString);
+        return rightsRepository.getList(idPaString);
     }
     
     /**
      * MEthod for return user rights by request from source
      * @param request Spark request object
-     * @param source user rights source
+     * @param rightsRepository user rights source
      * @return user right document
      * @throws DataException throw if can not found user or right
      */
-    protected static EmbeddedRight getUserRightById(Request request, RightsRepository source) throws DataException {
+    protected static EmbeddedRight getUserRightById(
+            Request request, 
+            RightsRepository rightsRepository
+    ) throws DataException {
        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
        String idParam = request.params(RequestParams.USER_ID.getName());
-       return source.getRightByIdParam(rightIdParam, idParam);
+       return rightsRepository.getRightByIdParam(rightIdParam, idParam);
     }
     
-    protected static EmbeddedRight createUserRight(Request request, RightsRepository source) throws DataException {
+    protected static EmbeddedRight createUserRight(
+            Request request, 
+            RightsRepository rightsRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
-        UserRightDTO rightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
-        return source.createUserRight(idParam, rightDTO);
+        UserRightDTO rightDTO = new Gson()
+                .fromJson(request.body(), UserRightDTO.class);
+        return rightsRepository.createUserRight(idParam, rightDTO);
     }
     
-    protected static List<EmbeddedRight> deleteRights(Request request, RightsRepository source) throws DataException {
+    protected static List<EmbeddedRight> deleteRights(
+            Request request, 
+            RightsRepository rightsRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
-        return source.removeRight(rightIdParam, idParam);
+        return rightsRepository.removeRight(rightIdParam, idParam);
     }
     
-    protected static EmbeddedRight updateRight(Request request, RightsRepository source) throws DataException {
+    protected static EmbeddedRight updateRight(
+            Request request, 
+            RightsRepository rightsRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
-        UserRightDTO userRightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
-        return source.updateUserRight(rightIdParam, idParam, userRightDTO);
+        UserRightDTO userRightDTO = new Gson()
+                .fromJson(request.body(), UserRightDTO.class);
+        return rightsRepository.updateUserRight(
+                rightIdParam, 
+                idParam, 
+                userRightDTO
+        );
     }
 }

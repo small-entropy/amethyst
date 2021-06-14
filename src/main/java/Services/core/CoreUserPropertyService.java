@@ -28,65 +28,95 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
     /**
      * Method for create user property
      * @param request Spark request object
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @return user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static EmbeddedProperty createUserProperty(Request request, PropertiesRepository source) throws DataException {
+    protected static EmbeddedProperty createUserProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
-        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-        return createUserProperty(idParam, userPropertyDTO, source);
+        UserPropertyDTO userPropertyDTO = new Gson()
+                .fromJson(request.body(), UserPropertyDTO.class);
+        return createUserProperty(
+                idParam, 
+                userPropertyDTO, 
+                propertiesRepository
+        );
     }
 
     /**
      * Get user properties by request
      * @param request Spark request object
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @return user properties list
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<EmbeddedProperty> getUserProperties(Request request, PropertiesRepository source) throws DataException {
+    protected static List<EmbeddedProperty> getUserProperties(
+            Request request, 
+            PropertiesRepository propertiesRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
-        return getPropertiesList(idParam, source);
+        return getPropertiesList(idParam, propertiesRepository);
     }
 
     /**
      * Method for get user property by id
      * @param request Spark request object
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @return founded user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static EmbeddedProperty getUserPropertyById(Request request, PropertiesRepository source) throws DataException {
+    protected static EmbeddedProperty getUserPropertyById(
+            Request request, 
+            PropertiesRepository propertiesRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
-        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
-        return getPropertyById(propertyIdParam, idParam, source);
+        String propertyIdParam = request
+                .params(RequestParams.PROPERTY_ID.getName());
+        return getPropertyById(propertyIdParam, idParam, propertiesRepository);
     }
 
     /**
      * Method for update user property in user document
      * @param request Spark request object
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @return updated user property
      * @throws DataException throw if con not be found user or property document
      */
-    protected static EmbeddedProperty updateUserProperty(Request request, PropertiesRepository source) throws DataException {
-        UserPropertyDTO userPropertyDTO = new Gson().fromJson(request.body(), UserPropertyDTO.class);
-        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
-        String idParams = request.params(RequestParams.USER_ID.getName());
-        return updateUserProperty(propertyIdParam, idParams, userPropertyDTO, source);
+    protected static EmbeddedProperty updateUserProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository
+    ) throws DataException {
+        UserPropertyDTO userPropertyDTO = new Gson()
+                .fromJson(request.body(), UserPropertyDTO.class);
+        String propertyIdParam = request
+                .params(RequestParams.PROPERTY_ID.getName());
+        String idParams = request
+                .params(RequestParams.USER_ID.getName());
+        return updateUserProperty(
+                propertyIdParam, 
+                idParams, 
+                userPropertyDTO, 
+                propertiesRepository
+        );
     }
     
     /**
      * Method for remove user property by request params
      * @param request Spark request object
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @return actual list of user properties
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<EmbeddedProperty> deleteUserProperty(Request request, PropertiesRepository source) throws DataException {
+    protected static List<EmbeddedProperty> deleteUserProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository
+    ) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
-        String propertyIdParam = request.params(RequestParams.PROPERTY_ID.getName());
-        return source.removeProperty(propertyIdParam, idParam);
+        String propertyIdParam = request
+                .params(RequestParams.PROPERTY_ID.getName());
+        return propertiesRepository.removeProperty(propertyIdParam, idParam);
     }
 }

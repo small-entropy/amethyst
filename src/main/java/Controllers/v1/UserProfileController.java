@@ -7,6 +7,7 @@ import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
 import Repositories.v1.ProfileRepository;
+import Repositories.v1.UsersRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -22,31 +23,36 @@ public class UserProfileController extends BaseUserProfileController {
     
     /**
      * Method with init routes for work with profile property documents
-     * @param store Morphia datastore
+     * @param datastore Morphia datastore
      * @param transformer JSON response transformer
      */
-    public static void routes(Datastore store, JsonTransformer transformer) {
+    public static void routes(Datastore datastore, JsonTransformer transformer) {
         
-        ProfileRepository source = new ProfileRepository(store, BLACK_LIST);
+        ProfileRepository profileRepository = new ProfileRepository(
+                datastore, 
+                BLACK_LIST
+        );
+        
+        UsersRepository usersRepository = new UsersRepository(datastore);
         
         // Route for get user profile
         get("/:user_id/profile", (req, res)-> {
             List<EmbeddedProperty> profile = UserProfileService
-                    .getUserProfile(req, source);
+                    .getUserProfile(req, profileRepository);
             return new SuccessResponse<>(MSG_LIST, profile);
         }, transformer);
         
         // Route for create profile property
         post("/:user_id/profile", (req, res) -> {
             EmbeddedProperty property = UserProfileService
-                    .createUserProfileProperty(req, source);
+                    .createUserProfileProperty(req, profileRepository);
             return new SuccessResponse<>(MSG_CREATED, property);
         }, transformer);
         
         // Route for get user profile property by ID
         get("/:user_id/profile/:property_id", (req, res) -> {
             EmbeddedProperty property = UserProfileService
-                    .getUserProfilePropertyById(req, source);
+                    .getUserProfilePropertyById(req, profileRepository);
             if (property != null) {
                 return new SuccessResponse<>(MSG_ENTITY, property);
             } else {
@@ -58,19 +64,19 @@ public class UserProfileController extends BaseUserProfileController {
         // Update user profile property by property UUID (user find by UUID)
         put("/:user_id/profile/:property_id", (req, res) -> {
             // Get user rule for update users documents
-            RuleDTO rule = getRule(req, source, RULE, UPDATE);
+            RuleDTO rule = getRule(req, usersRepository, RULE, UPDATE);
             // Try update user profile property
             EmbeddedProperty property = UserProfileService
-                    .updateUserProperty(req, source, rule);
+                    .updateUserProperty(req, profileRepository, rule);
             // Return successfully response
             return new SuccessResponse<>(MSG_UPDATED, property);
         }, transformer);
         
         // Remove user profile property by UUID (user find by UUID)
         delete("/:user_id/profile/:property_id", (req, res) -> {
-            RuleDTO rule = getRule(req, source, RULE, DELETE);
+            RuleDTO rule = getRule(req, usersRepository, RULE, DELETE);
             List<EmbeddedProperty> profile = UserProfileService
-                    .deleteProfileProperty(req, source, rule);
+                    .deleteProfileProperty(req, profileRepository, rule);
             return new SuccessResponse<>(MSG_DELETED, profile);
         }, transformer);
     }

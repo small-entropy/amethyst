@@ -21,9 +21,16 @@ import spark.Request;
 public class CategoryService extends CoreCategoryService {
     
     /** Property with public excludes fields */
-    private static final String[] PUBLIC_EXCLUDES = new String[] { "status", "owner", "version" };
+    private static final String[] PUBLIC_EXCLUDES = new String[] { 
+        "status", 
+        "owner", 
+        "version" 
+    };
     /** Property with private excludes fields */
-    private static final String[] PRIVATE_EXCLUDES = new String[] { "status",  "version"};
+    private static final String[] PRIVATE_EXCLUDES = new String[] { 
+        "status",  
+        "version"
+    };
     
     /**
      * Method for get exludes fields by rule * request
@@ -69,7 +76,11 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
-        var categories = getCategoriesByRequestForUser(request, categoriesSource, excludes);
+        var categories = getCategoriesByRequestForUser(
+                request, 
+                categoriesSource, 
+                excludes
+        );
         if (categories != null && !categories.isEmpty()) {
             return categories;
         } else {
@@ -101,7 +112,13 @@ public class CategoryService extends CoreCategoryService {
         if (hasAccess) {
             String idParam = request.params(PARAM_USER_ID);
             String catalogIdParam = request.params(PARAM_CATEGORY_ID);
-            Category category = createCategory(idParam, catalogIdParam, request, categoriesSource, catalogsSource, usersSource);
+            Category category = createCategory(
+                    idParam, 
+                    catalogIdParam, 
+                    request, 
+                    categoriesSource, 
+                    catalogsSource, usersSource
+            );
             String[] exludes = getExludesByRule(isTrusted, rule);
             return getCategoryByDocument(category, categoriesSource, exludes);
         } else {
@@ -174,10 +191,18 @@ public class CategoryService extends CoreCategoryService {
      * @return category document
      * @throws DataException throw if category document not found
      */
-    public static Category getCategoryById(Request request, CategoriesRepository categoriesSource, RuleDTO rule) throws DataException {
+    public static Category getCategoryById(
+            Request request, 
+            CategoriesRepository categoriesSource, 
+            RuleDTO rule
+    ) throws DataException {
         String[] exludes = getExcludes(request, rule);
         String categoryIdParam = request.params(PARAM_CATEGORY_ID);
-        var category = getCategoryById(categoryIdParam, categoriesSource, exludes);
+        var category = getCategoryById(
+                categoryIdParam, 
+                categoriesSource, 
+                exludes
+        );
         if (category != null) {
             return category;
         } else {

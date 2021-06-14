@@ -19,13 +19,18 @@ public class UserPropertyService extends CoreUserPropertyService {
     /**
      * Method for create user property
      * @param request Spark request object
-     * @param source users data source
+     * @param propertiesRepository users data source
      * @param rule rule data transfer object
      * @return user property
      * @throws AccessException user access exception
-     * @throws DataException throw if some data can not found or can not create user property
+     * @throws DataException throw if some data can not found or 
+     *                       can not create user property
      */
-    public static EmbeddedProperty createUserProperty(Request request, PropertiesRepository source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty createUserProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -35,7 +40,7 @@ public class UserPropertyService extends CoreUserPropertyService {
         // If user has access to create private fields - try do it.
         // If user has not access to create private fields - throw exception.
         if (hasAccess) {
-            return createUserProperty(request, source);
+            return createUserProperty(request, propertiesRepository);
         } else {
             String message = (isTrusted)
                     ? "Can crate user property for current user"
@@ -48,14 +53,18 @@ public class UserPropertyService extends CoreUserPropertyService {
     /**
      * Method for get user properties
      * @param request Spark request object
-     * @param source users data source
+     * @param propertiesRepository users data source
      * @param rule rule data transfer object
      * @return list of user properties
      * @throws TokenException throw if token not valid or not send
      * @throws DataException throw if some data can not found
      * @throws AccessException throw if user han't access to field
      */
-    public static List<EmbeddedProperty> getUserProperties(Request request, PropertiesRepository source, RuleDTO rule) throws TokenException, DataException, AccessException {
+    public static List<EmbeddedProperty> getUserProperties(
+            Request request, 
+            PropertiesRepository propertiesRepository, 
+            RuleDTO rule
+    ) throws TokenException, DataException, AccessException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -65,7 +74,7 @@ public class UserPropertyService extends CoreUserPropertyService {
         // If user has access to create private fields - try do it.
         // If user has not access to create private fields - throw exception.
         if (hasAccess) {
-            return getUserProperties(request, source);
+            return getUserProperties(request, propertiesRepository);
         } else {
             String message = (isTrusted)
                     ? "Can not rights for read own private fields"
@@ -78,13 +87,17 @@ public class UserPropertyService extends CoreUserPropertyService {
     /**
      * Method for get user property by id
      * @param request Spark request object
-     * @param source users data source
+     * @param propertiesRepository users data source
      * @param rule rule data transfer object
      * @return founded user property
      * @throws AccessException throw if user han't access to field
      * @throws DataException throw if user or property can not found
      */
-    public static EmbeddedProperty getUserPropertyById(Request request, PropertiesRepository source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty getUserPropertyById(
+            Request request, 
+            PropertiesRepository propertiesRepository, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
         // Compare token ID in token and in params
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // If id in token and id in params equals - get rule value for user own private fields.
@@ -94,7 +107,7 @@ public class UserPropertyService extends CoreUserPropertyService {
         // If user has access to create private fields - try do it.
         // If user has not access to create private fields - throw exception.
         if (hasAccess) {
-            return getUserPropertyById(request, source);
+            return getUserPropertyById(request, propertiesRepository);
         } else {
             String message = (isTrusted)
                     ? "Can not rights for read own private fields"
@@ -107,17 +120,21 @@ public class UserPropertyService extends CoreUserPropertyService {
     /**
      * Method for update user property
      * @param request Spark request object
-     * @param source source for work with users collection
+     * @param propertiesRepository source for work with users collection
      * @param rule rule data transfer object
      * @return updated user property document
      * @throws AccessException throw if user han't access to field
      * @throws DataException throw if user or property can not found
      */
-    public static EmbeddedProperty updateProperty(Request request, PropertiesRepository source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty updateProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            return updateUserProperty(request, source);
+            return updateUserProperty(request, propertiesRepository);
         } else {
             Error error = new Error("Has no access to update user properties");
             throw new AccessException("CanNotUpdate", error);
@@ -127,17 +144,21 @@ public class UserPropertyService extends CoreUserPropertyService {
     /**
      * Method for remove user property fro list by request params with check rule
      * @param request Spark request data
-     * @param source user property datasource
+     * @param propertiesRepository user property datasource
      * @param rule rule data transfer object
      * @return actual value of user properties
      * @throws AccessException throw if user hasn't access to remove document
      * @throws DataException throw if user or property can not found
      */
-    public static List<EmbeddedProperty> deleteUserProperty(Request request, PropertiesRepository source, RuleDTO rule) throws AccessException, DataException {
+    public static List<EmbeddedProperty> deleteUserProperty(
+            Request request, 
+            PropertiesRepository propertiesRepository, 
+            RuleDTO rule
+    ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            return deleteUserProperty(request, source);
+            return deleteUserProperty(request, propertiesRepository);
         } else {
             Error error = new Error("Has no access to delete user property");
             throw new AccessException("CanNotDelete", error);
