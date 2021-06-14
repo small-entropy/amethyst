@@ -1,6 +1,6 @@
 package Repositories.v1;
 
-import DataTransferObjects.CatalogDTO;
+import DataTransferObjects.v1.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;

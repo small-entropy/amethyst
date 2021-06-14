@@ -1,6 +1,6 @@
 package Repositories.v1;
 
-import DataTransferObjects.CategoryDTO;
+import DataTransferObjects.v1.CategoryDTO;
 import Exceptions.DataException;
 import Filters.CategoriesFilter;
 import Models.Embeddeds.EmbeddedBreadcrumb;

@@ -1,6 +1,8 @@
-package DataTransferObjects;
+package DataTransferObjects.v1;
 
-public class UserPropertyDTO {
+import DataTransferObjects.base.BaseDTO;
+
+public class UserPropertyDTO extends BaseDTO {
     private String key;
     private Object value;
     private boolean notPublic;

@@ -1,7 +1,7 @@
 package Controllers.core.v1;
 
 import Controllers.core.base.BaseController;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Repositories.v1.UsersRepository;
 import Utils.v1.RightManager;
 import spark.Request;

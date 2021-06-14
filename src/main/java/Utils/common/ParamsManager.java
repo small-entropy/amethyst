@@ -6,6 +6,7 @@
 package Utils.common;
 
 import Utils.constants.RequestParams;
+import spark.Request;
 
 /**
  *
@@ -13,11 +14,23 @@ import Utils.constants.RequestParams;
  */
 public class ParamsManager {
     
-    public static final String getUserId() {
-        return RequestParams.USER_ID.getName();
+    public static final String getUserId(Request request) {
+        return request.params(RequestParams.USER_ID.getName());
     }
     
-    public static final String getCategoryId() {
-        return RequestParams.CATAGORY_ID.getName();
+    public static final String getCategoryId(Request request) {
+        return request.params(RequestParams.CATAGORY_ID.getName());
+    }
+    
+    public static final String getCatalogId(Request request) {
+        return request.params(RequestParams.CATALOG_ID.getName());
+    }
+    
+    public static final String getRightId(Request request) {
+        return request.params(RequestParams.RIGHT_ID.getName());
+    }
+    
+    public static final String getPropertyId(Request request) {
+        return request.params(RequestParams.PROPERTY_ID.getName());
     }
 }

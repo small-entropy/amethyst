@@ -1,6 +1,6 @@
 package Repositories.v1;
 
-import DataTransferObjects.UserRightDTO;
+import DataTransferObjects.v1.UserRightDTO;
 import Exceptions.DataException;
 import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedRight;

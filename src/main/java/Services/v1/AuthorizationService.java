@@ -1,7 +1,7 @@
 package Services.v1;
 
-import DataTransferObjects.RuleDTO;
-import DataTransferObjects.UserDTO;
+import DataTransferObjects.v1.RuleDTO;
+import DataTransferObjects.v1.UserDTO;
 import Exceptions.AuthorizationException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
@@ -9,7 +9,6 @@ import Filters.UsersFilter;
 import Models.Standalones.User;
 import Services.core.CoreAuthorizationService;
 import Repositories.v1.UsersRepository;
-import com.google.gson.Gson;
 import spark.Request;
 
 /**
@@ -92,7 +91,7 @@ public class AuthorizationService extends CoreAuthorizationService {
             UsersRepository usersRepository
     ) {
         // Crete user data transfer object from JSON
-        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        UserDTO userDTO = UserDTO.build(request, UserDTO.class); 
         // Create user document in database
         User user = AuthorizationService.registerUser(userDTO, usersRepository);
         // Options for find in documents
@@ -149,7 +148,7 @@ public class AuthorizationService extends CoreAuthorizationService {
         // Get user full document
         User user = UserService.getUserWithTrust(request, usersRepository);
         // Get user data transfer object
-        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        UserDTO userDTO = UserDTO.build(request, UserDTO.class);
         // Call regenerate password for user
         user.reGeneratePassword(
                 userDTO.getOldPassword(), 

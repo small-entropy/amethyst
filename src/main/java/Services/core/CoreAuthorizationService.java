@@ -1,6 +1,6 @@
 package Services.core;
 
-import DataTransferObjects.UserDTO;
+import DataTransferObjects.v1.UserDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;

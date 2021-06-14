@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package DataTransferObjects;
+package DataTransferObjects.v1;
 
+import DataTransferObjects.base.BaseDTO;
 import Models.Standalones.User;
 
 /**
  * Class data transfer object for catalog model data
  * @author small-entropy
  */
-public class CatalogDTO {
+public class CatalogDTO extends BaseDTO {
     private String name;
     private String title;
     private String description;

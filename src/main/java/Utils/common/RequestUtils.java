@@ -1,6 +1,6 @@
 package Utils.common;
 import Utils.common.HeadersUtils;
-import Utils.common.QueryUtils;
+import Utils.common.QueryManager;
 import spark.Request;
 
 /**
@@ -14,7 +14,7 @@ public class RequestUtils {
      */
     public static String getTokenByRequest(Request request) {
         String header = HeadersUtils.getTokenFromHeaders(request);
-        String queryParam = QueryUtils.getTokenFromQuery(request);
+        String queryParam = QueryManager.getTokenFromQuery(request);
         if (header != null || queryParam != null) {
             return (header != null) ? header : queryParam;
         } else {

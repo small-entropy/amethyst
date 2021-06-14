@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package DataTransferObjects;
+package DataTransferObjects.v1;
+
+import DataTransferObjects.base.BaseDTO;
 
 /**
  * Class of data transfer object for 
  * @author small-entropy
  */
-public class UserRightDTO {
+public class UserRightDTO extends BaseDTO {
     private String name;
     private String create;
     private String read;

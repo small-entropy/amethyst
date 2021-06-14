@@ -1,14 +1,15 @@
 package Services.v1;
 // Import models
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.Standalones.User;
 import Services.core.CoreUserService;
 import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
+import Utils.common.ParamsManager;
+import Utils.common.QueryManager;
 import Utils.common.RequestUtils;
-import Utils.constants.RequestParams;
 import java.util.List;
 import spark.Request;
 
@@ -41,7 +42,7 @@ public class UserService extends CoreUserService {
             // If ids not equals - throw exception
             if (isEqualsIds) {
                 // Get id from query params
-                String paramId = request.params(RequestParams.USER_ID.getName());
+                String paramId = ParamsManager.getUserId(request);
                 // Find user by id
                 User user = getUserById(paramId, usersRepository);
                 // Check founded user
@@ -81,10 +82,10 @@ public class UserService extends CoreUserService {
             UsersRepository usersRepository
     ) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        String idParam = request.params(RequestParams.USER_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
         String[] excludes = isTrusted
-                ? UserService.PUBLIC_AND_PRIVATE_ALLOWED
-                : UserService.PUBLIC_ALLOWED;
+                ? PUBLIC_AND_PRIVATE_ALLOWED
+                : PUBLIC_ALLOWED;
         return getUserById(idParam, excludes, usersRepository);
     }
     
@@ -101,18 +102,8 @@ public class UserService extends CoreUserService {
             UsersRepository usersRepository, 
             RuleDTO rule
     ) throws DataException {
-        // Set default values for some params
-        final int DEFAULT_SKIP = 0;
-        final int DEFAULT_LIMIT = 10;
-        // Keys in query params
-        final String SKIP_FIELD = "skip";
-        final String LIMIT_FIELD = "limit";
-        // Set skip value from request query
-        String qSkip = request.queryMap().get(SKIP_FIELD).value();
-        int skip = (qSkip == null) ? DEFAULT_SKIP : Integer.parseInt(qSkip);
-        // Set limit value from request query
-        String qLimit = request.queryMap().get(LIMIT_FIELD).value();
-        int limit = (qLimit == null) ? DEFAULT_LIMIT : Integer.parseInt(qLimit);
+        int skip = QueryManager.getSkip(request);
+        int limit = QueryManager.getLimit(request);
         String[] excludes = UserService.getOtherFindOptionsArgs(rule);
         // Get users list
         return getList(skip, limit, excludes, usersRepository);

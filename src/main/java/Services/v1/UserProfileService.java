@@ -1,5 +1,5 @@
 package Services.v1;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Exceptions.TokenException;

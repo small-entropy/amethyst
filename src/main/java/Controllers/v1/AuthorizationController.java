@@ -1,7 +1,7 @@
 package Controllers.v1;
 
 import Controllers.base.BaseAuthorizationController;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Models.Standalones.User;
 import Responses.SuccessResponse;
 import Services.v1.AuthorizationService;

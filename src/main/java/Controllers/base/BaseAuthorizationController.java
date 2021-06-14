@@ -1,7 +1,7 @@
 package Controllers.base;
 
 import Controllers.core.v1.AbstractController;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Repositories.v1.UsersRepository;
 import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;

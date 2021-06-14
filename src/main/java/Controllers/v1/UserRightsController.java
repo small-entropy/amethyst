@@ -1,7 +1,7 @@
 package Controllers.v1;
 
 import Controllers.base.BaseUserRightsController;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Models.Embeddeds.EmbeddedRight;
 import Responses.SuccessResponse;
 import Services.v1.UserRightService;

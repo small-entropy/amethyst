@@ -1,6 +1,6 @@
 package Services.base;
 
-import DataTransferObjects.UserPropertyDTO;
+import DataTransferObjects.v1.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Repositories.Abstract.AbstractPropertyRepository;

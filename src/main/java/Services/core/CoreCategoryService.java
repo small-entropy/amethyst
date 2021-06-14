@@ -5,7 +5,7 @@
  */
 package Services.core;
 
-import DataTransferObjects.CategoryDTO;
+import DataTransferObjects.v1.CategoryDTO;
 import Exceptions.DataException;
 import Filters.CategoriesFilter;
 import Models.Standalones.Catalog;
@@ -14,6 +14,8 @@ import Models.Standalones.User;
 import Repositories.v1.CatalogsRepository;
 import Repositories.v1.CategoriesRepository;
 import Repositories.v1.UsersRepository;
+import Utils.common.ParamsManager;
+import Utils.common.QueryManager;
 import Utils.constants.ListConstants;
 import Utils.constants.QueryParams;
 import Utils.constants.RequestParams;
@@ -40,23 +42,11 @@ public class CoreCategoryService extends AbstractService {
             CategoriesRepository categoriesSource,
             String[] excludes
     ) {
-        String qSkip = request
-                .queryMap()
-                .get(QueryParams.SKIP.getKey())
-                .value();
-        int skip = (qSkip == null) 
-                ? ListConstants.SKIP.getValue() 
-                : Integer.parseInt(qSkip);
+        int skip = QueryManager.getSkip(request);
         // Set limit value from request query
-        String qLimit = request
-                .queryMap()
-                .get(QueryParams.LIMIT.getKey())
-                .value();
-        int limit = (qLimit == null) 
-                ? ListConstants.LIMIT.getValue() 
-                : Integer.parseInt(qLimit);
+        int limit = QueryManager.getLimit(request);
         // User id
-        String idParam = request.params(RequestParams.USER_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
         ObjectId id = new ObjectId(idParam);
         
         CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
@@ -76,22 +66,9 @@ public class CoreCategoryService extends AbstractService {
             CategoriesRepository categoriesSource,
             String[] excludes
     ) {
-        String qSkip = request
-                .queryMap()
-                .get(QueryParams.SKIP.getKey())
-                .value();
-        int skip = (qSkip == null) 
-                ? ListConstants.SKIP.getValue() 
-                : Integer.parseInt(qSkip);
+        int skip = QueryManager.getSkip(request);
         // Set limit value from request query
-        String qLimit = request
-                .queryMap()
-                .get(QueryParams.LIMIT.getKey())
-                .value();
-        int limit = (qLimit == null) 
-                ? ListConstants.LIMIT.getValue() 
-                : Integer.parseInt(qLimit);
-        
+        int limit = QueryManager.getLimit(request);
         CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
         return  categoriesSource.findAll(filter);
     }
@@ -159,8 +136,10 @@ public class CoreCategoryService extends AbstractService {
                 catalogsSource
         );
         if (user != null) {
-            CategoryDTO categoryDTO = new Gson()
-                    .fromJson(request.body(), CategoryDTO.class);
+            CategoryDTO categoryDTO = CategoryDTO.build(
+                    request, 
+                    CategoryDTO.class
+            );
             categoryDTO.setCatalog(catalog);
             categoryDTO.setOwner(user);
             return categoriesSource.create(categoryDTO);
@@ -184,21 +163,9 @@ public class CoreCategoryService extends AbstractService {
             CategoriesRepository categoriesSource,
             String[] excludes
     ) {
-        String qSkip = request
-                .queryMap()
-                .get(QueryParams.SKIP.getKey())
-                .value();
-        int skip = (qSkip == null) 
-                ? ListConstants.SKIP.getValue() 
-                : Integer.parseInt(qSkip);
+        int skip = QueryManager.getSkip(request);
         // Set limit value from request query
-        String qLimit = request
-                .queryMap()
-                .get(QueryParams.LIMIT.getKey())
-                .value();
-        int limit = (qLimit == null) 
-                ? ListConstants.LIMIT.getValue() 
-                : Integer.parseInt(qLimit);
+        int limit = QueryManager.getLimit(request);
         
         ObjectId idCatalog = new ObjectId(idCatalogParam);
         
@@ -220,8 +187,8 @@ public class CoreCategoryService extends AbstractService {
             CategoriesRepository categoriesSource,
             String[] exludes
     ) {
-        ObjectId catalogId = new ObjectId(categoryIdParam);
-        CategoriesFilter filter = new CategoriesFilter(catalogId, exludes);
+        ObjectId categoryId = new ObjectId(categoryIdParam);
+        CategoriesFilter filter = new CategoriesFilter(categoryId, exludes);
         return categoriesSource.findOneById(filter);
     }
     
@@ -242,8 +209,7 @@ public class CoreCategoryService extends AbstractService {
     ) throws DataException {
         ObjectId ownerId = new ObjectId(ownerIdParam);
         ObjectId categoryId = new ObjectId(categoryIdParam);
-        CategoryDTO categoryDTO = new Gson()
-                .fromJson(request.body(), CategoryDTO.class);
+        CategoryDTO categoryDTO = CategoryDTO.build(request, CategoryDTO.class);
         CategoriesFilter filter = new CategoriesFilter(new String[]{});
         filter.setOwner(ownerId);
         filter.setId(categoryId);

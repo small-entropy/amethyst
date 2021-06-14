@@ -1,6 +1,6 @@
 package Services.v1;
 
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Catalog;
@@ -8,7 +8,7 @@ import Services.core.CoreCatalogService;
 import Repositories.v1.CatalogsRepository;
 import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
-import Utils.constants.RequestParams;
+import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
 import java.util.List;
 import spark.Request;
@@ -143,7 +143,7 @@ public class CatalogService extends CoreCatalogService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
         if (hasAccess) {
-            String idParam = request.params(RequestParams.USER_ID.getName());
+            String idParam = ParamsManager.getUserId(request);
             Catalog catalog = createCatalog(
                     idParam, 
                     request, 
@@ -180,9 +180,8 @@ public class CatalogService extends CoreCatalogService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            String idParam = request.params(RequestParams.USER_ID.getName());
-            String catalogIdParam = request
-                    .params(RequestParams.CATALOG_ID.getName());
+            String idParam = ParamsManager.getUserId(request);
+            String catalogIdParam = ParamsManager.getCatalogId(request);
             Catalog catalog = updateCatalog(
                     idParam, 
                     catalogIdParam, 
@@ -216,11 +215,10 @@ public class CatalogService extends CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             RuleDTO rule
     ) throws AccessException, DataException {
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = RightManager.chechAccess(request, rule);
         if (hasAccess) {
-            String idParam = request.params(RequestParams.USER_ID.getName());
-            String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
+            String idParam = ParamsManager.getUserId(request);
+            String catalogIdParam = ParamsManager.getCatalogId(request);
             return deleteCatalog(idParam, catalogIdParam, catalogsRepository);
         } else {
             Error error = new Error("Has no access to delete catalog document");

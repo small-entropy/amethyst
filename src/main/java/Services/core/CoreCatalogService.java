@@ -1,16 +1,15 @@
 package Services.core;
 
 
-import DataTransferObjects.CatalogDTO;
+import DataTransferObjects.v1.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.User;
 import Repositories.v1.CatalogsRepository;
 import Repositories.v1.UsersRepository;
-import Utils.constants.ListConstants;
-import Utils.constants.QueryParams;
-import Utils.constants.RequestParams;
+import Utils.common.ParamsManager;
+import Utils.common.QueryManager;
 import com.google.gson.Gson;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -35,8 +34,8 @@ public class CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             String[] excludes
     ) {
-        String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
-        String ownerIdParam = request.params(RequestParams.USER_ID.getName());
+        String catalogIdParam = ParamsManager.getCatalogId(request);
+        String ownerIdParam = ParamsManager.getUserId(request);
         
         ObjectId ownerId = new ObjectId(ownerIdParam);
         ObjectId catalogId = new ObjectId(catalogIdParam);
@@ -105,20 +104,10 @@ public class CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             String[] excludes
     ) {
-        String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
-        int skip = (qSkip == null) 
-                ? ListConstants.SKIP.getValue() 
-                : Integer.parseInt(qSkip);
-        // Set limit value from request query
-        String qLimit = request
-                .queryMap()
-                .get(QueryParams.LIMIT.getKey())
-                .value();
-        int limit = (qLimit == null) 
-                ? ListConstants.LIMIT.getValue() 
-                : Integer.parseInt(qLimit);
+        int skip = QueryManager.getSkip(request);
+        int limit = QueryManager.getLimit(request);
         // User id
-        String idParam = request.params(RequestParams.USER_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
         ObjectId id = new ObjectId(idParam);
         
         CatalogsFilter filter = new CatalogsFilter(skip, limit, new String[]{});
@@ -185,8 +174,7 @@ public class CoreCatalogService {
         ObjectId catalogId = new ObjectId(catalogIdParam);
         ObjectId ownerId = new ObjectId(idParam);
         // Get catalog data transfer object
-        CatalogDTO catalogDTO = new Gson()
-                .fromJson(reqeust.body(), CatalogDTO.class);
+        CatalogDTO catalogDTO = CatalogDTO.build(reqeust, CatalogDTO.class); 
         // Create filter for serach document
         CatalogsFilter filter = new CatalogsFilter(new String[]{});
         // Set catalog owner

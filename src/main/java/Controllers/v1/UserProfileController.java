@@ -1,7 +1,7 @@
 package Controllers.v1;
 
 import Controllers.base.BaseUserProfileController;
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;

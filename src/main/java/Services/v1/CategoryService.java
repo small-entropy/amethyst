@@ -1,6 +1,6 @@
 package Services.v1;
 
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Category;
@@ -9,6 +9,7 @@ import Repositories.v1.CatalogsRepository;
 import Repositories.v1.CategoriesRepository;
 import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
+import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
 import java.util.List;
 import spark.Request;
@@ -110,8 +111,8 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            String idParam = request.params(PARAM_USER_ID);
-            String catalogIdParam = request.params(PARAM_CATEGORY_ID);
+            String idParam = ParamsManager.getUserId(request);
+            String catalogIdParam = ParamsManager.getCatalogId(request);
             Category category = createCategory(
                     idParam, 
                     catalogIdParam, 
@@ -141,7 +142,7 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
-        String catalogIdParam = request.params(PARAM_CATEGORY_ID);
+        String catalogIdParam = ParamsManager.getCatalogId(request);
         var categories = getCategoriesByCatalogId(
                 request,
                 catalogIdParam,
@@ -197,7 +198,7 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] exludes = getExcludes(request, rule);
-        String categoryIdParam = request.params(PARAM_CATEGORY_ID);
+        String categoryIdParam = ParamsManager.getCategoryId(request);
         var category = getCategoryById(
                 categoryIdParam, 
                 categoriesSource, 
@@ -219,8 +220,8 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            String ownerIdParam = request.params(PARAM_USER_ID);
-            String categoryIdParam = request.params(PARAM_CATEGORY_ID);
+            String ownerIdParam = ParamsManager.getUserId(request);
+            String categoryIdParam = ParamsManager.getCategoryId(request);
             Category category = updateCategory(
                     ownerIdParam, 
                     categoryIdParam,
@@ -243,9 +244,13 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            String ownerIdParam = request.params(PARAM_USER_ID);
-            String categoryIdParam = request.params(PARAM_CATEGORY_ID);
-            return deleteCategory(ownerIdParam, categoryIdParam, categoriesSource);
+            String ownerIdParam = ParamsManager.getUserId(request);
+            String categoryIdParam = ParamsManager.getCategoryId(request);
+            return deleteCategory(
+                    ownerIdParam, 
+                    categoryIdParam, 
+                    categoriesSource
+            );
         } else {
             Error error = new Error("Has no access to delete category document");
             throw new AccessException("CanNotDelete", error);

@@ -1,9 +1,11 @@
-package DataTransferObjects;
+package DataTransferObjects.v1;
+
+import DataTransferObjects.base.BaseDTO;
 
 /**
  * Class of data transfer object for rule
  */
-public class RuleDTO {
+public class RuleDTO extends BaseDTO {
     private final boolean myPublic;
     private final boolean myPrivate;
     private final boolean myGlobal;

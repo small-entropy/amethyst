@@ -1,12 +1,11 @@
 package Services.core;
 
-import DataTransferObjects.UserPropertyDTO;
+import DataTransferObjects.v1.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Services.base.BasePropertyService;
 import Repositories.v1.PropertiesRepository;
-import Utils.constants.RequestParams;
-import com.google.gson.Gson;
+import Utils.common.ParamsManager;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -36,9 +35,11 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        UserPropertyDTO userPropertyDTO = new Gson()
-                .fromJson(request.body(), UserPropertyDTO.class);
+        String idParam = ParamsManager.getUserId(request);
+        UserPropertyDTO userPropertyDTO =  UserPropertyDTO.build(
+                request, 
+                UserPropertyDTO.class
+        );
         return createUserProperty(
                 idParam, 
                 userPropertyDTO, 
@@ -57,7 +58,7 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
         return getPropertiesList(idParam, propertiesRepository);
     }
 
@@ -72,9 +73,8 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
+        String propertyIdParam = ParamsManager.getPropertyId(request);
         return getPropertyById(propertyIdParam, idParam, propertiesRepository);
     }
 
@@ -89,12 +89,12 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        UserPropertyDTO userPropertyDTO = new Gson()
-                .fromJson(request.body(), UserPropertyDTO.class);
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
-        String idParams = request
-                .params(RequestParams.USER_ID.getName());
+        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+                request, 
+                UserPropertyDTO.class
+        );
+        String propertyIdParam = ParamsManager.getPropertyId(request);
+        String idParams = ParamsManager.getUserId(request);
         return updateUserProperty(
                 propertyIdParam, 
                 idParams, 
@@ -114,9 +114,8 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
+        String propertyIdParam = ParamsManager.getPropertyId(request);
         return propertiesRepository.removeProperty(propertyIdParam, idParam);
     }
 }

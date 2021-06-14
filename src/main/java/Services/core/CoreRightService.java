@@ -1,9 +1,10 @@
 package Services.core;
 
-import DataTransferObjects.UserRightDTO;
+import DataTransferObjects.v1.UserRightDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedRight;
 import Repositories.v1.RightsRepository;
+import Utils.common.ParamsManager;
 import Utils.constants.DefaultRights;
 import Utils.constants.RequestParams;
 import com.google.gson.Gson;
@@ -55,8 +56,8 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-       String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
-       String idParam = request.params(RequestParams.USER_ID.getName());
+       String rightIdParam = ParamsManager.getRightId(request);
+       String idParam = ParamsManager.getUserId(request);
        return rightsRepository.getRightByIdParam(rightIdParam, idParam);
     }
     
@@ -64,9 +65,8 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        UserRightDTO rightDTO = new Gson()
-                .fromJson(request.body(), UserRightDTO.class);
+        String idParam = ParamsManager.getUserId(request);
+        UserRightDTO rightDTO = UserRightDTO.build(request, UserRightDTO.class);
         return rightsRepository.createUserRight(idParam, rightDTO);
     }
     
@@ -74,8 +74,8 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
+        String rightIdParam = ParamsManager.getRightId(request);
         return rightsRepository.removeRight(rightIdParam, idParam);
     }
     
@@ -83,10 +83,9 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.USER_ID.getName());
-        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
-        UserRightDTO userRightDTO = new Gson()
-                .fromJson(request.body(), UserRightDTO.class);
+        String idParam = ParamsManager.getUserId(request);
+        String rightIdParam = ParamsManager.getRightId(request);
+        UserRightDTO userRightDTO = UserRightDTO.build(request, UserRightDTO.class); 
         return rightsRepository.updateUserRight(
                 rightIdParam, 
                 idParam, 

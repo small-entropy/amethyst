@@ -1,5 +1,6 @@
-package DataTransferObjects;
+package DataTransferObjects.v1;
 
+import DataTransferObjects.base.BaseDTO;
 import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Standalones.Catalog;
 import Models.Standalones.Category;
@@ -11,7 +12,7 @@ import org.bson.types.ObjectId;
  * Class data transfer object for category model data
  * @author small-entropy
  */
-public class CategoryDTO {
+public class CategoryDTO extends BaseDTO {
     private ObjectId id;
     private String name;
     private String title;

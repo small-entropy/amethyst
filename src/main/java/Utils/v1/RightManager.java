@@ -1,6 +1,6 @@
 package Utils.v1;
 
-import DataTransferObjects.RuleDTO;
+import DataTransferObjects.v1.RuleDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedRight;
@@ -65,6 +65,11 @@ public class RightManager {
         );
     }
     
+    public static boolean chechAccess(Request request, RuleDTO rule) {
+        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        return (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
+    }
+    
     public static String[] getExludesByRule(
             boolean isTrusted,
             RuleDTO rule,
@@ -75,6 +80,62 @@ public class RightManager {
                 isTrusted, 
                 rule, 
                 GLOBAL_EXCLUDES, 
+                publicExludes, 
+                privateExcludes
+        );
+    }
+    
+    public static String[] getExludesByRuleWithAccess (
+            RuleDTO rule,
+            String[] globalExcludes,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        return getExludesByRule(
+                true, 
+                rule, 
+                globalExcludes, 
+                publicExludes, 
+                privateExcludes
+        );
+    }
+    
+    public static String[] getExludesByRuleWithoutAccess (
+            RuleDTO rule,
+            String[] globalExcludes,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        return getExludesByRule(
+                false, 
+                rule, 
+                globalExcludes, 
+                publicExludes, 
+                privateExcludes
+        );
+    }
+    
+     public static String[] getExludesByRuleWithAccess (
+            RuleDTO rule,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        return getExludesByRule(
+                true, 
+                rule, 
+                publicExludes, 
+                privateExcludes
+        );
+    }
+    
+    public static String[] getExludesByRuleWithoutAccess (
+            RuleDTO rule,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        return getExludesByRule(
+                false, 
+                rule, 
                 publicExludes, 
                 privateExcludes
         );

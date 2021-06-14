@@ -1,12 +1,11 @@
 package Services.core;
 
-import DataTransferObjects.UserPropertyDTO;
+import DataTransferObjects.v1.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Services.base.BasePropertyService;
 import Repositories.v1.ProfileRepository;
-import Utils.constants.RequestParams;
-import com.google.gson.Gson;
+import Utils.common.ParamsManager;
 import java.util.Arrays;
 import java.util.List;
 import spark.Request;
@@ -42,9 +41,11 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.RIGHT_ID.getName());
-        UserPropertyDTO userPropertyDTO = new Gson()
-                .fromJson(request.body(), UserPropertyDTO.class);
+        String idParam = ParamsManager.getUserId(request);
+        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+                request, 
+                UserPropertyDTO.class
+        ); 
         return createUserProperty(idParam, userPropertyDTO, profileRepository);
     }
     
@@ -61,7 +62,7 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             ProfileRepository profileRepository
     ) throws DataException {
         // Get user ID param from request URL
-        String idParam = request.params(RequestParams.RIGHT_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
         return getPropertiesList(idParam, profileRepository);
     }
     
@@ -76,9 +77,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.RIGHT_ID.getName());
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
+        String propertyIdParam = ParamsManager.getPropertyId(request);
         return getPropertyById(idParam, propertyIdParam, profileRepository);
     }
     
@@ -93,11 +93,12 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.RIGHT_ID.getName());
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
-        UserPropertyDTO userPropertyDTO = new Gson()
-                .fromJson(request.body(), UserPropertyDTO.class);
+        String idParam = ParamsManager.getUserId(request);
+        String propertyIdParam = ParamsManager.getPropertyId(request);
+        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+                request, 
+                UserPropertyDTO.class
+        );
         return updateUserProperty(
                 propertyIdParam, 
                 idParam, 
@@ -117,9 +118,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = request.params(RequestParams.RIGHT_ID.getName());
-        String propertyIdParam = request
-                .params(RequestParams.PROPERTY_ID.getName());
+        String idParam = ParamsManager.getUserId(request);
+        String propertyIdParam = ParamsManager.getPropertyId(request);
         return profileRepository.removeProperty(propertyIdParam, idParam);
     }
 }

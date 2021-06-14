@@ -1,13 +1,12 @@
 package Services.core;
 
-import DataTransferObjects.UserDTO;
+import DataTransferObjects.v1.UserDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Filters.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
 import Utils.common.*;
-import Utils.constants.RequestParams;
 import com.google.gson.Gson;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -119,7 +118,7 @@ public abstract class CoreUserService extends CoreService {
         // If token and URL haven't equals user ID - throw error.
         if (isTrusted) {
             // User id from URL params
-            String idParam = request.params(RequestParams.USER_ID.getName());
+            String idParam = ParamsManager.getUserId(request);
             // Get user document from database
             User user = CoreUserService.getUserById(idParam, usersRepository);
             // Check result on exist.
@@ -152,7 +151,7 @@ public abstract class CoreUserService extends CoreService {
         // Get token from request headers
         String header = HeadersUtils.getTokenFromHeaders(request);
         // Get token from request query params
-        String queryParam = QueryUtils.getTokenFromQuery(request);
+        String queryParam = QueryManager.getTokenFromQuery(request);
         // Check token from exist
         // If token exist in headers or query params - find in database
         // If token not exist in headers or query params - return null

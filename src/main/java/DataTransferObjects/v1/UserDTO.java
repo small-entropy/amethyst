@@ -1,10 +1,11 @@
-package DataTransferObjects;
+package DataTransferObjects.v1;
 
+import DataTransferObjects.base.BaseDTO;
 import Models.Embeddeds.EmbeddedProperty;
 import Models.Embeddeds.EmbeddedRight;
 import java.util.List;
 
-public class UserDTO {
+public class UserDTO extends BaseDTO {
     private String username;
     private String password;
     private String oldPassword;

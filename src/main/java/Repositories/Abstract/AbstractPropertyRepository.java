@@ -1,6 +1,6 @@
 package Repositories.Abstract;
 
-import DataTransferObjects.UserPropertyDTO;
+import DataTransferObjects.v1.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedProperty;

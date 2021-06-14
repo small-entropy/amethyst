@@ -1,7 +1,7 @@
 package Repositories.v1;
 
 import Repositories.Core.MorphiaRpository;
-import DataTransferObjects.UserDTO;
+import DataTransferObjects.v1.UserDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
 import Utils.common.JsonWebToken;
