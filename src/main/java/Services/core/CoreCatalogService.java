@@ -6,8 +6,8 @@ import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.User;
-import Sources.CatalogsSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.UsersRepository;
 import Utils.constants.ListConstants;
 import Utils.constants.QueryParams;
 import Utils.constants.RequestParams;
@@ -30,7 +30,7 @@ public class CoreCatalogService {
      * @param excludes exludes fields
      * @return catalog document
      */
-    public static Catalog getCatalogByRequestByUserId(Request request, CatalogsSource source, String[] excludes) {
+    public static Catalog getCatalogByRequestByUserId(Request request, CatalogsRepository source, String[] excludes) {
         String catalogIdParam = request.params(RequestParams.CATALOG_ID.getName());
         String ownerIdParam = request.params(RequestParams.USER_ID.getName());
         
@@ -47,7 +47,7 @@ public class CoreCatalogService {
      * @param excludes array of exluded fields
      * @return catalog document
      */
-    protected static Catalog getCatalogByDocument(Catalog catalog, CatalogsSource source, String[] excludes) {
+    protected static Catalog getCatalogByDocument(Catalog catalog, CatalogsRepository source, String[] excludes) {
         ObjectId ownerId = catalog.getOwner().getId();
         ObjectId catalogId = catalog.getId();
         return getCatalogById(catalogId, ownerId, source, excludes);
@@ -61,7 +61,7 @@ public class CoreCatalogService {
      * @param excludes array of exluded field
      * @return founded catalog document
      */
-    protected static Catalog getCatalogById(ObjectId catalogId, ObjectId ownerId, CatalogsSource source, String[] excludes) {
+    protected static Catalog getCatalogById(ObjectId catalogId, ObjectId ownerId, CatalogsRepository source, String[] excludes) {
         CatalogsFilter filter = new CatalogsFilter();
         filter.setId(catalogId);
         filter.setOwner(ownerId);
@@ -69,7 +69,7 @@ public class CoreCatalogService {
         return source.findOneByOwnerAndId(filter);
     }
     
-    public static Catalog getCatalogById(String catalogIdParam, CatalogsSource source) {
+    public static Catalog getCatalogById(String catalogIdParam, CatalogsRepository source) {
         ObjectId id = new ObjectId(catalogIdParam);
         CatalogsFilter filter = new CatalogsFilter();
         filter.setId(id);
@@ -84,7 +84,7 @@ public class CoreCatalogService {
      * @param excludes array of exludes fields
      * @return list of catalog documents
      */
-    protected static List<Catalog> getCatalogsByRequestForUser(Request request, CatalogsSource source, String[] excludes) {
+    protected static List<Catalog> getCatalogsByRequestForUser(Request request, CatalogsRepository source, String[] excludes) {
         String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
         int skip = (qSkip == null) ? ListConstants.SKIP.getValue() : Integer.parseInt(qSkip);
         // Set limit value from request query
@@ -107,7 +107,7 @@ public class CoreCatalogService {
      * @param excludes array of exludes fields
      * @return list of catalog documents
      */
-    protected static List<Catalog> getList(Request request, CatalogsSource source, String[] excludes) {
+    protected static List<Catalog> getList(Request request, CatalogsRepository source, String[] excludes) {
         CatalogsFilter filter = new CatalogsFilter();
         filter.setExcludes(excludes);
         return source.findAll(filter);
@@ -122,7 +122,7 @@ public class CoreCatalogService {
      * @param usersSource datasource for users collection
      * @return created catalog params
      */
-    protected static Catalog createCatalog(String idParam, Request request, CatalogsSource catalogsSource, UsersSource usersSource) {
+    protected static Catalog createCatalog(String idParam, Request request, CatalogsRepository catalogsSource, UsersRepository usersSource) {
         User user = CoreUserService.getUserById(idParam, usersSource);
         CatalogDTO catalogDTO = new Gson().fromJson(request.body(), CatalogDTO.class);
         catalogDTO.setOwner(user);
@@ -138,7 +138,7 @@ public class CoreCatalogService {
      * @return updated catalog document
      * @throws DataException 
      */
-    protected static Catalog updateCatalog(String idParam, String catalogIdParam, Request reqeust, CatalogsSource catalogsSource) throws DataException {
+    protected static Catalog updateCatalog(String idParam, String catalogIdParam, Request reqeust, CatalogsRepository catalogsSource) throws DataException {
         // Get catalog ObjectId by string
         ObjectId catalogId = new ObjectId(catalogIdParam);
         ObjectId ownerId = new ObjectId(idParam);
@@ -162,7 +162,7 @@ public class CoreCatalogService {
      * @return updated catalog document
      * @throws DataException throw if can not be found catalog
      */
-    protected static Catalog deleteCatalog(String idParam, String catalogIdParam, CatalogsSource catalogsSource) throws DataException {
+    protected static Catalog deleteCatalog(String idParam, String catalogIdParam, CatalogsRepository catalogsSource) throws DataException {
         ObjectId catalogId = new ObjectId(catalogIdParam);
         ObjectId ownerId = new ObjectId(idParam);
         CatalogsFilter filter = new CatalogsFilter(new String[]{});

@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Filters.UsersFilter;
 import Models.Standalones.User;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Utils.common.*;
 import Utils.constants.RequestParams;
 import com.google.gson.Gson;
@@ -37,7 +37,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source source for work with users collection
      * @return 
      */
-    public static User getUserById(String idString, UsersSource source) {
+    public static User getUserById(String idString, UsersRepository source) {
         ObjectId id = new ObjectId(idString);
         return getUserById(id, source, ALL_ALLOWED);
     }
@@ -49,7 +49,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source source for work with users collection
      * @return founded user document
      */
-    public static User getUserById(String idString, String[] excludes, UsersSource source) {
+    public static User getUserById(String idString, String[] excludes, UsersRepository source) {
         ObjectId id = new ObjectId(idString);
         return getUserById(id, source, excludes);
     }
@@ -61,7 +61,7 @@ public abstract class CoreUserService extends CoreService {
      * @param excludes exludes fields
      * @return user document
      */
-    public static User getUserById(ObjectId id, UsersSource source, String[] excludes) {
+    public static User getUserById(ObjectId id, UsersRepository source, String[] excludes) {
         UsersFilter filter = new UsersFilter(id, excludes);
         return getUserById(filter, source);
     }
@@ -72,7 +72,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source users source of data object
      * @return 
      */
-    public static User getUserById(UsersFilter filter, UsersSource source) {
+    public static User getUserById(UsersFilter filter, UsersRepository source) {
         return source.findOneById(filter);
     }
     
@@ -84,7 +84,7 @@ public abstract class CoreUserService extends CoreService {
      * @throws TokenException exception for errors with user token
      * @throws DataException  exception for errors with founded data
      */
-    public static User getUserWithTrust(Request request, UsersSource source) throws TokenException, DataException {
+    public static User getUserWithTrust(Request request, UsersRepository source) throws TokenException, DataException {
         // Result of check on trust
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check trust result.
@@ -117,7 +117,7 @@ public abstract class CoreUserService extends CoreService {
      * @param filter filter object
      * @return user object
      */
-    public static User getUserByToken(Request request, UsersSource source, UsersFilter filter) {
+    public static User getUserByToken(Request request, UsersRepository source, UsersFilter filter) {
         // Get token from request headers
         String header = HeadersUtils.getTokenFromHeaders(request);
         // Get token from request query params
@@ -147,7 +147,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source source for work with users collection
      * @return user document
      */
-    public static User getUserByUsername(Request request, UsersSource source) {
+    public static User getUserByUsername(Request request, UsersRepository source) {
         UserDTO userDTO = getUserDtoFromBody(request);
         return getUserByUsername(userDTO, source);
     }
@@ -158,7 +158,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source user data source
      * @return user document
      */
-    public static User getUserByUsername(UserDTO userDTO, UsersSource source) {
+    public static User getUserByUsername(UserDTO userDTO, UsersRepository source) {
         UsersFilter filter = new UsersFilter(userDTO.getUsername(), ALL_ALLOWED);
         return source.findOneByUsername(filter);
     }
@@ -171,7 +171,7 @@ public abstract class CoreUserService extends CoreService {
      * @param source source of data
      * @return list with user documents
      */
-    protected static List<User> getList(int skip, int limit, String[] excludes, UsersSource source) {
+    protected static List<User> getList(int skip, int limit, String[] excludes, UsersRepository source) {
         UsersFilter filter = new UsersFilter(skip, limit, excludes);
         return source.findAll(filter);
     }

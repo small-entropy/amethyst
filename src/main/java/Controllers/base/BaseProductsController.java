@@ -5,7 +5,7 @@ import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;
 
 /**
- *
+ * Base class for products controllers
  * @author small-entropey
  */
 public class BaseProductsController extends AbstractController {

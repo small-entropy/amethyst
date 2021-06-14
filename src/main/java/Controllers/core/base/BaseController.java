@@ -5,8 +5,8 @@ import Utils.constants.DefaultActions;
 import spark.Response;
 
 /**
- *
- * @author igrav
+ * Base class for create controllers
+ * @author small-entopy
  */
 public class BaseController {
     /** Property with name of create action */

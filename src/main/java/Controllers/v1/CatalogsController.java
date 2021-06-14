@@ -5,8 +5,8 @@ import DataTransferObjects.RuleDTO;
 import Models.Standalones.Catalog;
 import Responses.SuccessResponse;
 import Services.v1.CatalogService;
-import Sources.CatalogsSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.UsersRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -26,9 +26,9 @@ public class CatalogsController extends BaseCatalogsController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
-        CatalogsSource catalogsSource = new CatalogsSource(store);
+        CatalogsRepository catalogsSource = new CatalogsRepository(store);
         // Create user datastore source
-        UsersSource userSource = new UsersSource(store);
+        UsersRepository userSource = new UsersRepository(store);
         
         // Route for work with catalog list
         get("", (req, res) -> {

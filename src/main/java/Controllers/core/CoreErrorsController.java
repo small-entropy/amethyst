@@ -9,15 +9,20 @@ import spark.Response;
 import static spark.Spark.*;
 import static spark.Spark.exception;
 
+/**
+ * Class for work with errors
+ * @author small-entropy
+ */
 public class CoreErrorsController {
+    
     protected enum HttpErrors {
         INTERNAL_SERVER_ERROR(500, "Internal server error"),
         NOT_FOUND(404, "Not found"),
         UNAUTHORIZED(401, "Unauthorized user"),
         CONFLICT(409, "Conflict with sent data"),
         NOT_ACCEPTABLE(406, "Not Acceptable");
-        private int code;
-        private String message;
+        private final int code;
+        private final String message;
         HttpErrors(int code, String message) {
             this.code = code;
             this.message = message;
@@ -44,7 +49,11 @@ public class CoreErrorsController {
      * @param statusCode status code for response
      * @param error exception object
      */
-    public static void sendError(Response response, int statusCode, Exception error) {
+    public static void sendError(
+            Response response, 
+            int statusCode, 
+            Exception error
+    ) {
         String message = error.getCause().getMessage();
         sendError(response, statusCode, message);
     }
@@ -55,7 +64,11 @@ public class CoreErrorsController {
      * @param statusCode response status code
      * @param message error message
      */
-    public static void sendError(Response response, int statusCode, String message) {
+    public static void sendError(
+            Response response,
+            int statusCode,
+            String message
+    ) {
         response.status(statusCode);
         response.type(ErrorsController.RESPONSE_TYPE);
         ErrorResponse errorResponse = new ErrorResponse(message, null);
@@ -86,16 +99,28 @@ public class CoreErrorsController {
     public static void errors_ExternalPackagesErrors() {
         // Custom exception handler for MongoWriteException error
         exception(MongoWriteException.class, (error, req, res) -> {
-            sendError(res, HttpErrors.INTERNAL_SERVER_ERROR.getCode(), error.getMessage());
+            sendError(
+                    res,
+                    HttpErrors.INTERNAL_SERVER_ERROR.getCode(),
+                    error.getMessage()
+            );
         });
 
         // Custom exception handler for AlgorithmMismatchException error
         exception(AlgorithmMismatchException.class, (error, req, res) -> {
-            sendError(res, HttpErrors.INTERNAL_SERVER_ERROR.getCode(), error.getMessage());
+            sendError(
+                    res, 
+                    HttpErrors.INTERNAL_SERVER_ERROR.getCode(),
+                    error.getMessage()
+            );
         });
         // Custom exception handler for IllegalArgumentException
         exception(IllegalArgumentException.class, (error, req, res) -> {
-            ErrorsController.sendError(res, HttpErrors.CONFLICT.getCode(), error.getMessage());
+            ErrorsController.sendError(
+                    res,
+                    HttpErrors.CONFLICT.getCode(),
+                    error.getMessage()
+            );
         });
     }
 }

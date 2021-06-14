@@ -3,7 +3,7 @@ package Services.core;
 import DataTransferObjects.UserRightDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedRight;
-import Sources.RightsSource;
+import Repositories.v1.RightsRepository;
 import Utils.constants.DefaultRights;
 import Utils.constants.RequestParams;
 import com.google.gson.Gson;
@@ -36,7 +36,7 @@ public abstract class CoreRightService {
      * @return list of user rights
      * @throws DataException throw if can not found user or rights
      */
-    protected static List<EmbeddedRight> getUserRights(Request request, RightsSource source) throws DataException {
+    protected static List<EmbeddedRight> getUserRights(Request request, RightsRepository source) throws DataException {
         String idPaString = request.params(RequestParams.USER_ID.getName());
         return source.getList(idPaString);
     }
@@ -48,25 +48,25 @@ public abstract class CoreRightService {
      * @return user right document
      * @throws DataException throw if can not found user or right
      */
-    protected static EmbeddedRight getUserRightById(Request request, RightsSource source) throws DataException {
+    protected static EmbeddedRight getUserRightById(Request request, RightsRepository source) throws DataException {
        String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
        String idParam = request.params(RequestParams.USER_ID.getName());
        return source.getRightByIdParam(rightIdParam, idParam);
     }
     
-    protected static EmbeddedRight createUserRight(Request request, RightsSource source) throws DataException {
+    protected static EmbeddedRight createUserRight(Request request, RightsRepository source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         UserRightDTO rightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);
         return source.createUserRight(idParam, rightDTO);
     }
     
-    protected static List<EmbeddedRight> deleteRights(Request request, RightsSource source) throws DataException {
+    protected static List<EmbeddedRight> deleteRights(Request request, RightsRepository source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
         return source.removeRight(rightIdParam, idParam);
     }
     
-    protected static EmbeddedRight updateRight(Request request, RightsSource source) throws DataException {
+    protected static EmbeddedRight updateRight(Request request, RightsRepository source) throws DataException {
         String idParam = request.params(RequestParams.USER_ID.getName());
         String rightIdParam = request.params(RequestParams.RIGHT_ID.getName());
         UserRightDTO userRightDTO = new Gson().fromJson(request.body(), UserRightDTO.class);

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Sources.Core;
+package Repositories.Core;
 
-import Sources.Abstract.AbstractSource;
+import Repositories.Abstract.AbstractRepository;
 import Filters.Filter;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
@@ -21,14 +21,15 @@ import org.bson.types.ObjectId;
  * @param <F> filter type
  * @param <D> data transfer object ytpe
  */
-public class MorphiaSource<M, F extends Filter, D> extends AbstractSource<Datastore, M, ObjectId, F, D>{
+public class MorphiaRpository<M, F extends Filter, D> 
+        extends AbstractRepository<Datastore, M, ObjectId, F, D> {
     
     /**
      * Constructor for Morphia datastore source object
      * @param datastore Morphia datastore object
      * @param modelClass class of model collection
      */
-    public MorphiaSource(Datastore datastore, Class<M> modelClass) {
+    public MorphiaRpository(Datastore datastore, Class<M> modelClass) {
         super(datastore, modelClass);
     }
     

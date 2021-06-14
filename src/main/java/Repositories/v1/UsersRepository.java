@@ -1,6 +1,6 @@
-package Sources;
+package Repositories.v1;
 
-import Sources.Core.MorphiaSource;
+import Repositories.Core.MorphiaRpository;
 import DataTransferObjects.UserDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
@@ -17,13 +17,13 @@ import org.bson.types.ObjectId;
  * Source for work with user collection
  * @author small-entropy
  */
-public class UsersSource extends MorphiaSource<User, UsersFilter, UserDTO> {
+public class UsersRepository extends MorphiaRpository<User, UsersFilter, UserDTO> {
     
     /**
      * Constuctor users collection sources
      * @param datastore Morphia datastore object
      */
-    public UsersSource(Datastore datastore) {
+    public UsersRepository(Datastore datastore) {
         super(datastore, User.class);
     }
     

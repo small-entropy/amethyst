@@ -5,9 +5,9 @@ import DataTransferObjects.RuleDTO;
 import Models.Standalones.Category;
 import Responses.SuccessResponse;
 import Services.v1.CategoryService;
-import Sources.CatalogsSource;
-import Sources.CategoriesSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.CategoriesRepository;
+import Repositories.v1.UsersRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -21,11 +21,11 @@ public class CategoriesController extends BaseCategoriesController {
     
     public static void routes(Datastore store, JsonTransformer transformer) {
         // Create catalog datastore source
-        CatalogsSource catalogsSource = new CatalogsSource(store);
+        CatalogsRepository catalogsSource = new CatalogsRepository(store);
         // Create user datastore source
-        UsersSource userSource = new UsersSource(store);
+        UsersRepository userSource = new UsersRepository(store);
         // Create categories datastore source
-        CategoriesSource categoriesSource = new CategoriesSource(store);
+        CategoriesRepository categoriesSource = new CategoriesRepository(store);
         
         // Route for get categories list
         get("", (req, res) -> {

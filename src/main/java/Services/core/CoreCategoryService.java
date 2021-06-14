@@ -11,9 +11,9 @@ import Filters.CategoriesFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.Category;
 import Models.Standalones.User;
-import Sources.CatalogsSource;
-import Sources.CategoriesSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.CategoriesRepository;
+import Repositories.v1.UsersRepository;
 import Utils.constants.ListConstants;
 import Utils.constants.QueryParams;
 import Utils.constants.RequestParams;
@@ -37,7 +37,7 @@ public class CoreCategoryService extends AbstractService {
      */
     protected static List<Category> getCategoriesByRequestForUser(
             Request request,
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             String[] excludes
     ) {
         String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
@@ -63,7 +63,7 @@ public class CoreCategoryService extends AbstractService {
      */
     protected static List<Category> getList(
             Request request,
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             String[] excludes
     ) {
         String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
@@ -84,7 +84,7 @@ public class CoreCategoryService extends AbstractService {
      * @param excludes exludes field
      * @return category document
      */
-    protected static Category getCategoryById(ObjectId categoryId, ObjectId ownerId, CategoriesSource categoriesSource, String[] excludes) {
+    protected static Category getCategoryById(ObjectId categoryId, ObjectId ownerId, CategoriesRepository categoriesSource, String[] excludes) {
         CategoriesFilter filter = new CategoriesFilter();
         filter.setId(categoryId);
         filter.setOwner(ownerId);
@@ -99,7 +99,7 @@ public class CoreCategoryService extends AbstractService {
      * @param excludes exludes fields
      * @return category document
      */
-    protected static Category getCategoryByDocument(Category category, CategoriesSource categoriesSource, String[] excludes) {
+    protected static Category getCategoryByDocument(Category category, CategoriesRepository categoriesSource, String[] excludes) {
         ObjectId ownerId = category.getOwner().getId();
         ObjectId categoryId = category.getId();
         return getCategoryById(categoryId, ownerId, categoriesSource, excludes);
@@ -120,9 +120,9 @@ public class CoreCategoryService extends AbstractService {
             String idParam,
             String catalogIdParam, 
             Request request,
-            CategoriesSource categoriesSource,
-            CatalogsSource catalogsSource,
-            UsersSource usersSource
+            CategoriesRepository categoriesSource,
+            CatalogsRepository catalogsSource,
+            UsersRepository usersSource
     ) throws DataException {
         User user = CoreUserService.getUserById(idParam, usersSource);
         Catalog catalog = CoreCatalogService.getCatalogById(catalogIdParam, catalogsSource);
@@ -148,7 +148,7 @@ public class CoreCategoryService extends AbstractService {
     protected static List<Category> getCategoriesByCatalogId(
             Request request, 
             String idCatalogParam,
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             String[] excludes
     ) {
         String qSkip = request.queryMap().get(QueryParams.SKIP.getKey()).value();
@@ -174,7 +174,7 @@ public class CoreCategoryService extends AbstractService {
      */
     protected static Category getCategoryById(
             String categoryIdParam, 
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             String[] exludes
     ) {
         ObjectId catalogId = new ObjectId(categoryIdParam);
@@ -195,7 +195,7 @@ public class CoreCategoryService extends AbstractService {
             String ownerIdParam,
             String categoryIdParam,
             Request request,
-            CategoriesSource categoriesSource
+            CategoriesRepository categoriesSource
     ) throws DataException {
         ObjectId ownerId = new ObjectId(ownerIdParam);
         ObjectId categoryId = new ObjectId(categoryIdParam);
@@ -217,7 +217,7 @@ public class CoreCategoryService extends AbstractService {
     protected static Category deleteCategory(
             String ownerIdParam,
             String categoryIdParam,
-            CategoriesSource categoriesSource
+            CategoriesRepository categoriesSource
     ) throws DataException {
         ObjectId ownerId = new ObjectId(ownerIdParam);
         ObjectId categoryId = new ObjectId(categoryIdParam);

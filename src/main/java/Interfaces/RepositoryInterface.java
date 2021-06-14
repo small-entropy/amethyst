@@ -17,7 +17,7 @@ import java.util.List;
  * @param <F> type of filter
  * @param <D> type of data transfer object
  */
-public interface SourceInterface<S, M, I, F extends Filter, D> {
+public interface RepositoryInterface<S, M, I, F extends Filter, D> {
     public Class<M> getModelClass();
     public S getStore();
     public List<M> findAll(F filter);

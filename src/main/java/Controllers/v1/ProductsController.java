@@ -6,7 +6,7 @@ import dev.morphia.Datastore;
 import static spark.Spark.*;
 
 /**
- *
+ * Class controller for work with products collection
  * @author small-entropy
  */
 public class ProductsController extends AbstractController {

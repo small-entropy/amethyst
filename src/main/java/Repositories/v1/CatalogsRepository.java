@@ -1,24 +1,25 @@
-package Sources;
+package Repositories.v1;
 
 import DataTransferObjects.CatalogDTO;
 import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Embeddeds.EmbeddedOwner;
-import Sources.Core.MorphiaSource;
+import Repositories.Core.MorphiaRpository;
 import dev.morphia.Datastore;
 
 /**
  * Class for datastore source for catalogs collection
  * @author small-entropy
  */
-public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, CatalogDTO>{
+public class CatalogsRepository 
+        extends MorphiaRpository<Catalog, CatalogsFilter, CatalogDTO>{
     
     /**
      * Consturctor for datasource catalog collection
      * @param datastore Morphia datastore object
      */
-    public CatalogsSource(Datastore datastore) {
+    public CatalogsRepository(Datastore datastore) {
         super(datastore, Catalog.class);
     }
 
@@ -51,21 +52,26 @@ public class CatalogsSource extends MorphiaSource<Catalog, CatalogsFilter, Catal
      * @return updated catalog document
      * @throws DataException 
      */
-    public Catalog update(CatalogDTO catalogDTO, CatalogsFilter filter) throws DataException {
+    public Catalog update(
+            CatalogDTO catalogDTO,
+            CatalogsFilter filter
+    ) throws DataException {
         Catalog catalog = findOneByOwnerAndId(filter);
         var description = catalogDTO.getDescription();
         var title = catalogDTO.getTitle();
         if (catalog != null) {
-            if (title != null && (catalog.getTitle() == null || !catalog.getTitle().equals(title))) {
+            if (title != null && (catalog.getTitle() == null 
+                    || !catalog.getTitle().equals(title))) {
                 catalog.setTitle(title);
             }
-            if (description != null && (catalog.getDescription() == null || !catalog.getDescription().equals(description))) {
+            if (description != null && (catalog.getDescription() == null
+                    || !catalog.getDescription().equals(description))) {
                 catalog.setDescription(description);
             }
             save(catalog);
             return catalog;
         } else {
-            Error error = new Error("Can not find catalog dcoument");
+            Error error = new Error("Can not find catalog document");
             throw new DataException("NotFound", error);
         }
     }

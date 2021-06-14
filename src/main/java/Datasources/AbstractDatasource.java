@@ -5,14 +5,15 @@
  */
 package Datasources;
 
-import java.util.List;
-
 /**
  *
  * @author igrav
- * @param <D>
+ * @param <D> datastore object
+ * @param <M> models object
+ * @param <I>
  */
-public abstract class AbstractDatasource<D, M, I> implements DatasourceInterface<D, M, I>{
+public abstract class AbstractDatasource<D, M, I> 
+        implements DatasourceInterface<D, M, I>{
     // datastore property
     private final D datastore;
    

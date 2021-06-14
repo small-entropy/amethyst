@@ -6,7 +6,7 @@ import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedRight;
 import Services.core.CoreUserService;
 import Services.v1.UserService;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import spark.Request;
 
@@ -108,7 +108,7 @@ public class RightManager {
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Username(Request request, UsersSource source, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Username(Request request, UsersRepository source, String rightName, String ruleName) {
         try {
             User user = UserService.getUserByUsername(request, source);
             return RightManager.getRuleObject(user, rightName, ruleName);
@@ -125,7 +125,7 @@ public class RightManager {
      * @param ruleName rule name
      * @return rule data transfer object
      */
-    public static RuleDTO getRuleByRequest_Token(Request request, UsersSource source, String rightName, String ruleName) {
+    public static RuleDTO getRuleByRequest_Token(Request request, UsersRepository source, String rightName, String ruleName) {
         try {
             UsersFilter filter = new UsersFilter();
             filter.setExcludes(UserService.ALL_ALLOWED);

@@ -5,7 +5,7 @@ import DataTransferObjects.RuleDTO;
 import Models.Standalones.User;
 import Responses.SuccessResponse;
 import Services.v1.AuthorizationService;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import static spark.Spark.get;
@@ -28,7 +28,7 @@ public class AuthorizationController extends BaseAuthorizationController {
             JsonTransformer transformer
     ) {
        
-        UsersSource source = new UsersSource(datastore);
+        UsersRepository source = new UsersRepository(datastore);
 
         // Route for register user
         post("/register", (req, res) -> {

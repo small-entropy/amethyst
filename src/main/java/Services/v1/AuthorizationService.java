@@ -8,7 +8,7 @@ import Exceptions.TokenException;
 import Filters.UsersFilter;
 import Models.Standalones.User;
 import Services.core.CoreAuthorizationService;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import com.google.gson.Gson;
 import spark.Request;
 
@@ -29,7 +29,7 @@ public class AuthorizationService extends CoreAuthorizationService {
      */
     public static User autoLoginUser(
             Request request, 
-            UsersSource source, 
+            UsersRepository source, 
             RuleDTO rule
     ) throws AuthorizationException {
         UsersFilter filterForReturn = new UsersFilter();
@@ -56,7 +56,7 @@ public class AuthorizationService extends CoreAuthorizationService {
      */
     public static User loginUser(
             Request request, 
-            UsersSource source, 
+            UsersRepository source, 
             RuleDTO rule
     ) throws AuthorizationException {
         // Authorization user
@@ -82,7 +82,7 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @param source source for work with users collection
      * @return user document
      */
-    public static User registerUser(Request request, UsersSource source) {
+    public static User registerUser(Request request, UsersRepository source) {
         // Crete user data transfer object from JSON
         UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
         // Create user document in database
@@ -104,7 +104,7 @@ public class AuthorizationService extends CoreAuthorizationService {
      */
     public static User logoutUser(
             Request request, 
-            UsersSource source, 
+            UsersRepository source, 
             RuleDTO rule
     ) throws AuthorizationException {
         User user = AuthorizationService.logoutUser(request, source);
@@ -135,7 +135,7 @@ public class AuthorizationService extends CoreAuthorizationService {
      */
     public static User changePassword(
             Request request, 
-            UsersSource source, 
+            UsersRepository source, 
             RuleDTO rule
     ) throws TokenException, DataException, AuthorizationException {
         // Get user full document

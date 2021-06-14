@@ -5,9 +5,9 @@ import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Category;
 import Services.core.CoreCategoryService;
-import Sources.CatalogsSource;
-import Sources.CategoriesSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.CategoriesRepository;
+import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import Utils.v1.RightManager;
 import java.util.List;
@@ -65,7 +65,7 @@ public class CategoryService extends CoreCategoryService {
      */
     public static List<Category> getCategoriesByUser(
             Request request, 
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
@@ -91,9 +91,9 @@ public class CategoryService extends CoreCategoryService {
      */
     public static Category createCategory(
             Request request, 
-            CategoriesSource categoriesSource, 
-            CatalogsSource catalogsSource, 
-            UsersSource usersSource,
+            CategoriesRepository categoriesSource, 
+            CatalogsRepository catalogsSource, 
+            UsersRepository usersSource,
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
@@ -120,7 +120,7 @@ public class CategoryService extends CoreCategoryService {
      */
     public static List<Category> getCatalogCategories(
             Request request, 
-            CategoriesSource categoriesSource, 
+            CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
@@ -149,7 +149,7 @@ public class CategoryService extends CoreCategoryService {
      */
     public static List<Category> getCategoriesList(
             Request request, 
-            CategoriesSource categoriesSource, 
+            CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
@@ -174,7 +174,7 @@ public class CategoryService extends CoreCategoryService {
      * @return category document
      * @throws DataException throw if category document not found
      */
-    public static Category getCategoryById(Request request, CategoriesSource categoriesSource, RuleDTO rule) throws DataException {
+    public static Category getCategoryById(Request request, CategoriesRepository categoriesSource, RuleDTO rule) throws DataException {
         String[] exludes = getExcludes(request, rule);
         String categoryIdParam = request.params(PARAM_CATEGORY_ID);
         var category = getCategoryById(categoryIdParam, categoriesSource, exludes);
@@ -188,7 +188,7 @@ public class CategoryService extends CoreCategoryService {
 
     public static Category updateCategory(
             Request request, 
-            CategoriesSource categoriesSource, 
+            CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
@@ -212,7 +212,7 @@ public class CategoryService extends CoreCategoryService {
     
     public static Category deleteCategory(
             Request request,
-            CategoriesSource categoriesSource,
+            CategoriesRepository categoriesSource,
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);

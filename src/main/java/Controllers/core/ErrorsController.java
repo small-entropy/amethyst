@@ -9,6 +9,7 @@ import static spark.Spark.*;
 
 /**
  * Class controller for errors handling
+ * @author small-entropy
  */
 public class ErrorsController extends CoreErrorsController {
 
@@ -16,6 +17,7 @@ public class ErrorsController extends CoreErrorsController {
      * Method for custom errors handlers
      */
     public static void errors_Custom() {
+        
         // Custom exception handler for TokenException error
         exception(TokenException.class, (error, req, res) -> {
             // Get status code by exception message
@@ -26,6 +28,7 @@ public class ErrorsController extends CoreErrorsController {
             };
             ErrorsController.sendError(res, statusCode, error);
         });
+        
         // Custom exception handler for DataException
         exception(DataException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
@@ -35,14 +38,19 @@ public class ErrorsController extends CoreErrorsController {
             };
             ErrorsController.sendError(res, statusCode, error);
         });
+        
         // Custom exception handler for AccessException
         exception(AccessException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {
-                case "CanNotRead", "CanNotCreate", "CanNotUpdate", "CanNotDelete" -> HttpErrors.NOT_ACCEPTABLE.getCode();
+                case "CanNotRead",
+                    "CanNotCreate",
+                    "CanNotUpdate",
+                    "CanNotDelete" -> HttpErrors.NOT_ACCEPTABLE.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             ErrorsController.sendError(res, statusCode, error);
         });
+        
         // Custom exception handler for AuthorizationExceptions
         exception(AuthorizationException.class, (error, req, res) -> {
             int statusCode = switch (error.getMessage()) {

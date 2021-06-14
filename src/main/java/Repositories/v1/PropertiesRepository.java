@@ -3,24 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Sources;
+package Repositories.v1;
 
-import Sources.Abstract.AbstractPropertySource;
+import Repositories.Abstract.AbstractPropertyRepository;
 import dev.morphia.Datastore;
 import java.util.List;
 
 /**
- * Class of source for profile documents
+ * Class of source for user properties documents
  * @author small-entropy
  */
-public class ProfileSource extends AbstractPropertySource {
+public class PropertiesRepository extends AbstractPropertyRepository {
     
     /**
      * Constructor for source
      * @param datastore Morphia datastore object
      * @param blaclList blaclist for profile documents
      */
-    public ProfileSource(Datastore datastore, List<String> blaclList) {
-        super(datastore, "profile", blaclList);
+    public PropertiesRepository(Datastore datastore, List<String> blaclList) {
+        super(datastore, "properties", blaclList);
     }
-}
+}   

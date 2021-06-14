@@ -5,7 +5,7 @@ import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;
 
 /**
- *
+ * Base class for catalogs controllers
  * @author small-entropy
  */
 public class BaseCatalogsController extends AbstractController {

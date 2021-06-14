@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.Embeddeds.EmbeddedProperty;
 import Services.core.CoreUserProfileService;
-import Sources.ProfileSource;
+import Repositories.v1.ProfileRepository;
 import Utils.common.Comparator;
 import java.util.List;
 import spark.Request;
@@ -23,7 +23,7 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws DataException throw if user or property can not found
      * @throws TokenException throw if token not corect or not send
      */
-    public static EmbeddedProperty createUserProfileProperty(Request request, ProfileSource source) throws DataException, TokenException {
+    public static EmbeddedProperty createUserProfileProperty(Request request, ProfileRepository source) throws DataException, TokenException {
         // Check equals id from request url & id from send token
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check result compares ids.
@@ -46,7 +46,7 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws AccessException throw exception if request not access for update action
      * @throws DataException throw exception if some data (property or user) not found
      */
-    public static EmbeddedProperty updateUserProperty(Request request, ProfileSource source, RuleDTO rule) throws AccessException, DataException {
+    public static EmbeddedProperty updateUserProperty(Request request, ProfileRepository source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
         if (hasAccess) {
@@ -66,7 +66,7 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws AccessException throw if user hasn't rigth to remove profile proeprty document
      * @throws DataException  throw if user or property can not be found
      */
-    public static List<EmbeddedProperty> deleteProfileProperty(Request request, ProfileSource source, RuleDTO rule) throws AccessException, DataException {
+    public static List<EmbeddedProperty> deleteProfileProperty(Request request, ProfileRepository source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
         if (hasAccess) {

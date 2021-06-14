@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Sources.Abstract;
+package Repositories.Abstract;
 
 import DataTransferObjects.UserPropertyDTO;
 import Exceptions.DataException;
@@ -18,7 +13,7 @@ import java.util.List;
  * Abstract class for source works with user properties fields
  * @author small-entropy
  */
-public class AbstractPropertySource extends AbstractChildUserSource {
+public class AbstractPropertyRepository extends AbstractChildUserRepository {
     // Property with name of field
     private final String field;
     // Black list for user proeprties
@@ -30,7 +25,11 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @param field name of field
      * @param blaclList blacl list
      */
-    public AbstractPropertySource(Datastore datastore, String field, List<String> blaclList) {
+    public AbstractPropertyRepository(
+            Datastore datastore,
+            String field,
+            List<String> blaclList
+    ) {
         super(datastore);
         this.field = field;
         this.blackList = blaclList;
@@ -59,7 +58,10 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw exception if can not find user document
      */
-    public EmbeddedProperty createUserProperty(String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
+    public EmbeddedProperty createUserProperty(
+            String idParam,
+            UserPropertyDTO userPropertyDTO
+    ) throws DataException {
         User user = getUserDocument(idParam);
         boolean hasProperty = hasProperty(userPropertyDTO.getKey(), user);
         if (!hasProperty) {
@@ -102,7 +104,10 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if can not find list of user properties
      */
-    public EmbeddedProperty getUserPropertyById(String propertyIdParam, String idParam) throws DataException {
+    public EmbeddedProperty getUserPropertyById(
+            String propertyIdParam, 
+            String idParam
+    ) throws DataException {
         List<EmbeddedProperty> properties = getList(idParam);
         return getUserPropertyById(propertyIdParam, properties);
     }
@@ -114,7 +119,10 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
-    private EmbeddedProperty getUserPropertyById(String propertyIdParam, User user) throws DataException {
+    private EmbeddedProperty getUserPropertyById(
+            String propertyIdParam, 
+            User user
+    ) throws DataException {
         List<EmbeddedProperty> properties = getPropertiesByUser(user);
         return getUserPropertyById(propertyIdParam, properties);
     }
@@ -126,8 +134,12 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
-    private EmbeddedProperty getUserPropertyById(String propertyIdParam, List<EmbeddedProperty> properties) throws DataException {
-        EmbeddedProperty result = Searcher.getUserPropertyByIdFromList(propertyIdParam, properties);
+    private EmbeddedProperty getUserPropertyById(
+            String propertyIdParam, 
+            List<EmbeddedProperty> properties
+    ) throws DataException {
+        EmbeddedProperty result = Searcher
+                .getUserPropertyByIdFromList(propertyIdParam, properties);
         if (result != null) {
             return result;
         } else {
@@ -173,7 +185,10 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return list of user properties
      * @throws DataException throw if can not find list of user properties
      */
-    public List<EmbeddedProperty> removeProperty(String propertyIdParam, String idParam) throws DataException {
+    public List<EmbeddedProperty> removeProperty(
+            String propertyIdParam,
+            String idParam
+    ) throws DataException {
         User user = getUserDocument(idParam);
         List<EmbeddedProperty> properties = getPropertiesByUser(user);
         Iterator iterator = properties.iterator();
@@ -196,7 +211,11 @@ public class AbstractPropertySource extends AbstractChildUserSource {
      * @return updated user property document
      * @throws DataException throw if not found user or property
      */
-    public EmbeddedProperty updateUserProperty(String propertyIdParam, String idParam, UserPropertyDTO userPropertyDTO) throws DataException {
+    public EmbeddedProperty updateUserProperty(
+            String propertyIdParam,
+            String idParam,
+            UserPropertyDTO userPropertyDTO
+    ) throws DataException {
         User user = getUserDocument(idParam);
         EmbeddedProperty property = getUserPropertyById(propertyIdParam, user);
         property.setValue(userPropertyDTO.getValue());

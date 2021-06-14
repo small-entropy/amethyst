@@ -1,4 +1,4 @@
-package Sources;
+package Repositories.v1;
 
 import DataTransferObjects.CategoryDTO;
 import Exceptions.DataException;
@@ -7,7 +7,7 @@ import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Standalones.Category;
 import Models.Embeddeds.EmbeddedOwner;
-import Sources.Core.MorphiaSource;
+import Repositories.Core.MorphiaRpository;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
@@ -19,13 +19,14 @@ import java.util.List;
  * Class datasource for categories collection
  * @author small-entropy
  */
-public class CategoriesSource extends MorphiaSource<Category, CategoriesFilter, CategoryDTO>{
+public class CategoriesRepository 
+        extends MorphiaRpository<Category, CategoriesFilter, CategoryDTO>{
     
     /**
      * Constructor for datastore source of categories collection
      * @param datastore Morphia datastore
      */
-    public CategoriesSource(Datastore datastore) {
+    public CategoriesRepository(Datastore datastore) {
         super(datastore, Category.class);
     }
     
@@ -99,10 +100,12 @@ public class CategoriesSource extends MorphiaSource<Category, CategoriesFilter, 
         var description = categoryDTO.getDescription();
         var breadcrumbs = categoryDTO.getBradcrumbs();
         if (category != null) {
-            if (title != null && (category.getTitle() == null || !category.getTitle().equals(title))) {
+            if (title != null && (category.getTitle() == null
+                    || !category.getTitle().equals(title))) {
                 category.setTitle(title);
             }
-            if (description != null && (category.getDescription() == null || !category.getDescription().equals(description))) {
+            if (description != null && (category.getDescription() == null
+                    || !category.getDescription().equals(description))) {
                 category.setDescription(description);
             }
             if (breadcrumbs != null) {

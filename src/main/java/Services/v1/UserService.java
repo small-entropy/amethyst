@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.Standalones.User;
 import Services.core.CoreUserService;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import Utils.common.RequestUtils;
 import Utils.constants.RequestParams;
@@ -25,7 +25,7 @@ public class UserService extends CoreUserService {
      * @throws TokenException
      * @throws DataException
      */
-    public static User markToRemove(Request request, UsersSource source) throws TokenException, DataException {
+    public static User markToRemove(Request request, UsersRepository source) throws TokenException, DataException {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -73,7 +73,7 @@ public class UserService extends CoreUserService {
      * @param source
      * @return founded user document
      */
-    public static User getUserById(Request request, UsersSource source) {
+    public static User getUserById(Request request, UsersRepository source) {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         String idParam = request.params(RequestParams.USER_ID.getName());
         String[] excludes = isTrusted
@@ -90,7 +90,7 @@ public class UserService extends CoreUserService {
      * @return list of users documents
      * @throws DataException
      */
-    public static List<User> getList(Request request, UsersSource source, RuleDTO rule) throws DataException {
+    public static List<User> getList(Request request, UsersRepository source, RuleDTO rule) throws DataException {
         // Set default values for some params
         final int DEFAULT_SKIP = 0;
         final int DEFAULT_LIMIT = 10;

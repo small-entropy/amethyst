@@ -6,7 +6,7 @@ import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserProfileService;
-import Sources.ProfileSource;
+import Repositories.v1.ProfileRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class UserProfileController extends BaseUserProfileController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         
-        ProfileSource source = new ProfileSource(store, BLACK_LIST);
+        ProfileRepository source = new ProfileRepository(store, BLACK_LIST);
         
         // Route for get user profile
         get("/:user_id/profile", (req, res)-> {

@@ -6,7 +6,7 @@ import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Responses.SuccessResponse;
 import Services.v1.UserPropertyService;
-import Sources.PropertiesSource;
+import Repositories.v1.PropertiesRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class UserPropertyController extends BaseUserPropertyController {
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
-        PropertiesSource source = new PropertiesSource(store, BLACK_LIST);
+        PropertiesRepository source = new PropertiesRepository(store, BLACK_LIST);
         
         // Routes for work with user properties
         // Get user properties list by user UUID

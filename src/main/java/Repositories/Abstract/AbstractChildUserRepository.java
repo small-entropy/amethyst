@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Sources.Abstract;
+package Repositories.Abstract;
 
 import Exceptions.DataException;
 import Filters.UsersFilter;
 import Models.Standalones.User;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
 
@@ -16,13 +11,13 @@ import org.bson.types.ObjectId;
  * Abstract class with additional method for user datasource
  * @author small-entropy
  */
-public abstract class AbstractChildUserSource extends  UsersSource {
+public abstract class AbstractChildUserRepository extends  UsersRepository {
     
     /**
      * Constructor for datasouce
      * @param datastore Morphia datastore
      */
-    public AbstractChildUserSource(Datastore datastore) {
+    public AbstractChildUserRepository(Datastore datastore) {
         super(datastore);
     }
     

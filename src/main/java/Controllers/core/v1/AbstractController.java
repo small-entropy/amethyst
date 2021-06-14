@@ -2,13 +2,14 @@ package Controllers.core.v1;
 
 import Controllers.core.base.BaseController;
 import DataTransferObjects.RuleDTO;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Utils.v1.RightManager;
 import spark.Request;
 
 /**
  * Core class for server controller
  * @author small-entropy
+ * @version 1
  */
 public class AbstractController extends BaseController {
     
@@ -22,7 +23,7 @@ public class AbstractController extends BaseController {
      */
     protected static RuleDTO getRule(
             Request request,
-            UsersSource usersSource,
+            UsersRepository usersSource,
             String right,
             String action
     ) {

@@ -1,10 +1,10 @@
-package Sources;
+package Repositories.v1;
 
 import DataTransferObjects.UserRightDTO;
 import Exceptions.DataException;
 import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedRight;
-import Sources.Abstract.AbstractChildUserSource;
+import Repositories.Abstract.AbstractChildUserRepository;
 import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
@@ -14,7 +14,7 @@ import java.util.List;
  * Class for user datasource
  * @author small-entory
  */
-public class RightsSource extends AbstractChildUserSource {
+public class RightsRepository extends AbstractChildUserRepository {
     
     private final List<String> blackList;
     
@@ -23,7 +23,7 @@ public class RightsSource extends AbstractChildUserSource {
      * @param datastore Morphia datastore object
      * @param blackList
      */
-    public RightsSource(Datastore datastore, List<String> blackList) {
+    public RightsRepository(Datastore datastore, List<String> blackList) {
         super(datastore);
         this.blackList = blackList;
     }
@@ -39,7 +39,10 @@ public class RightsSource extends AbstractChildUserSource {
      * @return user right document
      * @throws DataException throw if not found user or right
      */
-    public EmbeddedRight getRightByIdParam(String rightIdParam, String idParam) throws DataException {
+    public EmbeddedRight getRightByIdParam(
+            String rightIdParam,
+            String idParam
+    ) throws DataException {
         List<EmbeddedRight> rights = getList(idParam);
         return Searcher.getUserRightByIdFromList(rightIdParam, rights);
     }
@@ -86,7 +89,10 @@ public class RightsSource extends AbstractChildUserSource {
      * @return created right document
      * @throws DataException throw if user document can be found
      */
-    public EmbeddedRight createUserRight(String idParam, UserRightDTO userRightDTO) throws DataException {
+    public EmbeddedRight createUserRight(
+            String idParam,
+            UserRightDTO userRightDTO
+    ) throws DataException {
         User user = getUserDocument(idParam);
         boolean hasRight = hasRight(idParam, user);
         if (!hasRight) {
@@ -114,7 +120,10 @@ public class RightsSource extends AbstractChildUserSource {
      * @return actual right list
      * @throws DataException throw if can user document can not be found
      */
-    public List<EmbeddedRight> removeRight(String rightIdParam, String idParam) throws DataException {
+    public List<EmbeddedRight> removeRight(
+            String rightIdParam,
+            String idParam
+    ) throws DataException {
         User user = getUserDocument(idParam);
         List<EmbeddedRight> rights = user.getRights();
         Iterator iterator = rights.iterator();
@@ -137,10 +146,15 @@ public class RightsSource extends AbstractChildUserSource {
      * @return updated right document
      * @throws DataException throw if user document con not be found
      */
-    public EmbeddedRight updateUserRight(String rightIdParam, String idParam, UserRightDTO userRightDTO) throws DataException {
+    public EmbeddedRight updateUserRight(
+            String rightIdParam, 
+            String idParam,
+            UserRightDTO userRightDTO
+    ) throws DataException {
         User user = getUserDocument(idParam);
         List<EmbeddedRight> rights = user.getRights();
-        EmbeddedRight right = Searcher.getUserRightByIdFromList(rightIdParam, rights);
+        EmbeddedRight right = Searcher
+                .getUserRightByIdFromList(rightIdParam, rights);
         
         if (userRightDTO.getCreate() != null && 
                 !right.getCreate().equals(userRightDTO.getCreate())) {

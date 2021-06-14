@@ -3,6 +3,7 @@ import static spark.Spark.*;
 
 /**
  * Common API controller class
+ * @author small-entropy
  */
 public class ApiController {
 

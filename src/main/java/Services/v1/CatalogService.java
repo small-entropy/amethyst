@@ -5,8 +5,8 @@ import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Catalog;
 import Services.core.CoreCatalogService;
-import Sources.CatalogsSource;
-import Sources.UsersSource;
+import Repositories.v1.CatalogsRepository;
+import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import Utils.constants.RequestParams;
 import Utils.v1.RightManager;
@@ -30,7 +30,7 @@ public class CatalogService extends CoreCatalogService {
      * @return catalog document
      * @throws DataException
      */
-    public static Catalog getCatalogById(Request request, CatalogsSource soure, RuleDTO rule) throws DataException {
+    public static Catalog getCatalogById(Request request, CatalogsRepository soure, RuleDTO rule) throws DataException {
         String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
         var catalog = getCatalogByRequestByUserId(request, soure, excludes);
         if (catalog != null) {
@@ -49,7 +49,7 @@ public class CatalogService extends CoreCatalogService {
      * @return list of catalog documents
      * @throws DataException throw if can not find 
      */
-    public static List<Catalog> getCatalogsByUser(Request request, CatalogsSource source, RuleDTO rule) throws DataException {
+    public static List<Catalog> getCatalogsByUser(Request request, CatalogsRepository source, RuleDTO rule) throws DataException {
         String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
         var catalogs = getCatalogsByRequestForUser(request, source, excludes);
         if (catalogs != null && !catalogs.isEmpty()) {
@@ -68,7 +68,7 @@ public class CatalogService extends CoreCatalogService {
      * @return list of catalogs
      * @throws DataException throw when can get catalogs
      */
-    public static List<Catalog> getCatalogs(Request request, CatalogsSource source, RuleDTO rule) throws DataException {
+    public static List<Catalog> getCatalogs(Request request, CatalogsRepository source, RuleDTO rule) throws DataException {
         String[] excludes = RightManager.getExcludes(request, rule, PUBLIC_EXCLUDES, PRIVATE_EXCLUDES);
         List<Catalog> catalogs = getList(request, source, excludes);
         if (!catalogs.isEmpty()) {
@@ -88,7 +88,7 @@ public class CatalogService extends CoreCatalogService {
      * @return created catalog document
      * @throws AccessException 
      */
-    public static Catalog createCatalog(Request request, CatalogsSource catalogsSource, UsersSource usersSource, RuleDTO rule) throws AccessException {
+    public static Catalog createCatalog(Request request, CatalogsRepository catalogsSource, UsersRepository usersSource, RuleDTO rule) throws AccessException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
         if (hasAccess) {
@@ -111,7 +111,7 @@ public class CatalogService extends CoreCatalogService {
      * @throws AccessException
      * @throws DataException 
      */
-    public static Catalog updateCatalog(Request request, CatalogsSource source, RuleDTO rule) throws AccessException, DataException {
+    public static Catalog updateCatalog(Request request, CatalogsRepository source, RuleDTO rule) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
@@ -137,7 +137,7 @@ public class CatalogService extends CoreCatalogService {
      */
     public static Catalog deleteCatalog(
             Request request, 
-            CatalogsSource source, 
+            CatalogsRepository source, 
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);

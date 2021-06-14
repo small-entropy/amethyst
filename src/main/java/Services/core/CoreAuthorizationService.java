@@ -3,7 +3,7 @@ package Services.core;
 import DataTransferObjects.UserDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param filterForSearch filter object for search user
      * @return founded user document
      */
-    protected static User autoLoginUser(Request request, UsersSource source, UsersFilter filterForReturn, UsersFilter filterForSearch) {
+    protected static User autoLoginUser(Request request, UsersRepository source, UsersFilter filterForReturn, UsersFilter filterForSearch) {
         // Get user document by token
         User user = CoreUserService.getUserByToken(request, source, filterForSearch);
         // Get token from request
@@ -46,7 +46,7 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param source source for work with users collection
      * @return user document
      */
-    protected static User loginUser(Request request, UsersSource source) {
+    protected static User loginUser(Request request, UsersRepository source) {
         // Transform JSON object from body to Map
         UserDTO userDTO = CoreUserService.getUserDtoFromBody(request);
         // Get field "password" from map
@@ -83,7 +83,7 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param source source for work with users collection
      * @return user document
      */
-    protected static User registerUser(UserDTO userDTO, UsersSource source) {
+    protected static User registerUser(UserDTO userDTO, UsersRepository source) {
         // Create user document
         userDTO.setProperties(CoreUserPropertyService.getDefaultUserProperty());
         userDTO.setProfile(CoreUserProfileService.getDefaultProfile());
@@ -97,7 +97,7 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param source source for work with users collection
      * @return user document
      */
-    protected static User logoutUser(Request request, UsersSource source) {
+    protected static User logoutUser(Request request, UsersRepository source) {
         // Not include in token value
         final int NOT_IN_LIST = -1;
         // Create filter object

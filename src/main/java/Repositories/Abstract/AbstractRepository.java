@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Sources.Abstract;
+package Repositories.Abstract;
 
 import Filters.Filter;
-import Interfaces.SourceInterface;
 import java.util.List;
+import Interfaces.RepositoryInterface;
 
 /**
  * Class for work with some data source
@@ -18,7 +13,9 @@ import java.util.List;
  * @param <F> type of filters
  * @param <D> type of data transfer objects
  */
-public abstract class AbstractSource<S, M, I, F extends Filter, D> implements SourceInterface<S, M, I, F, D> {
+public abstract class AbstractRepository<S, M, I, F extends Filter, D> 
+        implements RepositoryInterface<S, M, I, F, D> 
+{
     // Store property
     private final S store;
     // Model class property
@@ -29,7 +26,7 @@ public abstract class AbstractSource<S, M, I, F extends Filter, D> implements So
      * @param store store object
      * @param model model 
      */
-    public AbstractSource(S store, Class<M> model) {
+    public AbstractRepository(S store, Class<M> model) {
         this.store = store;
         this.modelClass = model;
     }

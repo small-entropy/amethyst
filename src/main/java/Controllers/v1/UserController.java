@@ -6,7 +6,7 @@ import Exceptions.DataException;
 import Models.Standalones.User;
 import Responses.SuccessResponse;
 import Services.v1.UserService;
-import Sources.UsersSource;
+import Repositories.v1.UsersRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -24,7 +24,7 @@ public class UserController extends BaseUserController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         
-        UsersSource source = new UsersSource(store);
+        UsersRepository source = new UsersRepository(store);
         
         // Route for work with users list
         get("", (req, res) -> {

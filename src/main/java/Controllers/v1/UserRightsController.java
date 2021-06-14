@@ -5,7 +5,7 @@ import DataTransferObjects.RuleDTO;
 import Models.Embeddeds.EmbeddedRight;
 import Responses.SuccessResponse;
 import Services.v1.UserRightService;
-import Sources.RightsSource;
+import Repositories.v1.RightsRepository;
 import Transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class UserRightsController extends BaseUserRightsController {
      * @param transformer JSON response transformer
      */
     public static void routes (Datastore store, JsonTransformer transformer) {
-        RightsSource source = new RightsSource(store, BLACK_LIST);
+        RightsRepository source = new RightsRepository(store, BLACK_LIST);
         
         // Routes for work with user rights
         // Get all rights by user UUID

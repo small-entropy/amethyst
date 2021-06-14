@@ -5,7 +5,7 @@ import Utils.constants.DefaultRights;
 import Utils.constants.ResponseMessages;
 
 /**
- *
+ * Base class for user controllers
  * @author small-entropy
  */
 public class BaseUserController extends AbstractController {
