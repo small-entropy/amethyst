@@ -11,7 +11,7 @@ import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
- *
+ * Class for work with request params
  * @author small-entropy
  */
 public class ParamsManager {
