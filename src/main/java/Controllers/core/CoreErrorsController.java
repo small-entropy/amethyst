@@ -17,6 +17,7 @@ public class CoreErrorsController {
     
     protected enum HttpErrors {
         INTERNAL_SERVER_ERROR(500, "Internal server error"),
+        BAD_REQUEST(400, "Bad reqeust"),
         NOT_FOUND(404, "Not found"),
         UNAUTHORIZED(401, "Unauthorized user"),
         CONFLICT(409, "Conflict with sent data"),

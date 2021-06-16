@@ -8,6 +8,7 @@ import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;
+import org.bson.types.ObjectId;
 
 /**
  * Abstract class for source works with user properties fields
@@ -53,16 +54,16 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * Method for craete user proeprty document
-     * @param idParam user id from request params
+     * @param userId user id from request params
      * @param userPropertyDTO user property data transfer object
      * @return user property document
      * @throws DataException throw exception if can not find user document
      */
     public EmbeddedProperty createUserProperty(
-            String idParam,
+            ObjectId userId,
             UserPropertyDTO userPropertyDTO
     ) throws DataException {
-        User user = getUserDocument(idParam);
+        User user = getUserDocument(userId);
         boolean hasProperty = hasProperty(userPropertyDTO.getKey(), user);
         if (!hasProperty) {
             EmbeddedProperty userProperty = new EmbeddedProperty(
@@ -99,47 +100,47 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * MEthod for get user property by id from request params
-     * @param propertyIdParam property id from request params
-     * @param idParam user id from request params
+     * @param propertyId property id from request params
+     * @param userId user id from request params
      * @return user property document
      * @throws DataException throw if can not find list of user properties
      */
     public EmbeddedProperty getUserPropertyById(
-            String propertyIdParam, 
-            String idParam
+            ObjectId propertyId, 
+            ObjectId userId
     ) throws DataException {
-        List<EmbeddedProperty> properties = getList(idParam);
-        return getUserPropertyById(propertyIdParam, properties);
+        List<EmbeddedProperty> properties = getList(userId);
+        return getUserPropertyById(propertyId, properties);
     }
 
     /**
      * Method for get user property by id from requst & user document
-     * @param propertyIdParam property id from request
+     * @param propertyId property id from request
      * @param user user document
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
     private EmbeddedProperty getUserPropertyById(
-            String propertyIdParam, 
+            ObjectId propertyId, 
             User user
     ) throws DataException {
         List<EmbeddedProperty> properties = getPropertiesByUser(user);
-        return getUserPropertyById(propertyIdParam, properties);
+        return getUserPropertyById(propertyId, properties);
     }
     
     /**
      * Method for get property by id from reqyst in properties list
-     * @param propertyIdParam property id from request
+     * @param propertyId property id from request
      * @param properties list of user properties
      * @return user property document
      * @throws DataException throw if not found usr or property
      */
     private EmbeddedProperty getUserPropertyById(
-            String propertyIdParam, 
+            ObjectId propertyId, 
             List<EmbeddedProperty> properties
     ) throws DataException {
         EmbeddedProperty result = Searcher
-                .getUserPropertyByIdFromList(propertyIdParam, properties);
+                .getUserPropertyByIdFromList(propertyId, properties);
         if (result != null) {
             return result;
         } else {
@@ -150,12 +151,12 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * Method for get user properties list by user id from request params
-     * @param idParam user id from request params
+     * @param userId user id from request params
      * @return list of user properties
      * @throws DataException throw if can not find list of user properties
      */
-    public List<EmbeddedProperty> getList(String idParam) throws DataException {
-        User user = getUserDocument(idParam);
+    public List<EmbeddedProperty> getList(ObjectId userId) throws DataException {
+        User user = getUserDocument(userId);
         List<EmbeddedProperty> properties = getPropertiesByUser(user);
         if (properties != null) {
             return properties;
@@ -180,21 +181,22 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * Method for remove user property from list of user properties
-     * @param propertyIdParam property id from request params
-     * @param idParam user id from request params
+     * @param propertyId property id from request params
+     * @param userId user id from request params
      * @return list of user properties
      * @throws DataException throw if can not find list of user properties
      */
     public List<EmbeddedProperty> removeProperty(
-            String propertyIdParam,
-            String idParam
+            ObjectId propertyId,
+            ObjectId userId
     ) throws DataException {
-        User user = getUserDocument(idParam);
+        User user = getUserDocument(userId);
         List<EmbeddedProperty> properties = getPropertiesByUser(user);
         Iterator iterator = properties.iterator();
+        String toCheck = propertyId.toString();
         while(iterator.hasNext()) {
             EmbeddedProperty property = (EmbeddedProperty) iterator.next();
-            if (property.getId().equals(propertyIdParam) &&
+            if (property.getId().equals(toCheck) &&
                     !getBlackList().contains(property.getKey())) {
                 iterator.remove();
             }
@@ -205,19 +207,19 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * Method for update user property document
-     * @param propertyIdParam property id param fom requiers
-     * @param idParam user id param from request
+     * @param propertyId property id param fom requiers
+     * @param userId user id param from request
      * @param userPropertyDTO user property data transfer object
      * @return updated user property document
      * @throws DataException throw if not found user or property
      */
     public EmbeddedProperty updateUserProperty(
-            String propertyIdParam,
-            String idParam,
+            ObjectId propertyId,
+            ObjectId userId,
             UserPropertyDTO userPropertyDTO
     ) throws DataException {
-        User user = getUserDocument(idParam);
-        EmbeddedProperty property = getUserPropertyById(propertyIdParam, user);
+        User user = getUserDocument(userId);
+        EmbeddedProperty property = getUserPropertyById(propertyId, user);
         property.setValue(userPropertyDTO.getValue());
         save(user);
         return property;

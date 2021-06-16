@@ -5,6 +5,7 @@ import Models.Embeddeds.EmbeddedProperty;
 import Models.Embeddeds.EmbeddedRight;
 
 import java.util.List;
+import org.bson.types.ObjectId;
 
 /**
  * Class for utils methods for search some in lists or other collections
@@ -18,13 +19,14 @@ public class Searcher {
      * @return user property
      */
     public static EmbeddedProperty getUserPropertyByIdFromList(
-            String propertyId, 
+            ObjectId propertyId, 
             List<EmbeddedProperty> properties
     ) {
         EmbeddedProperty result = null;
         if (properties != null && propertyId != null) {
+            String toCheck = propertyId.toString();
             for (EmbeddedProperty property : properties) {
-                if (property.getId().equals(propertyId)) {
+                if (property.getId().equals(toCheck)) {
                     result = property;
                     break;
                 }
@@ -35,18 +37,19 @@ public class Searcher {
     
     /**
      * Method for get user right for rights list by id
-     * @param rightIdParam right id as string
+     * @param rightId right id as string
      * @param rights rights list
      * @return founded right
      * @throws DataException throw if right not found
      */
     public static EmbeddedRight getUserRightByIdFromList(
-            String rightIdParam, 
+            ObjectId rightId, 
             List<EmbeddedRight> rights
     ) throws DataException {
         EmbeddedRight result = null;
+        String toCheck = rightId.toString();
         for (EmbeddedRight right : rights) {
-            if (right.getId().equals(rightIdParam)) {
+            if (right.getId().equals(toCheck)) {
                 result = right;
                 break;
             }

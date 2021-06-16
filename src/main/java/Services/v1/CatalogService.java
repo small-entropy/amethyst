@@ -11,6 +11,7 @@ import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
@@ -133,19 +134,20 @@ public class CatalogService extends CoreCatalogService {
      * @param rule rule data transfer object
      * @return created catalog document
      * @throws AccessException 
+     * @throws Exceptions.DataException 
      */
     public static Catalog createCatalog(
             Request request, 
             CatalogsRepository catalogsSource, 
             UsersRepository usersSource, 
             RuleDTO rule
-    ) throws AccessException {
+    ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
         if (hasAccess) {
-            String idParam = ParamsManager.getUserId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
             Catalog catalog = createCatalog(
-                    idParam, 
+                    userId, 
                     request, 
                     catalogsSource, 
                     usersSource
@@ -180,11 +182,11 @@ public class CatalogService extends CoreCatalogService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            String idParam = ParamsManager.getUserId(request);
-            String catalogIdParam = ParamsManager.getCatalogId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
+            ObjectId catalogId = ParamsManager.getCatalogId(request);
             Catalog catalog = updateCatalog(
-                    idParam, 
-                    catalogIdParam, 
+                    userId, 
+                    catalogId, 
                     request, 
                     catalogsRepository
             );
@@ -217,9 +219,9 @@ public class CatalogService extends CoreCatalogService {
     ) throws AccessException, DataException {
         boolean hasAccess = RightManager.chechAccess(request, rule);
         if (hasAccess) {
-            String idParam = ParamsManager.getUserId(request);
-            String catalogIdParam = ParamsManager.getCatalogId(request);
-            return deleteCatalog(idParam, catalogIdParam, catalogsRepository);
+            ObjectId userId = ParamsManager.getUserId(request);
+            ObjectId catalogId = ParamsManager.getCatalogId(request);
+            return deleteCatalog(userId, catalogId, catalogsRepository);
         } else {
             Error error = new Error("Has no access to delete catalog document");
             throw new AccessException("CanNotDelete", error);

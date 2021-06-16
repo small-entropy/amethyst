@@ -23,14 +23,13 @@ public abstract class AbstractChildUserRepository extends  UsersRepository {
     
     /**
      * Method for get full user document
-     * @param idString user id from request params
+     * @param userId user id from request params
      * @return user document
      * @throws DataException throw if can not find list of user properties
      */
-    public User getUserDocument(String idString) throws DataException {
-        ObjectId id = new ObjectId(idString);
+    public User getUserDocument(ObjectId userId) throws DataException {
         String[] excludes = new String[]{};
-        UsersFilter filter = new UsersFilter(id, excludes);
+        UsersFilter filter = new UsersFilter(userId, excludes);
         User user = findOneById(filter);
         if (user != null) {
             return user;

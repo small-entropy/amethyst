@@ -8,6 +8,7 @@ import Repositories.v1.PropertiesRepository;
 import Utils.common.ParamsManager;
 import java.util.Arrays;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
@@ -35,13 +36,13 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
         UserPropertyDTO userPropertyDTO =  UserPropertyDTO.build(
                 request, 
                 UserPropertyDTO.class
         );
         return createUserProperty(
-                idParam, 
+                userId, 
                 userPropertyDTO, 
                 propertiesRepository
         );
@@ -58,8 +59,8 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        return getPropertiesList(idParam, propertiesRepository);
+        ObjectId userId = ParamsManager.getUserId(request);
+        return getPropertiesList(userId, propertiesRepository);
     }
 
     /**
@@ -73,9 +74,9 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String propertyIdParam = ParamsManager.getPropertyId(request);
-        return getPropertyById(propertyIdParam, idParam, propertiesRepository);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
+        return getPropertyById(propertyId, userId, propertiesRepository);
     }
 
     /**
@@ -93,11 +94,11 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
                 request, 
                 UserPropertyDTO.class
         );
-        String propertyIdParam = ParamsManager.getPropertyId(request);
-        String idParams = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
         return updateUserProperty(
-                propertyIdParam, 
-                idParams, 
+                propertyId, 
+                userId, 
                 userPropertyDTO, 
                 propertiesRepository
         );
@@ -114,8 +115,8 @@ public abstract class CoreUserPropertyService extends BasePropertyService {
             Request request, 
             PropertiesRepository propertiesRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String propertyIdParam = ParamsManager.getPropertyId(request);
-        return propertiesRepository.removeProperty(propertyIdParam, idParam);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
+        return propertiesRepository.removeProperty(propertyId, userId);
     }
 }

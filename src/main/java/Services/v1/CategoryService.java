@@ -12,6 +12,7 @@ import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
@@ -111,11 +112,11 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            String idParam = ParamsManager.getUserId(request);
-            String catalogIdParam = ParamsManager.getCatalogId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
+            ObjectId catalogId = ParamsManager.getCatalogId(request);
             Category category = createCategory(
-                    idParam, 
-                    catalogIdParam, 
+                    userId, 
+                    catalogId, 
                     request, 
                     categoriesSource, 
                     catalogsSource, usersSource
@@ -142,10 +143,10 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] excludes = getExcludes(request, rule);
-        String catalogIdParam = ParamsManager.getCatalogId(request);
+        ObjectId catalogId = ParamsManager.getCatalogId(request);
         var categories = getCategoriesByCatalogId(
                 request,
-                catalogIdParam,
+                catalogId,
                 categoriesSource, 
                 excludes
         );
@@ -198,9 +199,9 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws DataException {
         String[] exludes = getExcludes(request, rule);
-        String categoryIdParam = ParamsManager.getCategoryId(request);
+        ObjectId categoryId = ParamsManager.getCategoryId(request);
         var category = getCategoryById(
-                categoryIdParam, 
+                categoryId, 
                 categoriesSource, 
                 exludes
         );
@@ -220,11 +221,11 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
         if (hasAccess) {
-            String ownerIdParam = ParamsManager.getUserId(request);
-            String categoryIdParam = ParamsManager.getCategoryId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
+            ObjectId categoryId = ParamsManager.getCategoryId(request);
             Category category = updateCategory(
-                    ownerIdParam, 
-                    categoryIdParam,
+                    userId, 
+                    categoryId,
                     request,
                     categoriesSource
             );
@@ -244,11 +245,11 @@ public class CategoryService extends CoreCategoryService {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            String ownerIdParam = ParamsManager.getUserId(request);
-            String categoryIdParam = ParamsManager.getCategoryId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
+            ObjectId categoryId = ParamsManager.getCategoryId(request);
             return deleteCategory(
-                    ownerIdParam, 
-                    categoryIdParam, 
+                    userId, 
+                    categoryId, 
                     categoriesSource
             );
         } else {

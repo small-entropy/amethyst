@@ -6,10 +6,9 @@ import Models.Embeddeds.EmbeddedRight;
 import Repositories.v1.RightsRepository;
 import Utils.common.ParamsManager;
 import Utils.constants.DefaultRights;
-import Utils.constants.RequestParams;
-import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
@@ -41,8 +40,8 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idPaString = request.params(RequestParams.USER_ID.getName());
-        return rightsRepository.getList(idPaString);
+        ObjectId userId = ParamsManager.getUserId(request);
+        return rightsRepository.getList(userId);
     }
     
     /**
@@ -56,39 +55,42 @@ public abstract class CoreRightService {
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-       String rightIdParam = ParamsManager.getRightId(request);
-       String idParam = ParamsManager.getUserId(request);
-       return rightsRepository.getRightByIdParam(rightIdParam, idParam);
+       ObjectId rightId = ParamsManager.getRightId(request);
+       ObjectId userId = ParamsManager.getUserId(request);
+       return rightsRepository.getRightByIdParam(rightId, userId);
     }
     
     protected static EmbeddedRight createUserRight(
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
         UserRightDTO rightDTO = UserRightDTO.build(request, UserRightDTO.class);
-        return rightsRepository.createUserRight(idParam, rightDTO);
+        return rightsRepository.createUserRight(userId, rightDTO);
     }
     
     protected static List<EmbeddedRight> deleteRights(
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String rightIdParam = ParamsManager.getRightId(request);
-        return rightsRepository.removeRight(rightIdParam, idParam);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId rightId = ParamsManager.getRightId(request);
+        return rightsRepository.removeRight(rightId, userId);
     }
     
     protected static EmbeddedRight updateRight(
             Request request, 
             RightsRepository rightsRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String rightIdParam = ParamsManager.getRightId(request);
-        UserRightDTO userRightDTO = UserRightDTO.build(request, UserRightDTO.class); 
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId rightId = ParamsManager.getRightId(request);
+        UserRightDTO userRightDTO = UserRightDTO.build(
+                request, 
+                UserRightDTO.class
+        ); 
         return rightsRepository.updateUserRight(
-                rightIdParam, 
-                idParam, 
+                rightId, 
+                userId, 
                 userRightDTO
         );
     }

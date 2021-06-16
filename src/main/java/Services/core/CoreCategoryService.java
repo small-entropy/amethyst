@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Services.core;
 
 import DataTransferObjects.v1.CategoryDTO;
@@ -16,17 +11,13 @@ import Repositories.v1.CategoriesRepository;
 import Repositories.v1.UsersRepository;
 import Utils.common.ParamsManager;
 import Utils.common.QueryManager;
-import Utils.constants.ListConstants;
-import Utils.constants.QueryParams;
-import Utils.constants.RequestParams;
-import com.google.gson.Gson;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
  *
- * @author igrav
+ * @author small-entropy
  */
 public class CoreCategoryService extends AbstractService {
     
@@ -36,21 +27,21 @@ public class CoreCategoryService extends AbstractService {
      * @param categoriesSource datastore source for categories collection
      * @param excludes arrya of exludes fields
      * @return list of category documents
+     * @throws DataException
      */
     protected static List<Category> getCategoriesByRequestForUser(
             Request request,
             CategoriesRepository categoriesSource,
             String[] excludes
-    ) {
+    ) throws DataException {
         int skip = QueryManager.getSkip(request);
         // Set limit value from request query
         int limit = QueryManager.getLimit(request);
         // User id
-        String idParam = ParamsManager.getUserId(request);
-        ObjectId id = new ObjectId(idParam);
+        ObjectId userId = ParamsManager.getUserId(request);
         
         CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
-        filter.setOwner(id);
+        filter.setOwner(userId);
         return categoriesSource.findAllByOwnerId(filter);
     }
     
@@ -113,8 +104,8 @@ public class CoreCategoryService extends AbstractService {
     
     /**
      * Method for create category
-     * @param idParam user id as string
-     * @param catalogIdParam catalog id as string
+     * @param userId user id
+     * @param catalogId catalog id
      * @param request Spark request object
      * @param categoriesSource datastore source for categories collection
      * @param catalogsSource datastore source for catalogs collection
@@ -123,16 +114,16 @@ public class CoreCategoryService extends AbstractService {
      * @throws DataException throw is user or catalog can not be found
      */
     protected static Category createCategory(
-            String idParam,
-            String catalogIdParam, 
+            ObjectId userId,
+            ObjectId catalogId, 
             Request request,
             CategoriesRepository categoriesSource,
             CatalogsRepository catalogsSource,
             UsersRepository usersSource
     ) throws DataException {
-        User user = CoreUserService.getUserById(idParam, usersSource);
+        User user = CoreUserService.getUserById(userId, usersSource);
         Catalog catalog = CoreCatalogService.getCatalogById(
-                catalogIdParam, 
+                catalogId, 
                 catalogsSource
         );
         if (user != null) {
@@ -152,14 +143,14 @@ public class CoreCategoryService extends AbstractService {
     /**
      * Method fot get categories by catalog id fom request params
      * @param request Spark reqeuset object
-     * @param idCatalogParam catalog id from request params (as string)
+     * @param catalogId catalog id from request params
      * @param categoriesSource datastoure source for categories collection
      * @param excludes array of exludes fields
      * @return list of categories documents
      */
     protected static List<Category> getCategoriesByCatalogId(
             Request request, 
-            String idCatalogParam,
+            ObjectId catalogId,
             CategoriesRepository categoriesSource,
             String[] excludes
     ) {
@@ -167,72 +158,65 @@ public class CoreCategoryService extends AbstractService {
         // Set limit value from request query
         int limit = QueryManager.getLimit(request);
         
-        ObjectId idCatalog = new ObjectId(idCatalogParam);
-        
         CategoriesFilter filter = new CategoriesFilter(skip, limit, excludes);
-        filter.setCatalog(idCatalog);
+        filter.setCatalog(catalogId);
         
         return categoriesSource.findAllByCatalogId(filter);
     }
     
     /**
      * Method for get category document by id from request params
-     * @param categoryIdParam catagory ID from request params (as string)
+     * @param categoryId catagory ID from request params
      * @param categoriesSource datastore source for categories collection
      * @param exludes array of excludes fields
      * @return category document
      */
     protected static Category getCategoryById(
-            String categoryIdParam, 
+            ObjectId categoryId, 
             CategoriesRepository categoriesSource,
             String[] exludes
     ) {
-        ObjectId categoryId = new ObjectId(categoryIdParam);
         CategoriesFilter filter = new CategoriesFilter(categoryId, exludes);
         return categoriesSource.findOneById(filter);
     }
     
     /**
      * Method for update category document
-     * @param ownerIdParam owner id from request params
-     * @param categoryIdParam category id from requeset params
+     * @param userId owner id from request params
+     * @param categoryId category id from requeset params
      * @param request Spark request objecet
      * @param categoriesSource datastoure source for categories collection
      * @return category document
      * @throws DataException throw if can not find category document
      */
     protected static Category updateCategory(
-            String ownerIdParam,
-            String categoryIdParam,
+            ObjectId userId,
+            ObjectId categoryId,
             Request request,
             CategoriesRepository categoriesSource
     ) throws DataException {
-        ObjectId ownerId = new ObjectId(ownerIdParam);
-        ObjectId categoryId = new ObjectId(categoryIdParam);
         CategoryDTO categoryDTO = CategoryDTO.build(request, CategoryDTO.class);
         CategoriesFilter filter = new CategoriesFilter(new String[]{});
-        filter.setOwner(ownerId);
+        filter.setOwner(userId);
         filter.setId(categoryId);
         return categoriesSource.update(categoryDTO, filter);
     }
     
     /**
      * Method for delete (deactivate) category document
-     * @param ownerIdParam owner id from request params
-     * @param categoryIdParam category id from requeset params
+     * @param userId owner id from request params
+     * @param categoryId category id from requeset params
      * @param categoriesSource datastoure source for categories collection
      * @return category document
      * @throws DataException throw if can not found category document
      */
     protected static Category deleteCategory(
-            String ownerIdParam,
-            String categoryIdParam,
+            ObjectId userId,
+            ObjectId categoryId,
             CategoriesRepository categoriesSource
     ) throws DataException {
-        ObjectId ownerId = new ObjectId(ownerIdParam);
-        ObjectId categoryId = new ObjectId(categoryIdParam);
         CategoriesFilter filter = new CategoriesFilter(new String[] {});
-        filter.setOwner(ownerId);
+        filter.setOwner(userId);
         filter.setId(categoryId);
         return categoriesSource.deactivated(filter);
     }

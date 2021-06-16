@@ -9,6 +9,7 @@ import Utils.common.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;
+import org.bson.types.ObjectId;
 
 /**
  * Class for user datasource
@@ -34,27 +35,27 @@ public class RightsRepository extends AbstractChildUserRepository {
     
     /**
      * Method for get user right by id param from request
-     * @param rightIdParam user right id as string
-     * @param idParam user id as string
+     * @param rightId user right id as string
+     * @param userId user id as string
      * @return user right document
      * @throws DataException throw if not found user or right
      */
     public EmbeddedRight getRightByIdParam(
-            String rightIdParam,
-            String idParam
+            ObjectId rightId,
+            ObjectId userId
     ) throws DataException {
-        List<EmbeddedRight> rights = getList(idParam);
-        return Searcher.getUserRightByIdFromList(rightIdParam, rights);
+        List<EmbeddedRight> rights = getList(userId);
+        return Searcher.getUserRightByIdFromList(rightId, rights);
     }
     
     /**
      * Method for get user right by user id
-     * @param idParam user id as string
+     * @param userId user id as string
      * @return list of user rights
      * @throws DataException throw if not founded user or rights
      */
-    public List<EmbeddedRight> getList(String idParam) throws DataException {
-        User user = getUserDocument(idParam);
+    public List<EmbeddedRight> getList(ObjectId userId) throws DataException {
+        User user = getUserDocument(userId);
         List<EmbeddedRight> rights = user.getRights();
         if (rights != null && !rights.isEmpty()) {
             return rights;
@@ -84,17 +85,17 @@ public class RightsRepository extends AbstractChildUserRepository {
 
     /**
      * Method for create user right by user right data transfer object
-     * @param idParam user id from request params
+     * @param userId user id from request params
      * @param userRightDTO user right data transfer object
      * @return created right document
      * @throws DataException throw if user document can be found
      */
     public EmbeddedRight createUserRight(
-            String idParam,
+            ObjectId userId,
             UserRightDTO userRightDTO
     ) throws DataException {
-        User user = getUserDocument(idParam);
-        boolean hasRight = hasRight(idParam, user);
+        User user = getUserDocument(userId);
+        boolean hasRight = hasRight(userRightDTO.getName(), user);
         if (!hasRight) {
             EmbeddedRight userRight = new EmbeddedRight(
                     userRightDTO.getName(),
@@ -115,21 +116,22 @@ public class RightsRepository extends AbstractChildUserRepository {
    
     /**
      * Method for remove user right from rights list in user document
-     * @param rightIdParam right id from request
-     * @param idParam user id from request
+     * @param rightId right id from request
+     * @param userId user id from request
      * @return actual right list
      * @throws DataException throw if can user document can not be found
      */
     public List<EmbeddedRight> removeRight(
-            String rightIdParam,
-            String idParam
+            ObjectId rightId,
+            ObjectId userId
     ) throws DataException {
-        User user = getUserDocument(idParam);
+        User user = getUserDocument(userId);
         List<EmbeddedRight> rights = user.getRights();
         Iterator iterator = rights.iterator();
+        String toCheck = rightId.toString();
         while(iterator.hasNext()) {
             EmbeddedRight right = (EmbeddedRight) iterator.next();
-            if (right.getId().equals(rightIdParam) &&
+            if (right.getId().equals(toCheck) &&
                     !getBlackList().contains(right.getName())) {
                 iterator.remove();
             }
@@ -140,21 +142,21 @@ public class RightsRepository extends AbstractChildUserRepository {
     
     /**
      * MEthod for update user right document
-     * @param rightIdParam right id from request
-     * @param idParam user id from request
+     * @param rightId right id from request
+     * @param userId user id from request
      * @param userRightDTO user right data transfer obejct
      * @return updated right document
      * @throws DataException throw if user document con not be found
      */
     public EmbeddedRight updateUserRight(
-            String rightIdParam, 
-            String idParam,
+            ObjectId rightId, 
+            ObjectId userId,
             UserRightDTO userRightDTO
     ) throws DataException {
-        User user = getUserDocument(idParam);
+        User user = getUserDocument(userId);
         List<EmbeddedRight> rights = user.getRights();
         EmbeddedRight right = Searcher
-                .getUserRightByIdFromList(rightIdParam, rights);
+                .getUserRightByIdFromList(rightId, rights);
         
         if (userRightDTO.getCreate() != null && 
                 !right.getCreate().equals(userRightDTO.getCreate())) {

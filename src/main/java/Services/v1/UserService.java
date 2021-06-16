@@ -11,6 +11,7 @@ import Utils.common.ParamsManager;
 import Utils.common.QueryManager;
 import Utils.common.RequestUtils;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
@@ -42,9 +43,9 @@ public class UserService extends CoreUserService {
             // If ids not equals - throw exception
             if (isEqualsIds) {
                 // Get id from query params
-                String paramId = ParamsManager.getUserId(request);
+                ObjectId userId = ParamsManager.getUserId(request);
                 // Find user by id
-                User user = getUserById(paramId, usersRepository);
+                User user = getUserById(userId, usersRepository);
                 // Check founded user
                 // If user found - deactivate user & save changes
                 // If user not found - return null
@@ -76,17 +77,18 @@ public class UserService extends CoreUserService {
      * @param request Spark request object
      * @param usersRepository
      * @return founded user document
+     * @throws DataException
      */
     public static User getUserById(
             Request request, 
             UsersRepository usersRepository
-    ) {
+    ) throws DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        String idParam = ParamsManager.getUserId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
         String[] excludes = isTrusted
                 ? PUBLIC_AND_PRIVATE_ALLOWED
                 : PUBLIC_ALLOWED;
-        return getUserById(idParam, excludes, usersRepository);
+        return getUserById(userId, excludes, usersRepository);
     }
     
    /**

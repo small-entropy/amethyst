@@ -42,32 +42,30 @@ public abstract class CoreUserService extends CoreService {
     
     /**
      * Method for get user, if ID as String
-     * @param idString id user ID as staing
+     * @param userId user id
      * @param usersRepository source for work with users collection
      * @return 
      */
     public static User getUserById(
-            String idString, 
+            ObjectId userId, 
             UsersRepository usersRepository
     ) {
-        ObjectId id = new ObjectId(idString);
-        return getUserById(id, usersRepository, ALL_ALLOWED);
+        return getUserById(userId, usersRepository, ALL_ALLOWED);
     }
     
     /**
      * Method for get user by id, if id as String
-     * @param idString id as string
+     * @param userId user id
      * @param excludes excludes fileds
      * @param usersRepository source for work with users collection
      * @return founded user document
      */
     public static User getUserById(
-            String idString, 
+            ObjectId userId, 
             String[] excludes, 
             UsersRepository usersRepository
     ) {
-        ObjectId id = new ObjectId(idString);
-        return getUserById(id, usersRepository, excludes);
+        return getUserById(userId, usersRepository, excludes);
     }
 
     /**
@@ -100,7 +98,8 @@ public abstract class CoreUserService extends CoreService {
     }
     
     /**
-     * Method for get user document, when send token in request headers or request params
+     * Method for get user document, when send token in request 
+     * headers or request params
      * @param request Spark request object
      * @param usersRepository users data source
      * @return user document
@@ -118,9 +117,9 @@ public abstract class CoreUserService extends CoreService {
         // If token and URL haven't equals user ID - throw error.
         if (isTrusted) {
             // User id from URL params
-            String idParam = ParamsManager.getUserId(request);
+            ObjectId userId = ParamsManager.getUserId(request);
             // Get user document from database
-            User user = CoreUserService.getUserById(idParam, usersRepository);
+            User user = CoreUserService.getUserById(userId, usersRepository);
             // Check result on exist.
             // If user exist - return user document.
             // If user not exist (equals null) - throw exception.
@@ -195,7 +194,10 @@ public abstract class CoreUserService extends CoreService {
             UserDTO userDTO, 
             UsersRepository usersRepository
     ) {
-        UsersFilter filter = new UsersFilter(userDTO.getUsername(), ALL_ALLOWED);
+        UsersFilter filter = new UsersFilter(
+                userDTO.getUsername(), 
+                ALL_ALLOWED
+        );
         return usersRepository.findOneByUsername(filter);
     }
 

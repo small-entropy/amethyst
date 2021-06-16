@@ -8,12 +8,13 @@ import Repositories.v1.ProfileRepository;
 import Utils.common.ParamsManager;
 import java.util.Arrays;
 import java.util.List;
+import org.bson.types.ObjectId;
 import spark.Request;
 
 
 /**
  * Base class for work with profile property list
- * @author entropy
+ * @author small-entropy
  */
 public abstract class CoreUserProfileService extends BasePropertyService {
 
@@ -41,12 +42,16 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
         UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
                 request, 
                 UserPropertyDTO.class
         ); 
-        return createUserProperty(idParam, userPropertyDTO, profileRepository);
+        return createUserProperty(
+                userId, 
+                userPropertyDTO, 
+                profileRepository
+        );
     }
     
     /**
@@ -62,8 +67,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             ProfileRepository profileRepository
     ) throws DataException {
         // Get user ID param from request URL
-        String idParam = ParamsManager.getUserId(request);
-        return getPropertiesList(idParam, profileRepository);
+        ObjectId userId = ParamsManager.getUserId(request);
+        return getPropertiesList(userId, profileRepository);
     }
     
     /**
@@ -77,9 +82,9 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String propertyIdParam = ParamsManager.getPropertyId(request);
-        return getPropertyById(idParam, propertyIdParam, profileRepository);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
+        return getPropertyById(userId, propertyId, profileRepository);
     }
     
     /**
@@ -93,15 +98,15 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String propertyIdParam = ParamsManager.getPropertyId(request);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
         UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
                 request, 
                 UserPropertyDTO.class
         );
         return updateUserProperty(
-                propertyIdParam, 
-                idParam, 
+                propertyId, 
+                userId, 
                 userPropertyDTO, 
                 profileRepository
         );
@@ -118,8 +123,8 @@ public abstract class CoreUserProfileService extends BasePropertyService {
             Request request, 
             ProfileRepository profileRepository
     ) throws DataException {
-        String idParam = ParamsManager.getUserId(request);
-        String propertyIdParam = ParamsManager.getPropertyId(request);
-        return profileRepository.removeProperty(propertyIdParam, idParam);
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId propertyId = ParamsManager.getPropertyId(request);
+        return profileRepository.removeProperty(propertyId, userId);
     }
 }
