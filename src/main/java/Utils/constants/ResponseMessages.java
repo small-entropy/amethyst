@@ -50,7 +50,13 @@ public enum ResponseMessages {
     PRODUCT("Successfully get product"),
     PRODUCT_CREATED("Successfully created product"),
     PRODUCT_UPDATED("Successfully updated product"),
-    PRODUCT_DELETED("Successfully deleted product");
+    PRODUCT_DELETED("Successfully deleted product"),
+    // Tags
+    TAGS("Successfully get tags"),
+    TAG("Successfully get tags "),
+    TAG_CREATED("Successfully created tag"),
+    TAG_UPDATED("Successfully updated tag"),
+    TAG_DELETED("Successfully deleted tag");
     // Property for text message
     private final String message;
 

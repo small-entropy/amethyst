@@ -21,7 +21,7 @@ import org.bson.types.ObjectId;
  * @param <F> filter type
  * @param <D> data transfer object ytpe
  */
-public class MorphiaRpository<M, F extends Filter, D> 
+public class MorphiaRepository<M, F extends Filter, D> 
         extends AbstractRepository<Datastore, M, ObjectId, F, D> {
     
     /**
@@ -29,7 +29,7 @@ public class MorphiaRpository<M, F extends Filter, D>
      * @param datastore Morphia datastore object
      * @param modelClass class of model collection
      */
-    public MorphiaRpository(Datastore datastore, Class<M> modelClass) {
+    public MorphiaRepository(Datastore datastore, Class<M> modelClass) {
         super(datastore, modelClass);
     }
     

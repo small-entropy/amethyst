@@ -14,7 +14,8 @@ public enum RequestParams {
     CATAGORY_ID("category_id"),
     USER_ID("user_id"),
     PROPERTY_ID("property_id"),
-    RIGHT_ID("right_id");
+    RIGHT_ID("right_id"),
+    TAGS_ID("tags_id");
     
     private final String name;
 

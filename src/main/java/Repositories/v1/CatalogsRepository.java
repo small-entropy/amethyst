@@ -5,7 +5,7 @@ import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Embeddeds.EmbeddedOwner;
-import Repositories.Core.MorphiaRpository;
+import Repositories.Core.MorphiaRepository;
 import dev.morphia.Datastore;
 
 /**
@@ -13,7 +13,7 @@ import dev.morphia.Datastore;
  * @author small-entropy
  */
 public class CatalogsRepository 
-        extends MorphiaRpository<Catalog, CatalogsFilter, CatalogDTO>{
+        extends MorphiaRepository<Catalog, CatalogsFilter, CatalogDTO>{
     
     /**
      * Consturctor for datasource catalog collection
@@ -90,7 +90,7 @@ public class CatalogsRepository
             return catalog;
         } else {
             Error error = new Error("Can not find catalog document");
-            throw new DataException("NotDounf", error);
+            throw new DataException("NotFound", error);
         }
     }
 }

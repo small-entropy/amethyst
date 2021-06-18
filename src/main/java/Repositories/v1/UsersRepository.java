@@ -1,6 +1,6 @@
 package Repositories.v1;
 
-import Repositories.Core.MorphiaRpository;
+import Repositories.Core.MorphiaRepository;
 import DataTransferObjects.v1.UserDTO;
 import Filters.UsersFilter;
 import Models.Standalones.User;
@@ -18,7 +18,7 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 public class UsersRepository 
-        extends MorphiaRpository<User, UsersFilter, UserDTO> {
+        extends MorphiaRepository<User, UsersFilter, UserDTO> {
     
     /**
      * Constuctor users collection sources

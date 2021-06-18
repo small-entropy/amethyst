@@ -12,6 +12,7 @@ public enum DefaultRights {
     REVIEW("review_right"),
     ORDERS("orders_right"),
     CART("carts_right"),
+    TAGS("tags_right"),
     PAGES("pages_right");
 
     private final String name;

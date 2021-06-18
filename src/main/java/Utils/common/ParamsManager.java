@@ -16,6 +16,14 @@ import spark.Request;
  */
 public class ParamsManager {
     
+    /**
+     * Method for get ObjectId from request string
+     * @param request Spark request object
+     * @param key name of request param
+     * @param errorMessage error message
+     * @return founded param
+     * @throws DataException throw if param not found in request
+     */
     private static ObjectId getObjectIdFromRequest(
             Request request,
             String key,
@@ -30,6 +38,12 @@ public class ParamsManager {
         }
     }
     
+    /**
+     * Method for get user id from request
+     * @param request Spark request object
+     * @return founded user id
+     * @throws DataException throw if param not found in request
+     */
     public static final ObjectId getUserId(Request request) 
             throws DataException 
     {
@@ -38,6 +52,12 @@ public class ParamsManager {
         return getObjectIdFromRequest(request, key, errorMessage);
     }
     
+    /**
+     * Method for get category id from request params
+     * @param request Spark request object
+     * @return founded param
+     * @throws DataException throw if param not found in request 
+     */
     public static final ObjectId getCategoryId(Request request) 
             throws DataException 
     {
@@ -46,6 +66,12 @@ public class ParamsManager {
         return getObjectIdFromRequest(request, key, errorMessage);
     }
     
+    /**
+     * Method for get catalog id from request params
+     * @param request Spark request object
+     * @return founded param
+     * @throws DataException throw if param not found in request 
+     */
     public static final ObjectId getCatalogId(Request request) 
             throws DataException 
     {
@@ -54,6 +80,12 @@ public class ParamsManager {
         return getObjectIdFromRequest(request, key, errorMessage);
     }
     
+    /**
+     * Method for get right id from requst params
+     * @param request Spark request object
+     * @return founded param
+     * @throws DataException throw if param not found in request
+     */
     public static final ObjectId getRightId(Request request) 
             throws DataException
     {
@@ -62,11 +94,31 @@ public class ParamsManager {
         return getObjectIdFromRequest(request, key, errorMessage);
     }
     
+    /**
+     * Method for get property id from request params
+     * @param request Spark request object
+     * @return founded param
+     * @throws DataException throw if param not found in request 
+     */
     public static final ObjectId getPropertyId(Request request) 
             throws DataException
     {
         String key = RequestParams.PROPERTY_ID.getName();
         String errorMessage = "Incorrect property id in request";
+        return getObjectIdFromRequest(request, key, errorMessage);
+    }
+    
+    /**
+     * Method fot get tag id from requst params
+     * @param request Spark request obejct
+     * @return founded param
+     * @throws DataException throw if param not found in request
+     */
+    public static final ObjectId getTagId(Request request) 
+            throws DataException
+    {
+        String key = RequestParams.TAGS_ID.getName();
+        String errorMessage = "Incorrect tag id in request";
         return getObjectIdFromRequest(request, key, errorMessage);
     }
 }

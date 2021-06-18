@@ -7,7 +7,7 @@ import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Standalones.Category;
 import Models.Embeddeds.EmbeddedOwner;
-import Repositories.Core.MorphiaRpository;
+import Repositories.Core.MorphiaRepository;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author small-entropy
  */
 public class CategoriesRepository 
-        extends MorphiaRpository<Category, CategoriesFilter, CategoryDTO>{
+        extends MorphiaRepository<Category, CategoriesFilter, CategoryDTO>{
     
     /**
      * Constructor for datastore source of categories collection
