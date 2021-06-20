@@ -1,11 +1,9 @@
 package Models.Standalones;
 
 import Models.Embeddeds.EmbeddedOwner;
-import Models.Embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Version;
-import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
