@@ -21,7 +21,6 @@ public class Tag {
     private String description;
     private String status;
     private EmbeddedOwner owner;
-    private List<EmbeddedProperty> properties;
     @Version
     private Long version;
 
@@ -40,14 +39,6 @@ public class Tag {
         this.description = description;
         this.status = "active";
         this.owner = owner;
-    }
-
-    public List<EmbeddedProperty> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<EmbeddedProperty> properties) {
-        this.properties = properties;
     }
 
     public EmbeddedOwner getOwner() {
