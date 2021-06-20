@@ -16,6 +16,14 @@ public class TagsFilter extends Filter {
         super();
     }
 
+    public TagsFilter(String[] exludes) {
+        super(exludes);
+    }
+
+    public TagsFilter(int skip, int limit, String[] excludes) {
+        super(skip, limit, excludes);
+    }
+
     public String getValue() {
         return value;
     }

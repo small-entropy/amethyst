@@ -105,9 +105,8 @@ public class CoreCatalogService {
         // User id
         ObjectId userId = ParamsManager.getUserId(request);
         
-        CatalogsFilter filter = new CatalogsFilter(skip, limit, new String[]{});
+        CatalogsFilter filter = new CatalogsFilter(skip, limit, excludes);
         filter.setOwner(userId);
-        filter.setExcludes(excludes);
         return catalogsRepository.findAllByOwnerId(filter);
     } 
     
@@ -123,8 +122,9 @@ public class CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             String[] excludes
     ) {
-        CatalogsFilter filter = new CatalogsFilter();
-        filter.setExcludes(excludes);
+        int skip = QueryManager.getSkip(request);
+        int limit = QueryManager.getLimit(request);
+        CatalogsFilter filter = new CatalogsFilter(skip, limit, excludes);
         return catalogsRepository.findAll(filter);
     }
     

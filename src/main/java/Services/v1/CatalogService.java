@@ -47,7 +47,8 @@ public class CatalogService extends CoreCatalogService {
         String[] excludes = RightManager.getExcludes(
                 request, 
                 rule, 
-                PUBLIC_EXCLUDES, PRIVATE_EXCLUDES
+                PUBLIC_EXCLUDES, 
+                PRIVATE_EXCLUDES
         );
         var catalog = getCatalogByRequestByUserId(
                 request, 
@@ -57,7 +58,7 @@ public class CatalogService extends CoreCatalogService {
         if (catalog != null) {
             return catalog;
         } else {
-            Error error = new Error("Can not find catalog focument by user id from request params");
+            Error error = new Error("Can not find catalog document by user id from request params");
             throw new DataException("NotFount", error);
         }
     }
@@ -129,8 +130,8 @@ public class CatalogService extends CoreCatalogService {
     /**
      * Method for create catalog documents by request
      * @param request Spark request object
-     * @param catalogsSource datasource for catalogs collection
-     * @param usersSource datasource for users collection
+     * @param catalogsRepository datasource for catalogs collection
+     * @param usersRepository datasource for users collection
      * @param rule rule data transfer object
      * @return created catalog document
      * @throws AccessException 
@@ -138,19 +139,21 @@ public class CatalogService extends CoreCatalogService {
      */
     public static Catalog createCatalog(
             Request request, 
-            CatalogsRepository catalogsSource, 
-            UsersRepository usersSource, 
+            CatalogsRepository catalogsRepository, 
+            UsersRepository usersRepository, 
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) 
+                ? rule.isMyGlobal()
+                : rule.isOtherGlobal();
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             Catalog catalog = createCatalog(
                     userId, 
                     request, 
-                    catalogsSource, 
-                    usersSource
+                    catalogsRepository, 
+                    usersRepository
             );
             String[] excludes = RightManager.getExludesByRule(
                     isTrusted, 
@@ -158,7 +161,7 @@ public class CatalogService extends CoreCatalogService {
                     PUBLIC_EXCLUDES, 
                     PRIVATE_EXCLUDES
             );
-            return getCatalogByDocument(catalog, catalogsSource, excludes);
+            return getCatalogByDocument(catalog, catalogsRepository, excludes);
         } else {
             Error error = new Error("Has no access to create catalog");
             throw new AccessException("CanNotCreate", error);
@@ -169,10 +172,10 @@ public class CatalogService extends CoreCatalogService {
      * Method for get update catalo by request
      * @param request Spark request object
      * @param catalogsRepository datasource for catalogs collection
-     * @param rule
-     * @return
-     * @throws AccessException
-     * @throws DataException 
+     * @param rule rule data transfer object 
+     * @return updated document
+     * @throws AccessException throw if no access to update document
+     * @throws DataException throw if can not find document
      */
     public static Catalog updateCatalog(
             Request request, 

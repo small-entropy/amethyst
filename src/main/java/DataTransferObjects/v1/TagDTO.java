@@ -1,7 +1,7 @@
 package DataTransferObjects.v1;
 
 import DataTransferObjects.base.BaseDTO;
-import Models.Embeddeds.EmbeddedOwner;
+import Models.Standalones.User;
 
 /**
  * Class of data trasfer object for tag model
@@ -11,7 +11,7 @@ public class TagDTO extends BaseDTO {
     private String name;
     private String value;
     private String description;
-    private EmbeddedOwner owner;
+    private User owner;
 
     public TagDTO() {}
 
@@ -31,11 +31,11 @@ public class TagDTO extends BaseDTO {
         this.name = name;
     }
 
-    public EmbeddedOwner getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(EmbeddedOwner owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 
