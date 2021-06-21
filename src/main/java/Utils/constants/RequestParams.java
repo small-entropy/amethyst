@@ -15,6 +15,7 @@ public enum RequestParams {
     USER_ID("user_id"),
     PROPERTY_ID("property_id"),
     RIGHT_ID("right_id"),
+    COMPANY_ID("comapny_id"),
     TAGS_ID("tags_id");
     
     private final String name;

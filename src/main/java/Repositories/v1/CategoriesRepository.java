@@ -77,6 +77,11 @@ public class CategoriesRepository
         return category;
     }
 
+    /**
+     * Method for get all categories by catalog id
+     * @param filter filter object
+     * @return list of all categories for catalog
+     */
     public List<Category> findAllByCatalogId(CategoriesFilter filter) {
         FindOptions findOptions = new FindOptions()
                 .projection()
@@ -93,6 +98,13 @@ public class CategoriesRepository
                 .toList();
     }
 
+    /**
+     * Method for update category document
+     * @param categoryDTO category data transfer object
+     * @param filter filter object
+     * @return updated document
+     * @throws DataException throw if can not find category document
+     */
     public Category update(CategoryDTO categoryDTO, CategoriesFilter filter) 
             throws DataException {
         Category category = findOneByOwnerAndId(filter);
@@ -120,10 +132,10 @@ public class CategoriesRepository
     }
         
     /**
-     * 
-     * @param filer
-     * @return
-     * @throws DataException 
+     * Method for deactivate category
+     * @param filer filter object
+     * @return deactivated category
+     * @throws DataException throw if can not find category
      */
     public Category deactivated(CategoriesFilter filer) throws DataException {
         Category category = findOneByOwnerAndId(filer);

@@ -3,7 +3,11 @@ package Models.Standalones;
 import Models.Embeddeds.EmbeddedOwner;
 import Models.Embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Field;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Index;
+import dev.morphia.annotations.IndexOptions;
+import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -12,7 +16,17 @@ import org.bson.types.ObjectId;
  * Class for work with sellers
  * @author small-entropy
  */
-@Entity("sellers")
+@Entity("companies")
+@Indexes({
+    @Index(
+            fields = @Field("name"),
+            options = @IndexOptions(unique = true)
+    ),
+    @Index(
+            fields = @Field("title"),
+            options = @IndexOptions(unique = true)
+    )
+})
 public class Company {
     @Id
     private ObjectId id;
@@ -22,7 +36,6 @@ public class Company {
     private EmbeddedOwner owner;
     private String status;
     private List<EmbeddedProperty> profile;
-    private List<EmbeddedProperty> properties;
     @Version
     private Long version;
 
@@ -46,15 +59,22 @@ public class Company {
         this.profile = profile;
         this.status = "active";
     }
-
-    public List<EmbeddedProperty> getProperties() {
-        return properties;
+    
+    public Company(
+            String name, 
+            String title, 
+            String description, 
+            EmbeddedOwner owner,
+            List<EmbeddedProperty> profile
+    ) {
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.profile = profile;
+        this.status = "active";
     }
-
-    public void setProperties(List<EmbeddedProperty> properties) {
-        this.properties = properties;
-    }
-
+    
     public List<EmbeddedProperty> getProfile() {
         return profile;
     }
@@ -62,8 +82,6 @@ public class Company {
     public void setProfile(List<EmbeddedProperty> profile) {
         this.profile = profile;
     }
-    
-    
 
     public ObjectId getId() {
         return id;

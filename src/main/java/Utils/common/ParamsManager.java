@@ -121,4 +121,17 @@ public class ParamsManager {
         String errorMessage = "Incorrect tag id in request";
         return getObjectIdFromRequest(request, key, errorMessage);
     }
+    
+    /**
+     * Method for get company id from request params
+     * @param request Spark request object
+     * @return company id
+     * @throws DataException throw if param not found in request
+     */
+    public static final ObjectId getCompanyId(Request request) 
+            throws DataException {
+        String key = RequestParams.COMPANY_ID.getName();
+        String errorMessage = "Incorrect company id in request";
+        return getObjectIdFromRequest(request, key, errorMessage);
+    }
 }

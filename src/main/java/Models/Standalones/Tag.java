@@ -2,7 +2,11 @@ package Models.Standalones;
 
 import Models.Embeddeds.EmbeddedOwner;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Field;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Index;
+import dev.morphia.annotations.IndexOptions;
+import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
 import org.bson.types.ObjectId;
 
@@ -11,6 +15,16 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 @Entity("tags")
+@Indexes({
+    @Index(
+            fields = @Field("name"),
+            options = @IndexOptions(unique = true)
+    ),
+    @Index(
+            fields = @Field("value"),
+            options = @IndexOptions(unique = true)
+    )
+})
 public class Tag {
     @Id
     private ObjectId id;
@@ -109,6 +123,10 @@ public class Tag {
         this.status = "active";
     }
     
+    /**
+     * Method for get id as string
+     * @return id as string
+     */
     public String getStringifiedId() {
         return id.toString();
     }
