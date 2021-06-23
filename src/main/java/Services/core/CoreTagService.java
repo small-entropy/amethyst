@@ -14,33 +14,11 @@ import org.bson.types.ObjectId;
 import spark.Request;
 
 /**
- * Class with static methods for create 
+ * Class with static methods for work with tags data
  * @author small-entropy
  */
 public class CoreTagService extends AbstractService {
-    
-    /**
-     * Method for get tags list by owner id
-     * @param request Spark request object 
-     * @param tagsRepository repository for tags collection
-     * @param excludes exlude fields
-     * @return list of tags documents
-     * @throws DataException throw if can not find user by reqeust params
-     */
-    protected static List<Tag> getTagsByRequestForUser(
-            Request request,
-            TagsRepository tagsRepository,
-            String[] excludes
-    ) throws DataException {
-        int skip = QueryManager.getSkip(request);
-        int limit = QueryManager.getLimit(request);
-        ObjectId userId = ParamsManager.getUserId(request);
-        
-        TagsFilter filter = new TagsFilter(skip, limit, excludes);
-        filter.setOwner(userId);
-        return tagsRepository.findAllByOwnerId(filter);
-    }
-    
+   
     /**
      * Method fot get list of tags documents
      * @param request Spark request object
@@ -51,12 +29,18 @@ public class CoreTagService extends AbstractService {
     protected static List<Tag> getList(
             Request request,
             TagsRepository tagsRepository,
-            String[] excludes
+            String[] excludes,
+            ObjectId ownerId
     ) {
         int skip = QueryManager.getSkip(request);
         int limit = QueryManager.getLimit(request);
         TagsFilter filter = new TagsFilter(skip, limit, excludes);
-        return tagsRepository.findAll(filter);
+        if (ownerId != null) {
+            filter.setOwner(ownerId);
+            return tagsRepository.findAllByOwnerId(filter);
+        } else {
+            return tagsRepository.findAll(filter);
+        }
     }
     
     /**

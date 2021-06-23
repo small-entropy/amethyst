@@ -33,17 +33,19 @@ public class CompaniesController extends BaseCompaniesController {
             List<Company> companies = CompanyService.getCompaniesList(
                     req,
                     companiesRepository,
-                    rule
+                    rule,
+                    false
             );
             return new SuccessResponse<>(MSG_LIST, companies);
         }, transformer);
         // Route for get company list by user
         get("/owner/:user_id", (req, res) -> {
             RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Company> companies = CompanyService.getCompaniesListByUser(
+            List<Company> companies = CompanyService.getCompaniesList(
                     req,
                     companiesRepository,
-                    rule
+                    rule,
+                    true
             );
             return new SuccessResponse<>(MSG_LIST, companies);
         }, transformer);
@@ -53,6 +55,7 @@ public class CompaniesController extends BaseCompaniesController {
             Company company = CompanyService.createCompany(
                     req,
                     companiesRepository,
+                    usersRepository,
                     rule
             );
             return new SuccessResponse<>(MSG_CREATED, company);

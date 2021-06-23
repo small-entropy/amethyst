@@ -46,7 +46,8 @@ public class TagService extends CoreTagService {
     public static List<Tag> getTagsList(
             Request request,
             TagsRepository tagsRepository,
-            RuleDTO rule
+            RuleDTO rule,
+            boolean byOwner
     ) throws DataException {
         String[] excludes = RightManager.getExcludes(
                 request, 
@@ -54,10 +55,14 @@ public class TagService extends CoreTagService {
                 PUBLIC_EXCLUDES, 
                 PRIVATE_EXCLUDES
         );
+        var userId = (byOwner)
+                ? ParamsManager.getUserId(request)
+                : null;
         List<Tag> tags = getList(
                 request,
                 tagsRepository,
-                excludes
+                excludes,
+                null
         );
         if (!tags.isEmpty()) {
             return tags;
@@ -107,38 +112,6 @@ public class TagService extends CoreTagService {
         } else {
             Error error = new Error("Has no access to create tag");
             throw new AccessException("CanNotCreate", error);
-        }
-    }
-
-    /**
-     * Method for get list of tags for owner by request params
-     * @param request Spark request object
-     * @param tagsRepository repository for tags collection
-     * @param rule rule data transfer obejct
-     * @return list of tags documents
-     * @throws DataException 
-     */
-    public static List<Tag> getTagsByOwnerId(
-            Request request,
-            TagsRepository tagsRepository,
-            RuleDTO rule
-    ) throws DataException {
-        String[] exludes = RightManager.getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
-        var tags = getTagsByRequestForUser(
-                request,
-                tagsRepository,
-                exludes
-        );
-        if (tags != null && !tags.isEmpty()) {
-            return tags;
-        } else {
-            Error error = new Error("Can not find user tags by request params");
-            throw new DataException("NotFound", error);
         }
     }
 

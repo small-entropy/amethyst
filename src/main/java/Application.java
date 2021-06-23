@@ -24,6 +24,7 @@ enum RoutesPath {
     CATALOGS("/catalogs"), // endpoint for catalogs API
     CATEGORIES("/categories"),
     TAGS("/tags"),
+    COMPANIES("/companies"),
     PRODUCTS("/products"); //endpoint for categories API
     private final String value;
     RoutesPath(String value) {
@@ -112,6 +113,11 @@ public class Application {
                 path(
                         RoutesPath.CATEGORIES.getValue(), 
                         () -> CategoriesController.routes(store, toJson)
+                );
+                // Grouped API routes for companies
+                path(
+                        RoutesPath.COMPANIES.getValue(),
+                        () -> CompaniesController.routes(store, toJson)
                 );
                 // Grouped API routes for tags
                 path(

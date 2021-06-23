@@ -26,17 +26,19 @@ public class TagsController extends BaseTagsController {
             List<Tag> tags = TagService.getTagsList(
                     req,
                     tagsRepository,
-                    rule
+                    rule,
+                    false
             );
             return new SuccessResponse<>(MSG_LIST, tags);
         }, transformer);
         // Route for get tags list by for user by id
         get("/owner/:user_id", (req, res) -> {
             RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Tag> tags = TagService.getTagsByOwnerId(
+            List<Tag> tags = TagService.getTagsList(
                     req, 
                     tagsRepository, 
-                    rule
+                    rule,
+                    true
             );
             return new SuccessResponse<>(MSG_LIST, tags);
         }, transformer);

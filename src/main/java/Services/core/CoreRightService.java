@@ -27,12 +27,14 @@ public abstract class CoreRightService {
         EmbeddedRight categoriesRight = new EmbeddedRight(DefaultRights.CATEGORIES.getName());
         EmbeddedRight productsRight = new EmbeddedRight(DefaultRights.PRODUCTS.getName());
         EmbeddedRight tagsRight = new EmbeddedRight(DefaultRights.TAGS.getName());
+        EmbeddedRight companiesRight = new EmbeddedRight(DefaultRights.COMPANIES.getName());
         return Arrays.asList(
                 usersRight, 
                 catalogsRight, 
                 categoriesRight, 
                 productsRight,
-                tagsRight
+                tagsRight,
+                companiesRight
         );
     }
 
