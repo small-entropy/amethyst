@@ -1,5 +1,6 @@
 package Models.Standalones;
 
+import Models.Base.Document;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Embeddeds.EmbeddedCategory;
 import Models.Embeddeds.EmbeddedCompany;
@@ -8,23 +9,17 @@ import Models.Embeddeds.EmbeddedPrice;
 import Models.Embeddeds.EmbeddedProperty;
 import Models.Embeddeds.EmbeddedTag;
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Version;
 import java.util.List;
-import org.bson.types.ObjectId;
 
 /**
  * Model for work with products collection
  * @author small-entropy
  */
 @Entity("products")
-public class Product {
-    @Id
-    private ObjectId id;
-    private String name;
-    private String title;
+public class Product extends Document {
+    
     private String brief;
-    private String description;
     private EmbeddedCatalog catalog;
     private List<EmbeddedPrice> prices;
     private List<EmbeddedCategory> categories;
@@ -34,12 +29,10 @@ public class Product {
     private List<EmbeddedTag> tags;
     private EmbeddedCompany seller;
     private EmbeddedCompany manufacturer;
-    private EmbeddedOwner owner;
-    private String status;
     @Version private Long version;
 
     public Product() {
-        this.status = "active";
+        super();
     }
 
     public Product(
@@ -60,10 +53,8 @@ public class Product {
             String status, 
             Long version
     ) {
-        this.name = name;
-        this.title = title;
+        super(name, title, description, owner);
         this.brief = brief;
-        this.description = description;
         this.catalog = catalog;
         this.prices = prices;
         this.categories = categories;
@@ -73,8 +64,6 @@ public class Product {
         this.tags = tags;
         this.seller = seller;
         this.manufacturer = manufacturer;
-        this.owner = owner;
-        this.status = "active";
     }
     
     /**
@@ -126,22 +115,6 @@ public class Product {
     }
 
     /**
-     * Getter for status field
-     * @return current value of status field 
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Setter for status field
-     * @param status new value for status field
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    /**
      * Getter for prices list
      * @return current value for prices list
      */
@@ -190,71 +163,6 @@ public class Product {
     }
 
     /**
-     * Getter for id field
-     * @return id for curren document
-     */
-    public ObjectId getId() {
-        return id;
-    }
-
-    /**
-     * Setter for id field
-     * @param id new value for id document
-     */
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-    
-
-    /**
-     * Getter for name field
-     * @return current value for name field
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Setter for name field
-     * @param name new value for name field
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Getter for title field
-     * @return current value for title field
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Setter for title field
-     * @param title new value for title field
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Getter for description field
-     * @return current value for description field
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Setter for description field
-     * @param description new value for description field
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
      * Getter for catalog field
      * @return current value of catalog field
      */
@@ -284,22 +192,6 @@ public class Product {
      */
     public void setCategories(List<EmbeddedCategory> categories) {
         this.categories = categories;
-    }
-
-    /**
-     * Getter for owner field
-     * @return owner document
-     */
-    public EmbeddedOwner getOwner() {
-        return owner;
-    }
-
-    /**
-     * Setter for owner field
-     * @param owner new value for owner field
-     */
-    public void setOwner(EmbeddedOwner owner) {
-        this.owner = owner;
     }
 
     /**
@@ -348,27 +240,5 @@ public class Product {
      */
     public void setVersion(Long version) {
         this.version = version;
-    }
-    
-    /**
-     * Method for deactivate user
-     */
-    public void deactivate() {
-        this.status = "inactive";
-    }
-
-    /**
-     * Method for activate user
-     */
-    public void activate() {
-        this.status = "active";
-    }
-    
-    /**
-     * Method for get stringified id
-     * @return stringified id
-     */
-    public String getStringifiedId() {
-        return id.toString();
     }
 }

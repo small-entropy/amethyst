@@ -37,7 +37,7 @@ public class TagsRepository
         
         Tag tag = new Tag(
                 tagDTO.getName(),
-                tagDTO.getValue(),
+                tagDTO.getTitle(),
                 tagDTO.getDescription(),
                 owner
         );
@@ -58,16 +58,16 @@ public class TagsRepository
     ) throws DataException {
         var tag = findOneByOwnerAndId(filter);
         var description = tagDTO.getDescription();
-        var value = tagDTO.getValue();
+        var value = tagDTO.getTitle();
         if (tag != null) {
             if (description != null && (tag.getDescription() == null 
                     || !tag.getDescription().equals(description))) {
                 tag.setDescription(description);
             }
             
-            if(value != null && (tag.getValue() == null
-                    || tag.getValue().equals(value))) {
-                tag.setValue(value);
+            if(value != null && (tag.getTitle()== null
+                    || tag.getTitle().equals(value))) {
+                tag.setTitle(value);
             }
             
             save(tag);

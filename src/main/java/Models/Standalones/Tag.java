@@ -1,14 +1,13 @@
 package Models.Standalones;
 
+import Models.Base.Document;
 import Models.Embeddeds.EmbeddedOwner;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Field;
-import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Index;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
-import org.bson.types.ObjectId;
 
 /**
  * Model for tag collection
@@ -21,85 +20,27 @@ import org.bson.types.ObjectId;
             options = @IndexOptions(unique = true)
     ),
     @Index(
-            fields = @Field("value"),
+            fields = @Field("title"),
             options = @IndexOptions(unique = true)
     )
 })
-public class Tag {
-    @Id
-    private ObjectId id;
-    private String name;
-    private String value;
-    private String description;
-    private String status;
-    private EmbeddedOwner owner;
-    @Version
-    private Long version;
+public class Tag extends Document {
+
+    @Version private Long version;
 
     public Tag() {
-        this.status = "active";
+        super();
     }
 
     public Tag(
             String name, 
-            String value, 
+            String title, 
             String description,
             EmbeddedOwner owner
     ) {
-        this.name = name;
-        this.value = value;
-        this.description = description;
-        this.status = "active";
-        this.owner = owner;
+        super(name, title, description, owner);
     }
 
-    public EmbeddedOwner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(EmbeddedOwner owner) {
-        this.owner = owner;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     public Long getVersion() {
         return version;
@@ -107,27 +48,5 @@ public class Tag {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-    
-    /**
-     * Method for deactivate user
-     */
-    public void deactivate() {
-        this.status = "inactive";
-    }
-
-    /**
-     * Method for activate user
-     */
-    public void activate() {
-        this.status = "active";
-    }
-    
-    /**
-     * Method for get id as string
-     * @return id as string
-     */
-    public String getStringifiedId() {
-        return id.toString();
     }
 }

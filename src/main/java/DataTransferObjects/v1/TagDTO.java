@@ -9,7 +9,7 @@ import Models.Standalones.User;
  */
 public class TagDTO extends BaseDTO {
     private String name;
-    private String value;
+    private String title;
     private String description;
     private User owner;
 
@@ -39,11 +39,11 @@ public class TagDTO extends BaseDTO {
         this.owner = owner;
     }
 
-    public String getValue() {
-        return value;
+    public String getTitle() {
+        return title;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

@@ -1,5 +1,6 @@
 package Models.Standalones;
 
+import Models.Base.Document;
 import Models.Embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
@@ -17,102 +18,48 @@ import dev.morphia.annotations.*;
     @Index(fields = @Field("title")),
     @Index(fields = @Field("owner"))
 })
-public class Catalog {
-    @Id
-    private ObjectId id;
-    private String name;
-    private String title;
-    private String description;
-    private EmbeddedOwner owner;
-    private String status;
+public class Catalog extends Document {
     @Version private Long version;
             
-    Catalog() {}
-    
-    public Catalog(String name, String title, EmbeddedOwner owner) {
-        this.name = name;
-        this.title = title;
-        this.owner = owner;
-        this.status = "active";
+    public Catalog() {
+        super();
     }
     
-    public Catalog(ObjectId id, String name, String title, EmbeddedOwner owner) {
-        this.id = id;
-        this.name = name;
-        this.title = title;
-        this.owner = owner;
-        this.status = "active";
+    public Catalog(
+            String name, 
+            String title, 
+            EmbeddedOwner owner
+    ) {
+        super(name, title, owner);
     }
     
-    
-    public Catalog(String name, String title, String description, EmbeddedOwner owner) {
-        this.name = name;
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
-        this.status = "active";
-    }
-    
-    public Catalog(ObjectId id, String name, String title, String description, EmbeddedOwner owner) {
-        this.id = id;
-        this.name = name;
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
-        this.status = "active";
-    }
-
-    public String getStatus()  {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
+    public Catalog(
+            ObjectId id, 
+            String name, 
+            String title, 
+            EmbeddedOwner owner
+    ) {
+        super(id, name, title, owner);
     }
     
     
-    public String getStringifiedId() {
-        return id.toString();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Catalog(
+            String name, 
+            String title, 
+            String description, 
+            EmbeddedOwner owner
+    ) {
+        super(name, title, description, owner);
     }
     
-    public EmbeddedOwner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(EmbeddedOwner owner) {
-        this.owner = owner;
+    public Catalog(
+            ObjectId id, 
+            String name, 
+            String title, 
+            String description, 
+            EmbeddedOwner owner
+    ) {
+        super(id, name, title, description, owner);
     }
     
     public Long getVersion() {
@@ -121,9 +68,5 @@ public class Catalog {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public void deactivate() {
-        this.status = "inactive";
     }
 }

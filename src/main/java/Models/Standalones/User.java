@@ -1,4 +1,5 @@
 package Models.Standalones;
+import Models.Base.Standalone;
 import Models.Embeddeds.EmbeddedProperty;
 import Models.Embeddeds.EmbeddedRight;
 import Exceptions.AuthorizationException;
@@ -16,14 +17,11 @@ import java.util.List;
     ),
     @Index(fields = @Field("profile"))
 })
-public class User {
-    @Id
-    private ObjectId id;
-    
+public class User extends Standalone {
+
     private String username;
     private String password;
     private List<String> issuedToken;
-    private String status;
     private List<EmbeddedProperty> properties;
     private List<EmbeddedProperty> profile;
     private List<EmbeddedRight> rights;
@@ -34,7 +32,9 @@ public class User {
     }
 
 
-    User() {}
+    public User() {
+        super();
+    }
 
     /**
      * Constructor for user document
@@ -42,9 +42,10 @@ public class User {
      * @param password user password
      */
     public User(String username, String password) {
+        super();
         this.username = username;
         this.password = getHashedPassword(password);
-        this.status = "active";
+        
     }
 
     /**
@@ -64,10 +65,9 @@ public class User {
             List<EmbeddedProperty> profile,
             List<EmbeddedRight> rights
     ) {
-        this.id = id;
+        super(id);
         this.username = username;
         this.password = getHashedPassword(password);
-        this.status = "active";
         this.properties = properties;
         this.profile = profile;
         this.rights = rights;
@@ -146,18 +146,6 @@ public class User {
     }
 
     /**
-     * Getter for user id
-     * @return user id (as ObjectId)
-     */
-    public ObjectId getId() {
-        return id;
-    }
-
-    public String getStringifiedId() {
-        return id.toString();
-    }
-
-    /**
      * Setter for user issued tokens
      * @param tokens list of tokens
      */
@@ -189,7 +177,10 @@ public class User {
         password = getHashedPassword(password);
     }
     
-    public void reGeneratePassword(String oldPassword, String newPassword) throws AuthorizationException {
+    public void reGeneratePassword(
+            String oldPassword, 
+            String newPassword
+    ) throws AuthorizationException {
         boolean verify = verifyPassword(oldPassword).verified;
         if (verify) {
             password = getHashedPassword(newPassword);
@@ -224,27 +215,5 @@ public class User {
     public String getFirstToken() {
         final int index = 0;
         return this.issuedToken.get(index);
-    }
-
-    /**
-     * Getter for active state user
-     * @return current value of active field
-     */
-    public String getStatus() {
-        return this.status;
-    }
-
-    /**
-     * Method for deactivate user
-     */
-    public void deactivate() {
-        this.status = "inactive";
-    }
-
-    /**
-     * Method for activate user
-     */
-    public void activate() {
-        this.status = "active";
     }
 }

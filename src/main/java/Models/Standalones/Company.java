@@ -1,10 +1,10 @@
 package Models.Standalones;
 
+import Models.Base.Document;
 import Models.Embeddeds.EmbeddedOwner;
 import Models.Embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Field;
-import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Index;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexes;
@@ -27,20 +27,13 @@ import org.bson.types.ObjectId;
             options = @IndexOptions(unique = true)
     )
 })
-public class Company {
-    @Id
-    private ObjectId id;
-    private String name;
-    private String title;
-    private String description;
-    private EmbeddedOwner owner;
-    private String status;
+public class Company extends Document {
+    
     private List<EmbeddedProperty> profile;
-    @Version
-    private Long version;
+    @Version private Long version;
 
     public Company() {
-        this.status = "active";
+        super();
     }
 
     public Company(
@@ -51,13 +44,8 @@ public class Company {
             EmbeddedOwner owner,
             List<EmbeddedProperty> profile
     ) {
-        this.id = id;
-        this.name = name;
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
+        super(id, name, title, description, owner);
         this.profile = profile;
-        this.status = "active";
     }
     
     public Company(
@@ -67,12 +55,8 @@ public class Company {
             EmbeddedOwner owner,
             List<EmbeddedProperty> profile
     ) {
-        this.name = name;
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
+        super(name, title, description, owner);
         this.profile = profile;
-        this.status = "active";
     }
     
     public List<EmbeddedProperty> getProfile() {
@@ -83,29 +67,6 @@ public class Company {
         this.profile = profile;
     }
 
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public Long getVersion() {
         return version;
@@ -113,45 +74,5 @@ public class Company {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
-    public void deactivate() {
-        this.status = "inactive";
-    }
-
-    /**
-     * Getter for owner field
-     * @return 
-     */
-    public EmbeddedOwner getOwner() {
-        return owner;
-    }
-
-    /**
-     * Setter for owner field
-     * @param owner owner document
-     */
-    public void setOwner(EmbeddedOwner owner) {
-        this.owner = owner;
-    }
-    
-    public String getStringifiedId() {
-        return id.toString();
     }
 }

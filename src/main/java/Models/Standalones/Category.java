@@ -1,5 +1,6 @@
 package Models.Standalones;
 
+import Models.Base.Document;
 import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Embeddeds.EmbeddedOwner;
@@ -21,20 +22,16 @@ import org.bson.types.ObjectId;
     @Index(fields = @Field("catalog")),
     @Index(fields = @Field("owner"))
 })
-public class Category {
-    @Id
-    private ObjectId id;
-    private String name;
-    private String title;
-    private String description;
+public class Category extends Document {
+    
     private EmbeddedCatalog catalog;
-    private String status;
     private List<EmbeddedBreadcrumb> breadcrumbs;
     private List<EmbeddedBreadcrumb> childs;
-    private EmbeddedOwner owner;
     @Version private Long version;
 
-    Category() {}
+    public Category() {
+        super();
+    }
     
     public Category(
             ObjectId id, 
@@ -45,14 +42,9 @@ public class Category {
             List<EmbeddedBreadcrumb> breadcrumbs,
             EmbeddedOwner owner
     ) {
-        this.id = id;
-        this.name = name;
-        this.title = title;
-        this.description = description;
+        super(id, name, title, description, owner);
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
-        this.owner = owner;
-        this.status = "active";
     }
     
     public Category(
@@ -63,57 +55,9 @@ public class Category {
             List<EmbeddedBreadcrumb> breadcrumbs,
             EmbeddedOwner owner
     ) {
-        this.name = name;
-        this.title = title;
-        this.description = description;
+        super(name, title, description, owner);
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
-        this.owner = owner;
-        this.status = "active";
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-    
-    public String getStringifiedId() {
-        return id.toString();
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public EmbeddedCatalog getCatalog() {
@@ -142,17 +86,5 @@ public class Category {
 
     public Long getVersion() {
         return version;
-    }
-
-    public EmbeddedOwner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(EmbeddedOwner owner) {
-        this.owner = owner;
-    }
-    
-    public void deactivate() {
-        this.status = "inactive";
     }
 }
