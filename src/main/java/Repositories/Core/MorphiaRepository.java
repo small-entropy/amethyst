@@ -155,12 +155,47 @@ public class MorphiaRepository<M extends Standalone, F extends Filter, D>
     }
     
     /**
+     * Update handler method, call before save document
+     * @param dto data transfer object
+     * @param document document object
+     * @return result of update
+     */
+    protected boolean updateHandler(D dto, M document) {
+        return false;
+    }
+    
+    /**
+     * Method for update document
+     * @param dto data transfer obejct
+     * @param filter filter object
+     * @return saved document
+     * @throws DataException throw if can not find document or can not update
+     *                       document
+     */
+    public final M update(D dto, F filter) throws DataException {
+        M document = findOneByOwnerAndId(filter);
+        if (document != null) {
+            boolean changed = updateHandler(dto, document);
+            if (changed) {
+                save(document);
+                return document;
+            } else {
+                Error error = new Error("Nothing to update");
+                throw new DataException("CanNotUpdate", error);
+            }
+        } else {
+            Error error = new Error("Can not find document");
+            throw new DataException("NotFound", error);
+        }
+    }
+    
+    /**
      * Method for deactivate document
      * @param filter filter object
      * @return deactivated document
      * @throws DataException throw if can not find document
      */
-    public M deactivate(F filter) throws DataException {
+    public final M deactivate(F filter) throws DataException {
         M document = findOneByOwnerAndId(filter);
         if (document != null) {
             document.deactivate();

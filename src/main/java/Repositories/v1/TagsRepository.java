@@ -46,36 +46,28 @@ public class TagsRepository
     }
     
     /**
-     * Method for update tag document
-     * @param tagDTO tag data transfer object
-     * @param filter filter object
-     * @return updated tag document
-     * @throws DataException throw if tag document not found
+     * Handler for update method
+     * @param tagDTO tag data transfer obejct
+     * @param tag tag document
+     * @return result of update
      */
-    public Tag update(
-            TagDTO tagDTO,
-            TagsFilter filter
-    ) throws DataException {
-        var tag = findOneByOwnerAndId(filter);
+    @Override
+    protected boolean updateHandler(TagDTO tagDTO, Tag tag) {
+        boolean changed = false;
         var description = tagDTO.getDescription();
         var value = tagDTO.getTitle();
-        if (tag != null) {
-            if (description != null && (tag.getDescription() == null 
-                    || !tag.getDescription().equals(description))) {
-                tag.setDescription(description);
-            }
-            
-            if(value != null && (tag.getTitle()== null
-                    || tag.getTitle().equals(value))) {
-                tag.setTitle(value);
-            }
-            
-            save(tag);
-            return tag;
-        } else {
-            Error error = new Error("Can not find tag document");
-            throw new DataException("NotFound", error);
+        if (description != null && (tag.getDescription() == null
+                || !tag.getDescription().equals(description))) {
+            tag.setDescription(description);
+            changed = true;
         }
-        
+        if(value != null && (tag.getTitle()== null
+                || tag.getTitle().equals(value))) {
+            tag.setTitle(value);
+            if (!changed) {
+                changed = true;
+            }
+        }
+        return changed;
     }
 }

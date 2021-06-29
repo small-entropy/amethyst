@@ -1,7 +1,6 @@
 package Repositories.v1;
 
 import DataTransferObjects.v1.CatalogDTO;
-import Exceptions.DataException;
 import Filters.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Embeddeds.EmbeddedOwner;
@@ -44,35 +43,30 @@ public class CatalogsRepository
         save(catalog);
         return catalog;
     }
-
+    
     /**
-     * Method for update catalog document
+     * Handler for method update catalog document
      * @param catalogDTO catalog data transfer object
-     * @param filter catalog filter document
-     * @return updated catalog document
-     * @throws DataException 
+     * @param catalog catalog document
+     * @return result of changed
      */
-    public Catalog update(
-            CatalogDTO catalogDTO,
-            CatalogsFilter filter
-    ) throws DataException {
-        Catalog catalog = findOneByOwnerAndId(filter);
+    @Override
+    protected boolean updateHandler(CatalogDTO catalogDTO, Catalog catalog) {
+        boolean changed = false;
         var description = catalogDTO.getDescription();
         var title = catalogDTO.getTitle();
-        if (catalog != null) {
-            if (title != null && (catalog.getTitle() == null 
-                    || !catalog.getTitle().equals(title))) {
-                catalog.setTitle(title);
-            }
-            if (description != null && (catalog.getDescription() == null
-                    || !catalog.getDescription().equals(description))) {
-                catalog.setDescription(description);
-            }
-            save(catalog);
-            return catalog;
-        } else {
-            Error error = new Error("Can not find catalog document");
-            throw new DataException("NotFound", error);
+        if (title != null && (catalog.getTitle() == null
+                || !catalog.getTitle().equals(title))) {
+            catalog.setTitle(title);
+            changed = true;
         }
+        if (description != null && (catalog.getDescription() == null
+                || !catalog.getDescription().equals(description))) {
+            catalog.setDescription(description);
+            if(!changed) {
+                changed = true;
+            }
+        }
+        return changed;
     }
 }

@@ -97,37 +97,38 @@ public class CategoriesRepository
                 .iterator(findOptions)
                 .toList();
     }
-
+    
     /**
-     * Method for update category document
+     * Handler for update document method 
      * @param categoryDTO category data transfer object
-     * @param filter filter object
-     * @return updated document
-     * @throws DataException throw if can not find category document
+     * @param category category document
+     * @return result of update
      */
-    public Category update(CategoryDTO categoryDTO, CategoriesFilter filter) 
-            throws DataException {
-        Category category = findOneByOwnerAndId(filter);
+    @Override
+    protected boolean updateHandler(
+            CategoryDTO categoryDTO, 
+            Category category
+    ) {
+        boolean changed = false;
         var title = categoryDTO.getTitle();
         var description = categoryDTO.getDescription();
         var breadcrumbs = categoryDTO.getBradcrumbs();
-        if (category != null) {
-            if (title != null && (category.getTitle() == null
-                    || !category.getTitle().equals(title))) {
-                category.setTitle(title);
-            }
-            if (description != null && (category.getDescription() == null
-                    || !category.getDescription().equals(description))) {
-                category.setDescription(description);
-            }
-            if (breadcrumbs != null) {
-                category.setBreadcrumbs(breadcrumbs);
-            }
-            save(category);
-            return category;
-        } else {
-            Error error = new Error("Can not find category document");
-            throw new DataException("NotFound", error);
+        if (title != null && (category.getTitle() == null
+                || !category.getTitle().equals(title))) {
+            category.setTitle(title);
+            changed = true;
         }
+        if (description != null && (category.getDescription() == null
+                || !category.getDescription().equals(description))) {
+            category.setDescription(description);
+            if (!changed) {
+                changed = true;
+            }
+        }
+        if (breadcrumbs != null) {
+            category.setBreadcrumbs(breadcrumbs);
+            changed = true;
+        }
+        return changed;
     }
 }

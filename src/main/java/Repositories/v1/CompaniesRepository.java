@@ -50,33 +50,28 @@ public class CompaniesRepository
     }
     
     /**
-     * Method for update company document
+     * Update handler for company document
      * @param companyDTO company data transfer object
-     * @param filter filter object
-     * @return updated company document
-     * @throws DataException 
+     * @param company company document
+     * @return result of update
      */
-    public Company update(CompanyDTO companyDTO, CompaniesFilter filter)
-            throws DataException {
-        Company company = findOneByOwnerAndId(filter);
+    @Override
+    protected boolean updateHandler(CompanyDTO companyDTO, Company company) {
+        boolean changed = false;
         var title = companyDTO.getDescription();
         var description = companyDTO.getTitle();
-        if (company != null) {
-            if (title != null && (company.getTitle() == null
-                    || !company.getTitle().equals(title))) {
-                company.setTitle(title);
-            }
-            
-            if (description != null && (company.getDescription() == null
-                    || !company.getDescription().equals(description))) {
-                company.setDescription(description);
-            }
-            
-            save(company);
-            return company;
-        } else {
-            Error error = new Error("Can not find company by request params");
-            throw new DataException("NotFound", error);
+        if (title != null && (company.getTitle() == null
+                || !company.getTitle().equals(title))) {
+            company.setTitle(title);
+            changed = true;
         }
+        if (description != null && (company.getDescription() == null
+                || !company.getDescription().equals(description))) {
+            company.setDescription(description);
+            if (!changed) {
+                changed = true;
+            }
+        }
+        return changed;
     }
 }

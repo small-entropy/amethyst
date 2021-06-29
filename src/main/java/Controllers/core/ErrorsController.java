@@ -34,6 +34,7 @@ public class ErrorsController extends CoreErrorsController {
             int statusCode = switch (error.getMessage()) {
                 case "NotFound" -> HttpErrors.NOT_FOUND.getCode();
                 case "CanNotCreate" -> HttpErrors.CONFLICT.getCode();
+                case "CanNotUpdate" -> HttpErrors.BAD_REQUEST.getCode();
                 case "NotSendParams" -> HttpErrors.BAD_REQUEST.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
