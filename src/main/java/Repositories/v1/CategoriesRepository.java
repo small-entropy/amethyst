@@ -130,22 +130,4 @@ public class CategoriesRepository
             throw new DataException("NotFound", error);
         }
     }
-        
-    /**
-     * Method for deactivate category
-     * @param filer filter object
-     * @return deactivated category
-     * @throws DataException throw if can not find category
-     */
-    public Category deactivated(CategoriesFilter filer) throws DataException {
-        Category category = findOneByOwnerAndId(filer);
-        if (category != null) {
-            category.deactivate();
-            save(category);
-            return category;
-        } else {
-            Error error = new Error("Can not find category document");
-            throw new DataException("NotFound", error);
-        }
-    }
 }

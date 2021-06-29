@@ -218,6 +218,6 @@ public class CoreCategoryService extends AbstractService {
         CategoriesFilter filter = new CategoriesFilter(new String[] {});
         filter.setOwner(userId);
         filter.setId(categoryId);
-        return categoriesSource.deactivated(filter);
+        return categoriesSource.deactivate(filter);
     }
 }

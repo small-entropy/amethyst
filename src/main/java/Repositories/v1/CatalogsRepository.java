@@ -75,22 +75,4 @@ public class CatalogsRepository
             throw new DataException("NotFound", error);
         }
     }
-
-    /**
-     * Method for deactivate catalog
-     * @param filter catalog filter object
-     * @return deactivated document
-     * @throws DataException
-     */
-    public Catalog deactivate(CatalogsFilter filter) throws DataException {
-        Catalog catalog = findOneByOwnerAndId(filter);
-        if (catalog != null) {
-            catalog.deactivate();
-            save(catalog);
-            return catalog;
-        } else {
-            Error error = new Error("Can not find catalog document");
-            throw new DataException("NotFound", error);
-        }
-    }
 }

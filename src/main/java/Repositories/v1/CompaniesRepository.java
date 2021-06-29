@@ -79,22 +79,4 @@ public class CompaniesRepository
             throw new DataException("NotFound", error);
         }
     }
-    
-    /**
-     * Method for deactivate company
-     * @param filter filter object
-     * @return deactivated document
-     * @throws DataException throw if can not found document
-     */
-    public Company deactivated(CompaniesFilter filter) throws DataException {
-        Company company = findOneByOwnerAndId(filter);
-        if (company != null) {
-            company.deactivate();
-            save(company);
-            return company;
-        } else {
-            Error error = new Error("Can not find company document");
-            throw new DataException("NotFound", error);
-        }
-    }
 }

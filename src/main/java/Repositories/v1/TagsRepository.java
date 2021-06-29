@@ -78,22 +78,4 @@ public class TagsRepository
         }
         
     }
-    
-    /**
-     * Method for deactivate (remove) tag document
-     * @param filter filter object
-     * @return deactivated tag document
-     * @throws DataException throw if tag document not found
-     */
-    public Tag deactivate(TagsFilter filter) throws DataException {
-        Tag tag = findOneByOwnerAndId(filter);
-        if (tag != null) {
-            tag.deactivate();
-            save(tag);
-            return tag;
-        } else {
-            Error error = new Error("Can not find tag document");
-            throw new DataException("NotFound", error);
-        } 
-    }
 }

@@ -5,8 +5,10 @@
  */
 package Repositories.Core;
 
+import Exceptions.DataException;
 import Repositories.Abstract.AbstractRepository;
 import Filters.Filter;
+import Models.Base.Standalone;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
@@ -21,7 +23,7 @@ import org.bson.types.ObjectId;
  * @param <F> filter type
  * @param <D> data transfer object ytpe
  */
-public class MorphiaRepository<M, F extends Filter, D> 
+public class MorphiaRepository<M extends Standalone, F extends Filter, D> 
         extends AbstractRepository<Datastore, M, ObjectId, F, D> {
     
     /**
@@ -150,5 +152,23 @@ public class MorphiaRepository<M, F extends Filter, D>
     @Override
     public void save(M data) {
         getStore().save(data);
+    }
+    
+    /**
+     * Method for deactivate document
+     * @param filter filter object
+     * @return deactivated document
+     * @throws DataException throw if can not find document
+     */
+    public M deactivate(F filter) throws DataException {
+        M document = findOneByOwnerAndId(filter);
+        if (document != null) {
+            document.deactivate();
+            save(document);
+            return document;
+        } else {
+            Error error = new Error("Can not find document");
+            throw new DataException("NotFound", error);
+        }
     }
 }

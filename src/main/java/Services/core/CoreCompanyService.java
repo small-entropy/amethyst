@@ -136,6 +136,6 @@ public class CoreCompanyService extends AbstractService {
         CompaniesFilter filter = new CompaniesFilter(new String[] {});
         filter.setId(companyId);
         filter.setOwner(userId);
-        return companiesRepository.deactivated(filter);
+        return companiesRepository.deactivate(filter);
     }
 }
