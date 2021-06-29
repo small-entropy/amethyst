@@ -36,6 +36,8 @@ public class ErrorsController extends CoreErrorsController {
                 case "CanNotCreate" -> HttpErrors.CONFLICT.getCode();
                 case "CanNotUpdate" -> HttpErrors.BAD_REQUEST.getCode();
                 case "NotSendParams" -> HttpErrors.BAD_REQUEST.getCode();
+                case "ServerError" -> 
+                    HttpErrors.INTERNAL_SERVER_ERROR.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
             ErrorsController.sendError(res, statusCode, error);

@@ -190,20 +190,55 @@ public class MorphiaRepository<M extends Standalone, F extends Filter, D>
     }
     
     /**
-     * Method for deactivate document
+     * Private method for change status field
      * @param filter filter object
-     * @return deactivated document
-     * @throws DataException throw if can not find document
+     * @param action name of action
+     * @return updated document
+     * @throws DataException throw if send not correct action
      */
-    public final M deactivate(F filter) throws DataException {
+    private M changeActivate(F filter, String action) 
+            throws DataException 
+    {
         M document = findOneByOwnerAndId(filter);
         if (document != null) {
-            document.deactivate();
+            switch (action) {
+                case "activate":
+                    document.activate();
+                    break;
+                case "deactivate":
+                    document.deactivate();
+                    break;
+                default:
+                    Error error = new Error("Not correct action");
+                    throw new DataException("ServerError", error);
+            }
             save(document);
             return document;
         } else {
             Error error = new Error("Can not find document");
             throw new DataException("NotFound", error);
         }
+    }
+    
+    /**
+     * Method for deactivate document
+     * @param filter filter object
+     * @return deactivated document
+     * @throws DataException throw if can not find document
+     *                       or send not correct action
+     */
+    public final M deactivate(F filter) throws DataException {
+        return changeActivate(filter, "deactivate");
+    }
+    
+    /**
+     * Method for activate document
+     * @param filter filter object
+     * @return activated document
+     * @throws DataException throw if can not find document
+     *                       or send not correct action
+     */
+    public final M activate(F filter) throws DataException {
+        return changeActivate(filter, "activate");
     }
 }
