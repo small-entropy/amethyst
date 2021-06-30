@@ -1,7 +1,7 @@
 package Utils.v1;
 
 import DataTransferObjects.v1.RuleDTO;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Models.Embeddeds.EmbeddedRight;
 import Services.core.CoreUserService;

@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.v1.CompanyDTO;
 import Exceptions.DataException;
-import Filters.CompaniesFilter;
+import Filters.common.CompaniesFilter;
 import Models.Standalones.Company;
 import Models.Standalones.User;
 import Repositories.v1.CompaniesRepository;

@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.v1.CategoryDTO;
 import Exceptions.DataException;
-import Filters.CategoriesFilter;
+import Filters.common.CategoriesFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.Category;
 import Models.Standalones.User;

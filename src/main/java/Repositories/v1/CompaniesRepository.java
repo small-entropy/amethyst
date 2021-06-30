@@ -2,7 +2,7 @@ package Repositories.v1;
 
 import DataTransferObjects.v1.CompanyDTO;
 import Exceptions.DataException;
-import Filters.CompaniesFilter;
+import Filters.common.CompaniesFilter;
 import Models.Embeddeds.EmbeddedOwner;
 import Models.Standalones.Company;
 import Repositories.Core.MorphiaRepository;

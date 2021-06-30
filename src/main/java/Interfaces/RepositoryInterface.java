@@ -5,7 +5,7 @@
  */
 package Interfaces;
 
-import Filters.Filter;
+import Filters.base.Filter;
 import java.util.List;
 
 /**

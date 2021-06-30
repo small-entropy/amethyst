@@ -3,7 +3,7 @@ package Services.core;
 import DataTransferObjects.v1.UserDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
 import Utils.common.*;

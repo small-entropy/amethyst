@@ -2,7 +2,7 @@ package Services.core;
 
 import DataTransferObjects.v1.TagDTO;
 import Exceptions.DataException;
-import Filters.TagsFilter;
+import Filters.common.TagsFilter;
 import Models.Standalones.Tag;
 import Models.Standalones.User;
 import Repositories.v1.TagsRepository;

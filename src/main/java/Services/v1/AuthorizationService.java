@@ -5,7 +5,7 @@ import DataTransferObjects.v1.UserDTO;
 import Exceptions.AuthorizationException;
 import Exceptions.DataException;
 import Exceptions.TokenException;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Services.core.CoreAuthorizationService;
 import Repositories.v1.UsersRepository;

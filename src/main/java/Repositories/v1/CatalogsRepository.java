@@ -1,7 +1,7 @@
 package Repositories.v1;
 
 import DataTransferObjects.v1.CatalogDTO;
-import Filters.CatalogsFilter;
+import Filters.common.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Embeddeds.EmbeddedOwner;
 import Repositories.Core.MorphiaRepository;

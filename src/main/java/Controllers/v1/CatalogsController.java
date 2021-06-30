@@ -3,11 +3,11 @@ package Controllers.v1;
 import Controllers.base.BaseCatalogsController;
 import DataTransferObjects.v1.RuleDTO;
 import Models.Standalones.Catalog;
-import Responses.SuccessResponse;
+import Utils.responses.SuccessResponse;
 import Services.v1.CatalogService;
 import Repositories.v1.CatalogsRepository;
 import Repositories.v1.UsersRepository;
-import Transformers.JsonTransformer;
+import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package Repositories.Abstract;
 
 import Exceptions.DataException;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
 import dev.morphia.Datastore;

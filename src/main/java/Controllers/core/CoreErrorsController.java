@@ -1,6 +1,6 @@
 package Controllers.core;
 
-import Responses.ErrorResponse;
+import Utils.responses.ErrorResponse;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.google.gson.Gson;
 import com.mongodb.MongoWriteException;

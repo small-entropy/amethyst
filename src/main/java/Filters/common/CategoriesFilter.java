@@ -1,5 +1,6 @@
-package Filters;
+package Filters.common;
 
+import Filters.base.Filter;
 import org.bson.types.ObjectId;
 
 /**

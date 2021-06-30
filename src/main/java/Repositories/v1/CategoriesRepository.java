@@ -2,7 +2,7 @@ package Repositories.v1;
 
 import DataTransferObjects.v1.CategoryDTO;
 import Exceptions.DataException;
-import Filters.CategoriesFilter;
+import Filters.common.CategoriesFilter;
 import Models.Embeddeds.EmbeddedBreadcrumb;
 import Models.Embeddeds.EmbeddedCatalog;
 import Models.Standalones.Category;

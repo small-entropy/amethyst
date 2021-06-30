@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Filters;
+package Filters.base;
 
 import org.bson.types.ObjectId;
 
@@ -18,9 +18,24 @@ public abstract class Filter {
     private String status = "active";
     private ObjectId id;
     private ObjectId owner;
-    private String[] excludes;
+    private String[] excludes =  new String[] {};
     
     public Filter() {}
+    
+    public Filter(ObjectId id) {
+        this.id = id;
+    }
+    
+    public Filter(ObjectId id, ObjectId owner, String[] excludes) {
+        this.id = id;
+        this.owner = owner;
+        this.excludes = excludes;
+    }
+    
+    public Filter(ObjectId id, ObjectId owner) {
+        this.id = id;
+        this.owner = owner;
+    }
     
     public Filter(ObjectId id, String[] excludes) {
         this.id = id;

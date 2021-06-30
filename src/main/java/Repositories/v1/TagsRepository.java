@@ -2,7 +2,7 @@ package Repositories.v1;
 
 import DataTransferObjects.v1.TagDTO;
 import Exceptions.DataException;
-import Filters.TagsFilter;
+import Filters.common.TagsFilter;
 import Models.Embeddeds.EmbeddedOwner;
 import Models.Standalones.Tag;
 import Repositories.Core.MorphiaRepository;

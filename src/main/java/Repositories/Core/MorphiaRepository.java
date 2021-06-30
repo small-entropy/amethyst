@@ -7,7 +7,7 @@ package Repositories.Core;
 
 import Exceptions.DataException;
 import Repositories.Abstract.AbstractRepository;
-import Filters.Filter;
+import Filters.base.Filter;
 import Models.Base.Standalone;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Filters;
+package Filters.common;
 
+import Filters.base.Filter;
 import org.bson.types.ObjectId;
 
 /**

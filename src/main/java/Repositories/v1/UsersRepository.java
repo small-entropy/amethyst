@@ -2,7 +2,7 @@ package Repositories.v1;
 
 import Repositories.Core.MorphiaRepository;
 import DataTransferObjects.v1.UserDTO;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Utils.common.JsonWebToken;
 import dev.morphia.Datastore;

@@ -1,5 +1,5 @@
-package Transformers;
-import Adapters.ObjectIdTypeAdapter;
+package Utils.transformers;
+import Utils.adapters.ObjectIdTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bson.types.ObjectId;

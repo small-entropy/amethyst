@@ -1,4 +1,4 @@
-package Responses;
+package Utils.responses;
 
 /**
  * Class for create standard response object

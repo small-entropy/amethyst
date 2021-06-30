@@ -3,7 +3,7 @@ package Services.core;
 
 import DataTransferObjects.v1.CatalogDTO;
 import Exceptions.DataException;
-import Filters.CatalogsFilter;
+import Filters.common.CatalogsFilter;
 import Models.Standalones.Catalog;
 import Models.Standalones.User;
 import Repositories.v1.CatalogsRepository;
@@ -70,10 +70,11 @@ public class CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             String[] excludes
     ) {
-        CatalogsFilter filter = new CatalogsFilter();
-        filter.setId(catalogId);
-        filter.setOwner(ownerId);
-        filter.setExcludes(excludes);
+        CatalogsFilter filter = new CatalogsFilter(
+                catalogId, 
+                ownerId, 
+                excludes
+        );
         return catalogsRepository.findOneByOwnerAndId(filter);
     }
     
@@ -81,9 +82,7 @@ public class CoreCatalogService {
             ObjectId catalogId, 
             CatalogsRepository catalogsRepository
     ) {
-        CatalogsFilter filter = new CatalogsFilter();
-        filter.setId(catalogId);
-        filter.setExcludes(new String[] {});
+        CatalogsFilter filter = new CatalogsFilter(catalogId);
         return catalogsRepository.findOneById(filter);
     }
     
@@ -167,11 +166,7 @@ public class CoreCatalogService {
         // Get catalog data transfer object
         CatalogDTO catalogDTO = CatalogDTO.build(reqeust, CatalogDTO.class); 
         // Create filter for serach document
-        CatalogsFilter filter = new CatalogsFilter(new String[]{});
-        // Set catalog owner
-        filter.setOwner(userId);
-        // Set catalog id
-        filter.setId(catalogId);
+        CatalogsFilter filter = new CatalogsFilter(catalogId, userId);
         // Return update result
         return catalogsSource.update(catalogDTO, filter);
     }
@@ -189,9 +184,7 @@ public class CoreCatalogService {
             ObjectId catalogId, 
             CatalogsRepository catalogsSource
     ) throws DataException {
-        CatalogsFilter filter = new CatalogsFilter(new String[]{});
-        filter.setOwner(userId);
-        filter.setId(catalogId);
+        CatalogsFilter filter = new CatalogsFilter(catalogId, userId);
         return catalogsSource.deactivate(filter);
     }
 }

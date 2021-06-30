@@ -1,7 +1,7 @@
 package Services.core;
 
 import DataTransferObjects.v1.UserDTO;
-import Filters.UsersFilter;
+import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
 import Utils.common.JsonWebToken;

@@ -1,5 +1,6 @@
-package Filters;
+package Filters.common;
 
+import Filters.base.Filter;
 import org.bson.types.ObjectId;
 
 /**
@@ -11,6 +12,18 @@ public class CatalogsFilter extends Filter {
     
     public CatalogsFilter() {
         super();
+    }
+    
+    public CatalogsFilter(ObjectId id) {
+        super(id);
+    }
+    
+    public CatalogsFilter(ObjectId id, ObjectId owner) {
+        super(id, owner);
+    }
+    
+    public CatalogsFilter(ObjectId id, ObjectId owner, String[] excludes) {
+        super(id, owner, excludes);
     }
     
     public CatalogsFilter(ObjectId id, String[] excludes) {

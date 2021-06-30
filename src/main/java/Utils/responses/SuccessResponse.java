@@ -1,4 +1,4 @@
-package Responses;
+package Utils.responses;
 
 /**
  * Class for create success response object (always have a "success" status)
