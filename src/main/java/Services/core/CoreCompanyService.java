@@ -17,7 +17,7 @@ import spark.Request;
  * Class with static methods for work with companies data
  * @author small-entropy
  */
-public class CoreCompanyService extends AbstractService {
+public class CoreCompanyService extends CoreService {
     
     /**
      * Method for get company document (with excludes) by full document

@@ -10,6 +10,7 @@ import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.common.QueryManager;
 import Utils.common.RequestUtils;
+import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -106,7 +107,14 @@ public class UserService extends CoreUserService {
     ) throws DataException {
         int skip = QueryManager.getSkip(request);
         int limit = QueryManager.getLimit(request);
-        String[] excludes = UserService.getOtherFindOptionsArgs(rule);
+        String[] excludes = UserService.getExcludes(
+                rule,
+                true,
+                ALL_ALLOWED,
+                PUBLIC_ALLOWED,
+                PUBLIC_AND_PRIVATE_ALLOWED
+        );
+        System.out.println(Arrays.toString(excludes));
         // Get users list
         return getList(skip, limit, excludes, usersRepository);
     }

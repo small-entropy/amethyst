@@ -19,14 +19,13 @@ public abstract class CoreUserService extends CoreService {
         "issuedToken", 
         "password", 
         "properties", 
-        "status", "rights", 
+        "rights", 
         "version" 
     };
     // Fields for public and private fields by rights for users collection
     public final static String[] PUBLIC_AND_PRIVATE_ALLOWED = new String[]{ 
-        "status", 
         "password", 
-        "version" 
+        "properties" 
     };
     // Fields for all fields by rights for users collection
     public final static String[] ALL_ALLOWED = new String[]{};

@@ -22,12 +22,10 @@ import spark.Request;
 public class CatalogService extends CoreCatalogService {
     private static final String[] PUBLIC_EXCLUDES = new String[]{ 
         "owner", 
-        "status", 
         "version"  
     };
     
     private static final String[] PRIVATE_EXCLUDES = new String[] { 
-        "status", 
         "version" 
     };
     
@@ -44,7 +42,7 @@ public class CatalogService extends CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -76,7 +74,7 @@ public class CatalogService extends CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -108,7 +106,7 @@ public class CatalogService extends CoreCatalogService {
             CatalogsRepository catalogsRepository, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -155,7 +153,7 @@ public class CatalogService extends CoreCatalogService {
                     catalogsRepository, 
                     usersRepository
             );
-            String[] excludes = RightManager.getExludesByRule(
+            String[] excludes = getExcludes(
                     isTrusted, 
                     rule, 
                     PUBLIC_EXCLUDES, 
@@ -193,7 +191,7 @@ public class CatalogService extends CoreCatalogService {
                     request, 
                     catalogsRepository
             );
-            String[] excludes = RightManager.getExludesByRule(
+            String[] excludes = getExcludes(
                     isTrusted, 
                     rule, 
                     PUBLIC_EXCLUDES, 

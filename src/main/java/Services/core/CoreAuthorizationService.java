@@ -1,5 +1,6 @@
 package Services.core;
 
+import DataTransferObjects.v1.RuleDTO;
 import DataTransferObjects.v1.UserDTO;
 import Filters.common.UsersFilter;
 import Models.Standalones.User;
@@ -162,5 +163,17 @@ public abstract class CoreAuthorizationService extends CoreService {
             // Return null if user not found
             return null;
         }
+    }
+    
+    protected static UsersFilter getUsersFilter(User user, RuleDTO rule) {
+        String[] excludes = getExcludes(
+                rule, 
+                true, 
+                CoreUserService.ALL_ALLOWED, 
+                CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED, 
+                CoreUserService.PUBLIC_ALLOWED
+        );
+        
+        return new UsersFilter(user.getId(), excludes);
     }
 }

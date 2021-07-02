@@ -19,7 +19,7 @@ import spark.Request;
  * Class for base work with catalog documents
  * @author small-entropy
  */
-public class CoreCatalogService {
+public class CoreCatalogService extends CoreService {
     
     /**
      * Method for get catalog document by request (get id from requst params)

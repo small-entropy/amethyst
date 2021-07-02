@@ -19,7 +19,7 @@ import spark.Request;
  *
  * @author small-entropy
  */
-public class CoreCategoryService extends AbstractService {
+public class CoreCategoryService extends CoreService {
     
     /**
      * Method for get list of categories by user id from request params

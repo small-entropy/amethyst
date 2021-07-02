@@ -23,7 +23,6 @@ public class TagService extends CoreTagService {
     
     /** List of excludes fields for public read documents */
     private static final String[] PRIVATE_EXCLUDES = new String[] {
-        "status",
         "owner",
         "properties",
         "version"
@@ -31,8 +30,7 @@ public class TagService extends CoreTagService {
     
     /** List of exludes fields for public read documents */
     private static final String[] PUBLIC_EXCLUDES = new String[] {
-        "version",
-        "status"
+        "version"
     };
 
     /**
@@ -49,7 +47,7 @@ public class TagService extends CoreTagService {
             RuleDTO rule,
             boolean byOwner
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -102,7 +100,7 @@ public class TagService extends CoreTagService {
                     tagsRepository,
                     usersRepository
             );
-            String[] excludes = RightManager.getExcludes(
+            String[] excludes = getExcludes(
                     request, 
                     rule, 
                     PUBLIC_EXCLUDES, 
@@ -128,7 +126,7 @@ public class TagService extends CoreTagService {
             TagsRepository tagsRepository,
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -174,7 +172,7 @@ public class TagService extends CoreTagService {
                     request,
                     tagsRepository
             );
-            String[] excludes = RightManager.getExcludes(
+            String[] excludes = getExcludes(
                     request, 
                     rule, 
                     PUBLIC_EXCLUDES, 

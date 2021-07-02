@@ -17,7 +17,7 @@ import spark.Request;
  * Class with static methods for work with tags data
  * @author small-entropy
  */
-public class CoreTagService extends AbstractService {
+public class CoreTagService extends CoreService {
    
     /**
      * Method fot get list of tags documents

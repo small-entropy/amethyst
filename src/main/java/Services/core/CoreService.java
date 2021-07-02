@@ -1,35 +1,72 @@
 package Services.core;
 
 import DataTransferObjects.v1.RuleDTO;
+import Utils.v1.RightManager;
+import spark.Request;
+
 
 public abstract class CoreService {
-    /**
-     * Method for get find options argument by rule my documents access state
-     * @param rule user rule
-     * @return arguments for find options
-     */
-    protected static String[] getMyFindOptionsArgs(RuleDTO rule) {
-        return (rule != null)
-                ? switch (rule.getMyAccess()) {
-            case "Full" -> CoreUserService.ALL_ALLOWED;
-            case "PublicAndPrivate" -> CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED;
-            default -> CoreUserService.PUBLIC_ALLOWED;
-        }
-                : CoreUserService.PUBLIC_ALLOWED;
+    
+    protected static String[] getExcludes(
+            Request request,
+            RuleDTO rule,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        return RightManager.getExcludes(
+                request, 
+                rule, 
+                publicExcludes, 
+                privateExcludes
+        );
     }
-
-    /**
-     * Method for get find options argument by rule other documents access state
-     * @param rule user rule
-     * @return arguments for find options
-     */
-    protected static String[] getOtherFindOptionsArgs(RuleDTO rule) {
-        return (rule != null)
-                ? switch (rule.getOtherAccess()) {
-            case "Full" -> CoreUserService.ALL_ALLOWED;
-            case "PublicAndPrivate" -> CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED;
-            default -> CoreUserService.PUBLIC_ALLOWED;
+    
+    protected static String[] getExcludes(
+            boolean isTrusted,
+            RuleDTO rule,
+            String[] publicExludes,
+            String[] privateExcludes
+    ) {
+        return RightManager.getExludesByRule(
+                isTrusted, 
+                rule, 
+                publicExludes, 
+                privateExcludes
+        );
+    }
+    
+    protected static String[] getExcludes(
+            Request request,
+            RuleDTO rule,
+            String[] globalExcludes,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        return RightManager.getExcludes(
+                request, 
+                rule, 
+                globalExcludes, 
+                publicExcludes, 
+                privateExcludes
+        );
+    }
+     
+    protected static String[] getExcludes(
+            RuleDTO rule,
+            boolean other,
+            String[] globalExcludes,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        if (rule != null) {
+            var state = (other) ? rule.getMyAccess() : rule.getOtherAccess();
+            return switch(state) {
+                case "Full" -> globalExcludes;
+                case "PublicAndPrivate" -> privateExcludes;
+                default -> publicExcludes;
+            };
+        } else {
+            return publicExcludes;
         }
-                : CoreUserService.PUBLIC_ALLOWED;
     }
 }

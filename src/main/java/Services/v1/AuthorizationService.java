@@ -33,7 +33,14 @@ public class AuthorizationService extends CoreAuthorizationService {
     ) throws AuthorizationException {
         UsersFilter filterForReturn = new UsersFilter();
         UsersFilter filterForSearch = new UsersFilter();
-        filterForReturn.setExcludes(AuthorizationService.getMyFindOptionsArgs(rule));
+        String[] excludes = AuthorizationService.getExcludes(
+                rule, 
+                true, 
+                UserService.ALL_ALLOWED, 
+                UserService.PUBLIC_AND_PRIVATE_ALLOWED, 
+                UserService.PUBLIC_ALLOWED
+        );
+        filterForReturn.setExcludes(excludes);
         filterForSearch.setExcludes(UserService.ALL_ALLOWED);
         // Get user document by token
         User user = autoLoginUser(
@@ -67,11 +74,7 @@ public class AuthorizationService extends CoreAuthorizationService {
         User user = AuthorizationService.loginUser(request, usersRepository);
         // Check user on exist
         if (user != null) {
-            // Create find options by roles
-            UsersFilter filter = new UsersFilter(
-                    user.getId(), 
-                    AuthorizationService.getMyFindOptionsArgs(rule)
-            );
+            UsersFilter filter = getUsersFilter(user, rule);
             // Find & return document
             return UserService.getUserById(filter, usersRepository);
         } else {
@@ -95,9 +98,10 @@ public class AuthorizationService extends CoreAuthorizationService {
         // Create user document in database
         User user = AuthorizationService.registerUser(userDTO, usersRepository);
         // Options for find in documents
-        UsersFilter filter = new UsersFilter();
-        filter.setId(user.getId());
-        filter.setExcludes(UserService.PUBLIC_AND_PRIVATE_ALLOWED);
+        UsersFilter filter = new UsersFilter(
+                user.getId(), 
+                UserService.PUBLIC_AND_PRIVATE_ALLOWED
+        );
         return UserService.getUserById(filter, usersRepository);
     }
 
@@ -116,11 +120,7 @@ public class AuthorizationService extends CoreAuthorizationService {
     ) throws AuthorizationException {
         User user = AuthorizationService.logoutUser(request, usersRepository);
         if (user != null) {
-            // Crate find options
-            UsersFilter filter = new UsersFilter(
-                    user.getId(), 
-                    AuthorizationService.getMyFindOptionsArgs(rule)
-            );
+            UsersFilter filter = getUsersFilter(user, rule);
             // Get user document by user id with find options with rule 
             // excluded fields
             return UserService.getUserById(filter, usersRepository);
@@ -129,6 +129,8 @@ public class AuthorizationService extends CoreAuthorizationService {
             throw new AuthorizationException("UserNotFound", error);
         }
     }
+    
+    
 
     /**
      * Method for change user password
@@ -156,11 +158,9 @@ public class AuthorizationService extends CoreAuthorizationService {
         );
         // Save changes in document
         usersRepository.save(user);
+        
         // Create filter object
-        UsersFilter filter = new UsersFilter(
-                user.getId(), 
-                AuthorizationService.getMyFindOptionsArgs(rule)
-        );
+        UsersFilter filter = getUsersFilter(user, rule);
         // Return user by rule
         return UserService.getUserById(filter, usersRepository);
     }

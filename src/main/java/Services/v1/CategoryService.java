@@ -10,7 +10,6 @@ import Repositories.v1.CategoriesRepository;
 import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import Utils.common.ParamsManager;
-import Utils.v1.RightManager;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -24,45 +23,13 @@ public class CategoryService extends CoreCategoryService {
     
     /** Property with public excludes fields */
     private static final String[] PUBLIC_EXCLUDES = new String[] { 
-        "status", 
         "owner", 
         "version" 
     };
     /** Property with private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = new String[] { 
-        "status",  
         "version"
     };
-    
-    /**
-     * Method for get exludes fields by rule * request
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return excludes fields
-     */
-    private static String[] getExcludes(Request request, RuleDTO rule) {
-        return RightManager.getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
-    }
-    
-    /**
-     * Method fot get excludes fields by rule
-     * @param isTrusted trusted param
-     * @param rule rule data transfer obejct
-     * @return excludes fields
-     */
-    private static String[] getExludesByRule(boolean isTrusted, RuleDTO rule) {
-        return RightManager.getExludesByRule(
-                isTrusted, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
-    }
     
     /**
      * Methodo for get user categories
@@ -77,7 +44,12 @@ public class CategoryService extends CoreCategoryService {
             CategoriesRepository categoriesSource,
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = getExcludes(request, rule);
+        String[] excludes = getExcludes(
+                request, 
+                rule,
+                PUBLIC_EXCLUDES,
+                PRIVATE_EXCLUDES
+        );
         var categories = getCategoriesByRequestForUser(
                 request, 
                 categoriesSource, 
@@ -110,7 +82,9 @@ public class CategoryService extends CoreCategoryService {
             RuleDTO rule
     ) throws AccessException, DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) 
+                ? rule.isMyGlobal() 
+                : rule.isOtherGlobal();
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId catalogId = ParamsManager.getCatalogId(request);
@@ -121,7 +95,12 @@ public class CategoryService extends CoreCategoryService {
                     categoriesSource, 
                     catalogsSource, usersSource
             );
-            String[] exludes = getExludesByRule(isTrusted, rule);
+            String[] exludes = getExcludes(
+                    isTrusted, 
+                    rule,
+                    PUBLIC_EXCLUDES,
+                    PRIVATE_EXCLUDES
+            );
             return getCategoryByDocument(category, categoriesSource, exludes);
         } else {
             Error error = new Error("Has no access to create catalog");
@@ -142,7 +121,12 @@ public class CategoryService extends CoreCategoryService {
             CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = getExcludes(request, rule);
+        String[] excludes = getExcludes(
+                request, 
+                rule,
+                PUBLIC_EXCLUDES,
+                PRIVATE_EXCLUDES
+        );
         ObjectId catalogId = ParamsManager.getCatalogId(request);
         var categories = getCategoriesByCatalogId(
                 request,
@@ -171,7 +155,12 @@ public class CategoryService extends CoreCategoryService {
             CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = getExcludes(request, rule);
+        String[] excludes = getExcludes(
+                request, 
+                rule,
+                PUBLIC_EXCLUDES,
+                PRIVATE_EXCLUDES
+        );
         var categories = getList(
                 request,
                 categoriesSource,
@@ -198,7 +187,12 @@ public class CategoryService extends CoreCategoryService {
             CategoriesRepository categoriesSource, 
             RuleDTO rule
     ) throws DataException {
-        String[] exludes = getExcludes(request, rule);
+        String[] exludes = getExcludes(
+                request, 
+                rule,
+                PUBLIC_EXCLUDES,
+                PRIVATE_EXCLUDES
+        );
         ObjectId categoryId = ParamsManager.getCategoryId(request);
         var category = getCategoryById(
                 categoryId, 
@@ -229,7 +223,12 @@ public class CategoryService extends CoreCategoryService {
                     request,
                     categoriesSource
             );
-            String[] excludes = getExludesByRule(isTrusted, rule);
+            String[] excludes = getExcludes(
+                    isTrusted, 
+                    rule,
+                    PUBLIC_EXCLUDES,
+                    PRIVATE_EXCLUDES
+            );
             return getCategoryByDocument(category, categoriesSource, excludes);
         } else {
             Error error = new Error("Has no access to update cateogry document");

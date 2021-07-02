@@ -24,14 +24,11 @@ public class CompanyService extends CoreCompanyService {
     /** Public exludes fields */
     private static final String[] PUBLIC_EXCLUDES = {
         "owner",
-        "status",
-        "status",
         "version"
     }; 
     
     /* Private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = {
-        "status",
         "version"
     };
 
@@ -50,7 +47,7 @@ public class CompanyService extends CoreCompanyService {
             RuleDTO rule,
             boolean byOwner
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -98,7 +95,7 @@ public class CompanyService extends CoreCompanyService {
                     companiesRepository,
                     usersRepository
             );
-            String[] excludes = RightManager.getExcludes(
+            String[] excludes = getExcludes(
                     request, 
                     rule, 
                     PUBLIC_EXCLUDES, 
@@ -123,7 +120,7 @@ public class CompanyService extends CoreCompanyService {
             CompaniesRepository companiesRepository, 
             RuleDTO rule
     ) throws DataException {
-        String[] excludes = RightManager.getExcludes(
+        String[] excludes = getExcludes(
                 request, 
                 rule, 
                 PUBLIC_EXCLUDES, 
@@ -172,7 +169,7 @@ public class CompanyService extends CoreCompanyService {
                     request,
                     companiesRepository
             );
-            String[] exludes = RightManager.getExcludes(
+            String[] exludes = getExcludes(
                     request, 
                     rule, 
                     PUBLIC_EXCLUDES, 
