@@ -17,7 +17,6 @@ public abstract class Document extends Standalone {
     private String description;
     /** Property for document owner */
     private EmbeddedOwner owner;
-
     /**
      * Main constructor for document (if no data send)
      */
@@ -51,6 +50,7 @@ public abstract class Document extends Standalone {
         this.title = title;
         this.description = description;
         this.owner = owner;
+        this.setStatus("active");
     }
     
     /**
@@ -86,6 +86,7 @@ public abstract class Document extends Standalone {
         this.name = name;
         this.title = title;
         this.owner = owner;
+        this.setStatus("active");
     }
     
     /**

@@ -24,12 +24,14 @@ public class CompanyService extends CoreCompanyService {
     /** Public exludes fields */
     private static final String[] PUBLIC_EXCLUDES = {
         "owner",
-        "version"
+        "version",
+        "status"
     }; 
     
     /* Private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = {
-        "version"
+        "version",
+        "status"
     };
 
     /**

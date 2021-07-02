@@ -24,11 +24,13 @@ public class CategoryService extends CoreCategoryService {
     /** Property with public excludes fields */
     private static final String[] PUBLIC_EXCLUDES = new String[] { 
         "owner", 
-        "version" 
+        "version",
+        "status"
     };
     /** Property with private excludes fields */
     private static final String[] PRIVATE_EXCLUDES = new String[] { 
-        "version"
+        "version",
+        "status"
     };
     
     /**

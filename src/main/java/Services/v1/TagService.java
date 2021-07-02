@@ -25,12 +25,14 @@ public class TagService extends CoreTagService {
     private static final String[] PRIVATE_EXCLUDES = new String[] {
         "owner",
         "properties",
-        "version"
+        "version",
+        "status"
     };
     
     /** List of exludes fields for public read documents */
     private static final String[] PUBLIC_EXCLUDES = new String[] {
-        "version"
+        "version",
+        "status"
     };
 
     /**

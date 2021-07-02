@@ -19,9 +19,7 @@ public abstract class Standalone {
     /**
      * Main cinstructor for standalone entity
      */
-    public Standalone() {
-        this.status = "active";
-    }
+    public Standalone() {}
 
     /**
      * Constructor for create standalone antity if send id

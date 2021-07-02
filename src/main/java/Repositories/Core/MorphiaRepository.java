@@ -13,6 +13,7 @@ import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;
+import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -108,6 +109,7 @@ public class MorphiaRepository<M extends Standalone, F extends Filter, D>
                 .exclude(filter.getExcludes())
                 .skip(filter.getSkip())
                 .limit(filter.getLimit());
+        System.out.println(Arrays.toString(filter.getExcludes()));
         // Find in datastore by filter options & return list
         return getStore()
                 .find(getModelClass())

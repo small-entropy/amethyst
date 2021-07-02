@@ -114,7 +114,6 @@ public class UserService extends CoreUserService {
                 PUBLIC_ALLOWED,
                 PUBLIC_AND_PRIVATE_ALLOWED
         );
-        System.out.println(Arrays.toString(excludes));
         // Get users list
         return getList(skip, limit, excludes, usersRepository);
     }
