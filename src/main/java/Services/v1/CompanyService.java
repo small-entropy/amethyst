@@ -4,12 +4,11 @@ import DataTransferObjects.v1.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Company;
-import Repositories.v1.CompaniesRepository;
-import Repositories.v1.UsersRepository;
 import Services.core.CoreCompanyService;
 import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -20,50 +19,37 @@ import spark.Request;
  * @version 1
  */
 public class CompanyService extends CoreCompanyService {
-    
-    /** Public exludes fields */
-    private static final String[] PUBLIC_EXCLUDES = {
-        "owner",
-        "version",
-        "status"
-    }; 
-    
-    /* Private excludes fields */
-    private static final String[] PRIVATE_EXCLUDES = {
-        "version",
-        "status"
-    };
+
+    public CompanyService(Datastore datastore) {
+        super(
+                datastore,
+                new String[] {},
+                new String[] { "owner", "version", "status" },
+                new String[] { "version", "status" }
+        );
+    }
+
 
     /**
      * Method for get list of companoes
      * @param request Spark request object
-     * @param companiesRepository repository for companies collection
      * @param rule rule data transfer object
      * @param byOwner true if list for owner
      * @return list of companies
      * @throws DataException trow if companies list is empty
      */
-    public static List<Company> getCompaniesList(
-            Request request, 
-            CompaniesRepository companiesRepository, 
-            RuleDTO rule,
+    public List<Company> getCompaniesList(
+            Request request,
+            String right,
+            String action,
             boolean byOwner
     ) throws DataException {
-        String[] excludes = getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
+        RuleDTO rule = getRule(request, right, action);
+        String[] excludes = getExcludes(request, rule);
         var userId = (byOwner)
                 ? ParamsManager.getUserId(request)
                 : null;
-        List<Company> companies = getList(
-                request, 
-                companiesRepository, 
-                excludes,
-                userId
-        );
+        List<Company> companies = getList(request, excludes, userId);
         if (!companies.isEmpty()) {
             return companies;
         } else {
@@ -79,12 +65,12 @@ public class CompanyService extends CoreCompanyService {
      * @param rule rule data transfer object
      * @return created company document
      */
-    public static Company createCompany(
-            Request request, 
-            CompaniesRepository companiesRepository,
-            UsersRepository usersRepository,
-            RuleDTO rule
+    public Company createCompany(
+            Request request,
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted)
                 ? rule.isMyGlobal()
@@ -93,17 +79,10 @@ public class CompanyService extends CoreCompanyService {
             ObjectId ownerId = ParamsManager.getUserId(request);
             Company company = createCompany(
                     ownerId,
-                    request,
-                    companiesRepository,
-                    usersRepository
+                    request
             );
-            String[] excludes = getExcludes(
-                    request, 
-                    rule, 
-                    PUBLIC_EXCLUDES, 
-                    PRIVATE_EXCLUDES
-            );
-            return getCompanyByDocument(company, companiesRepository, excludes);
+            String[] excludes = getExcludes(request, rule);
+            return getCompanyByDocument(company, excludes);
         } else {
             Error error = new Error("Has no access to create tag");
             throw new AccessException("CanNotCreate", error);
@@ -117,23 +96,18 @@ public class CompanyService extends CoreCompanyService {
      * @param rule rule data transfer object
      * @return finded document
      */
-    public static Company getCompanyByOwnerAndId(
-            Request request, 
-            CompaniesRepository companiesRepository, 
-            RuleDTO rule
+    public Company getCompanyByOwnerAndId(
+            Request request,
+            String right,
+            String action
     ) throws DataException {
-        String[] excludes = getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
+        RuleDTO rule = getRule(request, right, action);
+        String[] excludes = getExcludes(request, rule);
         ObjectId ownerId = ParamsManager.getUserId(request);
         ObjectId companyId = ParamsManager.getCompanyId(request);
         var company = getCompanyById(
                 companyId,
                 ownerId,
-                companiesRepository, 
                 excludes
         );
         if (company != null) {
@@ -153,11 +127,12 @@ public class CompanyService extends CoreCompanyService {
      * @throws AccessException throw if has no access to update document
      * @throws DataException throw if can not find company document
      */
-    public static Company updateCompany(
-            Request request, 
-            CompaniesRepository companiesRepository, 
-            RuleDTO rule
+    public Company updateCompany(
+            Request request,
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted)
                 ? rule.isMyPrivate()
@@ -168,16 +143,10 @@ public class CompanyService extends CoreCompanyService {
             Company company = updateCompany(
                     userId,
                     companyId,
-                    request,
-                    companiesRepository
+                    request
             );
-            String[] exludes = getExcludes(
-                    request, 
-                    rule, 
-                    PUBLIC_EXCLUDES, 
-                    PRIVATE_EXCLUDES
-            );
-            return getCompanyByDocument(company, companiesRepository, exludes);
+            String[] exludes = getExcludes(request, rule);
+            return getCompanyByDocument(company, exludes);
         } else {
             Error error = new Error("Has no access to update company document");
             throw new AccessException("CanNotUpdate", error);
@@ -195,20 +164,21 @@ public class CompanyService extends CoreCompanyService {
      * @throws Exceptions.DataException throw if can not get from params company
      *                                  id or user id
      */
-    public static Company deleteCompany(
-            Request request, 
-            CompaniesRepository companiesRepository, 
-            RuleDTO rule
+    public Company deleteCompany(
+            Request request,
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean hasAccess = RightManager.chechAccess(request, rule);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId companyId = ParamsManager.getCompanyId(request);
-            return deleteCompany(userId, companyId, companiesRepository);
+            return deleteCompany(userId, companyId);
         } else {
             Error error = new Error("Has no access to delete tag document");
             throw new AccessException("CanNotDelete", error);
         }
     }
-    
+
 }

@@ -2,6 +2,7 @@ package Services.core;
 
 import DataTransferObjects.v1.RuleDTO;
 import Utils.v1.RightManager;
+import java.util.Arrays;
 import spark.Request;
 
 
@@ -60,11 +61,12 @@ public abstract class CoreService {
     ) {
         if (rule != null) {
             var state = (other) ? rule.getMyAccess() : rule.getOtherAccess();
-            return switch(state) {
+            var result = switch(state) {
                 case "Full" -> globalExcludes;
                 case "PublicAndPrivate" -> privateExcludes;
                 default -> publicExcludes;
             };
+            return result;
         } else {
             return publicExcludes;
         }

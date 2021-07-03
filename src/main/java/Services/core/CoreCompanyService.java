@@ -6,8 +6,9 @@ import Filters.common.CompaniesFilter;
 import Models.Standalones.Company;
 import Models.Standalones.User;
 import Repositories.v1.CompaniesRepository;
-import Repositories.v1.UsersRepository;
+import Services.base.BaseDocumentService;
 import Utils.common.QueryManager;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -17,23 +18,37 @@ import spark.Request;
  * Class with static methods for work with companies data
  * @author small-entropy
  */
-public class CoreCompanyService extends CoreService {
+public abstract class CoreCompanyService 
+        extends BaseDocumentService<CompaniesRepository> {
+    
+    public CoreCompanyService(
+            Datastore datastore,
+            String[] globalExcludes,
+            String[] publicExclides,
+            String[] privateExcludes
+    ) {
+        super(
+                datastore,
+                new CompaniesRepository(datastore),
+                globalExcludes,
+                publicExclides,
+                privateExcludes
+        );
+    }
     
     /**
      * Method for get company document (with excludes) by full document
      * @param company company document
-     * @param companiesRepository repository for comanies collection
      * @param excludes exlude fields
      * @return company document
      */
-    protected static Company getCompanyByDocument(
+    protected Company getCompanyByDocument(
             Company company,
-            CompaniesRepository companiesRepository,
             String[] excludes
     ) {
         ObjectId ownerId = company.getOwner().getId();
         ObjectId companyId = company.getId();
-        return getCompanyById(companyId, ownerId, companiesRepository, excludes);
+        return getCompanyById(companyId, ownerId, excludes);
     }
     
     /**
@@ -44,47 +59,41 @@ public class CoreCompanyService extends CoreService {
      * @param excludes exlude fields
      * @return finded document
      */
-    protected static Company getCompanyById(
+    protected Company getCompanyById(
             ObjectId companyId,
             ObjectId ownerId,
-            CompaniesRepository companiesRepository,
             String[] excludes
     ) {
         CompaniesFilter filter = new CompaniesFilter(companyId, excludes);
         filter.setOwner(ownerId);
-        return companiesRepository.findOneByOwnerAndId(filter);
+        return getRepository().findOneByOwnerAndId(filter);
     }
     
     /**
      * Method for create company document
      * @param ownerId owner id
      * @param request Spark reqeust object
-     * @param companiesRepository repository for comanies data
-     * @param usersRepository repository for users data
      * @return created company document
      */
-    protected static Company createCompany(
+    protected Company createCompany(
             ObjectId ownerId,
-            Request request,
-            CompaniesRepository companiesRepository,
-            UsersRepository usersRepository
+            Request request
     ) { 
-       User user = CoreUserService.getUserById(ownerId, usersRepository);
+       User user = getUserById(ownerId);
        CompanyDTO companyDTO = CompanyDTO.build(request, CompanyDTO.class);
-       return companiesRepository.create(companyDTO);
+       companyDTO.setOwner(user);
+       return getRepository().create(companyDTO);
     }
     
     /**
      * Method for get list of companies documents
      * @param request Spark request object
-     * @param companiesRepository repository for comanies collection
      * @param excludes exlude fileds
      * @param ownerId ownerId
      * @return list of comanies
      */
-    protected static List<Company> getList(
+    protected List<Company> getList(
             Request request, 
-            CompaniesRepository companiesRepository, 
             String[] excludes,
             ObjectId ownerId
     ) throws DataException {
@@ -93,9 +102,9 @@ public class CoreCompanyService extends CoreService {
         CompaniesFilter filter = new CompaniesFilter(skip, limit, excludes);
         if (ownerId != null) {
             filter.setOwner(ownerId);
-            return companiesRepository.findAllByOwnerId(filter);
+            return getRepository().findAllByOwnerId(filter);
         } else {
-            return companiesRepository.findAll(filter);
+            return getRepository().findAll(filter);
         }
     }
     
@@ -104,38 +113,34 @@ public class CoreCompanyService extends CoreService {
      * @param ownerId owner id
      * @param companyId company id
      * @param request Spark reqeust obejct
-     * @param companiesRepository repository for companies collection
      * @return updated document
      * @throws DataException throw if can not find company document
      */
-    protected static Company updateCompany(
+    protected Company updateCompany(
             ObjectId ownerId,
             ObjectId companyId,
-            Request request,
-            CompaniesRepository companiesRepository
+            Request request
     ) throws DataException {
         CompanyDTO companyDTO = CompanyDTO.build(request, CompanyDTO.class);
         CompaniesFilter filter = new CompaniesFilter(companyId, new String[] {});
         filter.setOwner(ownerId);
-        return companiesRepository.update(companyDTO, filter);
+        return getRepository().update(companyDTO, filter);
     }
     
     /**
      * Method for deactivate company document
      * @param userId owner id
      * @param companyId company id
-     * @param companiesRepository repository for companies collection
      * @return deactivated document
      * @throws DataException throw if can not find document
      */
-    protected static Company deleteCompany(
+    protected Company deleteCompany(
             ObjectId userId, 
-            ObjectId companyId, 
-            CompaniesRepository companiesRepository
+            ObjectId companyId
     ) throws DataException {
         CompaniesFilter filter = new CompaniesFilter(new String[] {});
         filter.setId(companyId);
         filter.setOwner(userId);
-        return companiesRepository.deactivate(filter);
+        return getRepository().deactivate(filter);
     }
 }

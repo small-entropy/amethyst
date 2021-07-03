@@ -1,13 +1,9 @@
 package Controllers.v1;
 
 import Controllers.base.BaseCategoriesController;
-import DataTransferObjects.v1.RuleDTO;
 import Models.Standalones.Category;
 import Utils.responses.SuccessResponse;
 import Services.v1.CategoryService;
-import Repositories.v1.CatalogsRepository;
-import Repositories.v1.CategoriesRepository;
-import Repositories.v1.UsersRepository;
 import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -19,88 +15,74 @@ import static spark.Spark.*;
  */
 public class CategoriesController extends BaseCategoriesController {
     
-    public static void routes(Datastore store, JsonTransformer transformer) {
-        // Create catalog datastore source
-        CatalogsRepository catalogsRepository = new CatalogsRepository(store);
-        // Create user datastore source
-        UsersRepository usersRepository = new UsersRepository(store);
-        // Create categories datastore source
-        CategoriesRepository categoriesRepository = new CategoriesRepository(store);
+    public static void routes(Datastore datastoer, JsonTransformer transformer) {
+        CategoryService service = new CategoryService(datastoer);
         
         // Route for get categories list
         get("", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Category> categories = CategoryService.getCategoriesList(
-                    req,
-                    categoriesRepository,
-                    rule
+            List<Category> categories = service.getCategoriesList(
+                    req, 
+                    RIGHT, 
+                    READ
             );
             return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
         // Route for get all categories by owner id
         get("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Category> categories = CategoryService.getCategoriesByUser(
+            List<Category> categories = service.getCategoriesByUser(
                     req, 
-                    categoriesRepository, 
-                    rule
+                    RIGHT, 
+                    READ
             );
             return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
         get("/catalog/:catalog_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Category> categories = CategoryService.getCatalogCategories(
+            List<Category> categories = service.getCatalogCategories(
                     req,
-                    categoriesRepository,
-                    rule
+                    RIGHT,
+                    READ
             );
             return new SuccessResponse<>(MSG_LIST, categories);
         }, transformer);
         
         // Route for create category for catelog
         post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, CREATE);
-            Category category = CategoryService.createCategory(
+            Category category = service.createCategory(
                     req, 
-                    categoriesRepository, 
-                    catalogsRepository, 
-                    usersRepository, 
-                    rule
+                    RIGHT,
+                    CREATE
             );
             return new SuccessResponse<>(MSG_CREATED, category);
         }, transformer);
         
         // Route for get category
         get("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            Category category = CategoryService.getCategoryById(
+            Category category = service.getCategoryById(
                     req, 
-                    categoriesRepository,
-                    rule
+                    RIGHT,
+                    READ
             );
             return new SuccessResponse<>(MSG_ENTITY, category);
         }, transformer);
         
         // Route for update category
         put("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, UPDATE);
-            Category category = CategoryService.updateCategory(
+            Category category = service.updateCategory(
                     req,
-                    categoriesRepository,
-                    rule
+                    RIGHT,
+                    UPDATE
             );
             return new SuccessResponse<>(MSG_UPDATED, category);
         }, transformer);
         
         // Route for mark to delete category
         delete("/owner/:user_id/category/:category_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, DELETE);
-            Category category = CategoryService.deleteCategory(
+            Category category = service.deleteCategory(
                     req, 
-                    categoriesRepository, 
-                    rule
+                    RIGHT,
+                    DELETE
             );
             return new SuccessResponse<>(MSG_DELETED, category);
         }, transformer);

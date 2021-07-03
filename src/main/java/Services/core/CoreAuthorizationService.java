@@ -170,8 +170,8 @@ public abstract class CoreAuthorizationService extends CoreService {
                 rule, 
                 true, 
                 CoreUserService.ALL_ALLOWED, 
-                CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED, 
-                CoreUserService.PUBLIC_ALLOWED
+                CoreUserService.PUBLIC_ALLOWED, 
+                CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED
         );
         
         return new UsersFilter(user.getId(), excludes);
