@@ -1,116 +1,100 @@
 package Services.core;
 
+import DataTransferObjects.v1.RuleDTO;
 import DataTransferObjects.v1.UserDTO;
 import Exceptions.DataException;
 import Exceptions.TokenException;
 import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
+import Services.base.BaseService;
 import Utils.common.*;
+import Utils.v1.RightManager;
 import com.google.gson.Gson;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
-public abstract class CoreUserService extends CoreService {
-
-    // Fields for only public field by rights for users collection
-    public final static String[] PUBLIC_ALLOWED = new String[]{ 
-        "issuedToken", 
-        "password", 
-        "properties", 
-        "rights", 
-        "version",
-        "status"
-    };
-    // Fields for public and private fields by rights for users collection
-    public final static String[] PUBLIC_AND_PRIVATE_ALLOWED = new String[]{ 
-        "password", 
-        "properties",
-        "status"
-    };
-    // Fields for all fields by rights for users collection
-    public final static String[] ALL_ALLOWED = new String[]{};
+public abstract class CoreUserService 
+        extends BaseService<UsersRepository> {
+    
+    public CoreUserService(
+            Datastore datastore,
+            String[] globalExcludes,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        super(
+                new UsersRepository(datastore),
+                globalExcludes,
+                publicExcludes,
+                privateExcludes
+        );
+    }
+    
+    protected RuleDTO getRule(
+            Request request,
+            String right,
+            String action
+    ) {
+        return RightManager.getRuleByRequest_Token(
+                request, 
+                getRepository(), 
+                right, 
+                action
+        );
+    }
 
     /**
      * Method for create user data transfer object from request body
      * @param request Spark request object
      * @return user data transfer object
      */
-    protected static UserDTO getUserDtoFromBody(Request request) {
+    protected UserDTO getUserDtoFromBody(Request request) {
         return new Gson().fromJson(request.body(), UserDTO.class);
     }
     
     /**
      * Method for get user, if ID as String
      * @param userId user id
-     * @param usersRepository source for work with users collection
      * @return 
      */
-    public static User getUserById(
-            ObjectId userId, 
-            UsersRepository usersRepository
-    ) {
-        return getUserById(userId, usersRepository, ALL_ALLOWED);
+    public User getUserById(ObjectId userId) {
+        return getUserById(userId, getGlobalExcludes());
     }
     
     /**
      * Method for get user by id, if id as String
      * @param userId user id
      * @param excludes excludes fileds
-     * @param usersRepository source for work with users collection
-     * @return founded user document
+ument
      */
-    public static User getUserById(
-            ObjectId userId, 
-            String[] excludes, 
-            UsersRepository usersRepository
-    ) {
-        return getUserById(userId, usersRepository, excludes);
-    }
-
-    /**
-     * Method for get user by id, if id as ObjectId
-     * @param id user id
-     * @param usersRepository source for work with users collection
-     * @param excludes exludes fields
-     * @return user document
-     */
-    public static User getUserById(
-            ObjectId id, 
-            UsersRepository usersRepository, 
-            String[] excludes
-    ) {
-        UsersFilter filter = new UsersFilter(id, excludes);
-        return getUserById(filter, usersRepository);
+    public User getUserById(ObjectId userId, String[] excludes) {
+        UsersFilter filter = new UsersFilter(userId, excludes);
+        return getUserById(filter);
     }
     
     /**
      * Method for get user by id with created filter
      * @param filter filter object
-     * @param usersRepository users source of data object
      * @return 
      */
-    public static User getUserById(
-            UsersFilter filter, 
-            UsersRepository usersRepository
-    ) {
-        return usersRepository.findOneById(filter);
+    public User getUserById(UsersFilter filter) {
+        return getRepository().findOneById(filter);
     }
     
     /**
      * Method for get user document, when send token in request 
      * headers or request params
      * @param request Spark request object
-     * @param usersRepository users data source
      * @return user document
      * @throws TokenException exception for errors with user token
      * @throws DataException  exception for errors with founded data
      */
-    public static User getUserWithTrust(
-            Request request, 
-            UsersRepository usersRepository
-    ) throws TokenException, DataException {
+    public User getUserWithTrust(Request request) 
+            throws TokenException, DataException 
+    {
         // Result of check on trust
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         // Check trust result.
@@ -120,7 +104,7 @@ public abstract class CoreUserService extends CoreService {
             // User id from URL params
             ObjectId userId = ParamsManager.getUserId(request);
             // Get user document from database
-            User user = CoreUserService.getUserById(userId, usersRepository);
+            User user = getUserById(userId);
             // Check result on exist.
             // If user exist - return user document.
             // If user not exist (equals null) - throw exception.
@@ -133,6 +117,38 @@ public abstract class CoreUserService extends CoreService {
         } else {
             Error error = new Error("Id from request not equal id from token");
             throw new TokenException("NotEquals", error);
+        }
+    }
+    
+    /**
+     * Method for login user by token
+     * @param request Spark request object
+     * @param filter filter object
+     * @return user object
+     */
+    public User getUserByToken(
+            Request request,
+            UsersFilter filter
+    ) {
+        // Get token from request headers
+        String header = HeadersUtils.getTokenFromHeaders(request);
+        // Get token from request query params
+        String queryParam = QueryManager.getTokenFromQuery(request);
+        // Check token from exist
+        // If token exist in headers or query params - find in database
+        // If token not exist in headers or query params - return null
+        if (header != null || queryParam != null) {
+            // Get token
+            // If token exist in headers - set it as value
+            // If token not exist in headers - set it as value
+            String token = (header != null) ? header : queryParam;
+            // Get user id from token
+            ObjectId id = JsonWebToken.getIdFromToken(token);
+            // Find & return user document
+            filter.setId(id);
+            return getUserById(filter);
+        } else {
+            return null;
         }
     }
     
@@ -164,7 +180,7 @@ public abstract class CoreUserService extends CoreService {
             ObjectId id = JsonWebToken.getIdFromToken(token);
             // Find & return user document
             filter.setId(id);
-            return getUserById(filter, usersRepository);
+            return usersRepository.findOneById(filter);
         } else {
             return null;
         }
@@ -174,15 +190,11 @@ public abstract class CoreUserService extends CoreService {
      * Method for find user by username from request
      * Method return document with all fields
      * @param request Spark request object
-     * @param usersRepository source for work with users collection
      * @return user document
      */
-    public static User getUserByUsername(
-            Request request, 
-            UsersRepository usersRepository
-    ) {
+    public User getUserByUsername(Request request) {
         UserDTO userDTO = getUserDtoFromBody(request);
-        return getUserByUsername(userDTO, usersRepository);
+        return getUserByUsername(userDTO);
     }
     
     /**
@@ -191,13 +203,22 @@ public abstract class CoreUserService extends CoreService {
      * @param usersRepository user data source
      * @return user document
      */
-    public static User getUserByUsername(
-            UserDTO userDTO, 
-            UsersRepository usersRepository
-    ) {
+    public User getUserByUsername(UserDTO userDTO) {
         UsersFilter filter = new UsersFilter(
                 userDTO.getUsername(), 
-                ALL_ALLOWED
+                getGlobalExcludes()
+        );
+        return getRepository().findOneByUsername(filter);
+    }
+    
+    public static User getUserByUsername(
+            Request request,
+            UsersRepository usersRepository
+    ) {
+        UserDTO userDTO = new Gson().fromJson(request.body(), UserDTO.class);
+        UsersFilter filter = new UsersFilter(
+                userDTO.getUsername(), 
+                new String[] {}
         );
         return usersRepository.findOneByUsername(filter);
     }
@@ -210,13 +231,12 @@ public abstract class CoreUserService extends CoreService {
      * @param usersRepository source of data
      * @return list with user documents
      */
-    protected static List<User> getList(
+    protected List<User> getList(
             int skip, 
             int limit, 
-            String[] excludes, 
-            UsersRepository usersRepository
+            String[] excludes
     ) {
         UsersFilter filter = new UsersFilter(skip, limit, excludes);
-        return usersRepository.findAll(filter);
+        return getRepository().findAll(filter);
     }
 }

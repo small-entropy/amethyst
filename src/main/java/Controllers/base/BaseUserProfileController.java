@@ -9,7 +9,7 @@ import Utils.constants.ResponseMessages;
  * @author small-entropy
  */
 public class BaseUserProfileController extends AbstractController {
-    protected static final String RULE = DefaultRights.USERS.getName();
+    protected static final String RIGHT = DefaultRights.USERS.getName();
     
     protected static final String MSG_LIST = ResponseMessages.PROFILE.getMessage();
     protected static final String MSG_CREATED = ResponseMessages.PROFILE_CREATED.getMessage();

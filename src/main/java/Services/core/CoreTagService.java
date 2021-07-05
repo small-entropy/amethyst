@@ -6,9 +6,10 @@ import Filters.common.TagsFilter;
 import Models.Standalones.Tag;
 import Models.Standalones.User;
 import Repositories.v1.TagsRepository;
-import Repositories.v1.UsersRepository;
+import Services.base.BaseDocumentService;
 import Utils.common.ParamsManager;
 import Utils.common.QueryManager;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -17,18 +18,33 @@ import spark.Request;
  * Class with static methods for work with tags data
  * @author small-entropy
  */
-public class CoreTagService extends CoreService {
+public abstract class CoreTagService 
+        extends BaseDocumentService<TagsRepository> {
    
+    public CoreTagService(
+            Datastore datastore,
+            String[] globalExcludes,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        super(
+                datastore,
+                new TagsRepository(datastore),
+                globalExcludes,
+                publicExcludes,
+                privateExcludes
+        );
+    }
+    
     /**
      * Method fot get list of tags documents
      * @param request Spark request object
-     * @param tagsRepository repository for tags collection
      * @param excludes exlude fields
+     * @param ownerId owner (user) id
      * @return list of tags documents
      */
-    protected static List<Tag> getList(
+    protected List<Tag> getList(
             Request request,
-            TagsRepository tagsRepository,
             String[] excludes,
             ObjectId ownerId
     ) {
@@ -37,48 +53,44 @@ public class CoreTagService extends CoreService {
         TagsFilter filter = new TagsFilter(skip, limit, excludes);
         if (ownerId != null) {
             filter.setOwner(ownerId);
-            return tagsRepository.findAllByOwnerId(filter);
+            return getRepository().findAllByOwnerId(filter);
         } else {
-            return tagsRepository.findAll(filter);
+            return getRepository().findAll(filter);
         }
     }
     
     /**
      * Method for get tag document with excludes
      * @param tag tag dacument
-     * @param tagsRepository repository for tags collection
      * @param excludes exlude fields
      * @return tag document
      */
-    protected static Tag getTagByDocument(
-            Tag tag, 
-            TagsRepository tagsRepository, 
+    protected Tag getTagByDocument(
+            Tag tag,  
             String[] excludes
     ) {
         ObjectId ownerId = tag.getOwner().getId();
         ObjectId tagId = tag.getId();
-        return getTagById(tagId, ownerId, tagsRepository, excludes);
+        return getTagById(tagId, ownerId, excludes);
     }
     
     /**
      * Method for get tag document by tag id & owner id
      * @param tagId tag id
      * @param ownerId owner id
-     * @param tagsRepository repository for tags collection
      * @param excludes exclude fields
      * @return tag document
      */
-    protected static Tag getTagById(
+    protected Tag getTagById(
             ObjectId tagId,
             ObjectId ownerId,
-            TagsRepository tagsRepository,
             String[] excludes
     ) {
         TagsFilter filter = new TagsFilter();
         filter.setId(tagId);
         filter.setOwner(ownerId);
         filter.setExcludes(excludes);
-        return tagsRepository.findOneByOwnerAndId(filter);
+        return getRepository().findOneByOwnerAndId(filter);
     }
     
     /**
@@ -89,34 +101,30 @@ public class CoreTagService extends CoreService {
      * @param usersRepository repository for users collection
      * @return created tag document
      */
-    protected static Tag createTag(
+    protected Tag createTag(
             ObjectId userId,
-            Request request,
-            TagsRepository tagsRepository,
-            UsersRepository usersRepository
+            Request request
     ) {
-        User user = CoreUserService.getUserById(userId, usersRepository);
+        User user = getUserById(userId);
         TagDTO tagDTO = TagDTO.build(request, TagDTO.class);
         tagDTO.setOwner(user);
-        return tagsRepository.create(tagDTO);
+        return getRepository().create(tagDTO);
     }
     
     /**
      * Method for get tag document by tag id and owner id
      * @param request Spark request object
-     * @param tagsRepository repository for tags collection
      * @param excludes exclude fields
      * @return founded tag document
      * @throws DataException throw if can not get ids from params
      */
-    protected static Tag getTagByRequestByUserId (
+    protected Tag getTagByRequestByUserId (
             Request request,
-            TagsRepository tagsRepository,
             String[] excludes
     ) throws DataException {
         ObjectId tagId = ParamsManager.getTagId(request);
         ObjectId ownerId = ParamsManager.getUserId(request);
-        return getTagById(tagId, ownerId, tagsRepository, excludes);
+        return getTagById(tagId, ownerId, excludes);
     }
     
     /**
@@ -124,21 +132,19 @@ public class CoreTagService extends CoreService {
      * @param userId owner id
      * @param tagId tag id
      * @param request Spark request obejct
-     * @param tagsRepository repository for tags collection
      * @return updated tag document
      * @throws DataException throw if can get ids from params or found tag
      */
-    protected static Tag updateTag(
+    protected Tag updateTag(
             ObjectId userId,
             ObjectId tagId,
-            Request request,
-            TagsRepository tagsRepository
+            Request request
     ) throws DataException {
         TagDTO tagDTO = TagDTO.build(request, TagDTO.class);
         TagsFilter filter = new TagsFilter(new String[] {});
         filter.setOwner(userId);
         filter.setId(tagId);
-        return tagsRepository.update(tagDTO, filter);
+        return getRepository().update(tagDTO, filter);
     }
     
     /**
@@ -149,14 +155,13 @@ public class CoreTagService extends CoreService {
      * @return deactivated tag document
      * @throws DataException throw if can get ids from params or found tag
      */
-    protected static Tag deleteTag(
+    protected Tag deleteTag(
             ObjectId userId, 
-            ObjectId tagId, 
-            TagsRepository tagsRepository
+            ObjectId tagId
     ) throws DataException {
         TagsFilter filter = new TagsFilter(new String[] {});
         filter.setId(tagId);
         filter.setOwner(userId);
-        return tagsRepository.deactivate(filter);
+        return getRepository().deactivate(filter);
     }
 }

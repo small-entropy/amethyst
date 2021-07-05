@@ -7,6 +7,8 @@ import Models.Standalones.User;
 import Repositories.v1.UsersRepository;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;
+import Utils.v1.RightManager;
+import dev.morphia.Datastore;
 import java.util.Arrays;
 import spark.Request;
 
@@ -14,26 +16,59 @@ import spark.Request;
  * Class for base functions for create authorization service
  * @author small-entropy
  */
-public abstract class CoreAuthorizationService extends CoreService {
+public abstract class CoreAuthorizationService 
+        extends CoreUserService {
+    
+    public CoreAuthorizationService(
+            Datastore datastore,
+            String[] globalExcludes,
+            String[] publicExcludes,
+            String[] privateExcludes
+    ) {
+        super(
+                datastore,
+                globalExcludes,
+                publicExcludes,
+                privateExcludes
+        );
+    }
+    
+    /**
+     * Method for get rule by username from request body
+     * @param request Spark request object
+     * @param usersRepository datastore source for users collection
+     * @param right right string
+     * @param action action name
+     * @return 
+     */
+    protected RuleDTO getRule_byUsername(
+            Request request,
+            String right,
+            String action
+    ) {
+        return RightManager.getRuleByRequest_Username(
+                request, 
+                getRepository(), 
+                right, 
+                action
+        );
+    }
 
     /**
      * Method for login user by token
      * @param request Spark request object
-     * @param usersRepository source for work with users collection
      * @param filterForReturn filter object for return answer
      * @param filterForSearch filter object for search user
      * @return founded user document
      */
-    protected static User autoLoginUser(
+    protected User autoLoginUser(
             Request request, 
-            UsersRepository usersRepository, 
             UsersFilter filterForReturn, 
             UsersFilter filterForSearch
     ) {
         // Get user document by token
-        User user = CoreUserService.getUserByToken(
+        User user = getUserByToken(
                 request,
-                usersRepository,
                 filterForSearch
         );
         // Get token from request
@@ -46,9 +81,8 @@ public abstract class CoreAuthorizationService extends CoreService {
                 && token != null
                 && user.getIssuedTokens() != null
                 && user.getIssuedTokens().contains(token))
-                ? CoreUserService.getUserByToken(
-                        request, 
-                        usersRepository, 
+                ? getUserByToken(
+                        request,
                         filterForReturn
                 )
                 : null;
@@ -61,16 +95,13 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User loginUser(
-            Request request,
-            UsersRepository usersRepository
-    ) {
+    protected User loginUser(Request request) {
         // Transform JSON object from body to Map
-        UserDTO userDTO = CoreUserService.getUserDtoFromBody(request);
+        UserDTO userDTO = getUserDtoFromBody(request);
         // Get field "password" from map
         String password = userDTO.getPassword();
         // Find user by username from request body
-        User user = CoreUserService.getUserByUsername(userDTO, usersRepository);
+        User user = getUserByUsername(userDTO);
         // Verified user password:
         // if user not find - false,
         // if user send wrong password - false,
@@ -87,7 +118,7 @@ public abstract class CoreAuthorizationService extends CoreService {
             if (tokens == null || tokens.isEmpty()) {
                 token = JsonWebToken.encode(user);
                 user.setIssuedTokens(Arrays.asList(token));
-                usersRepository.save(user);
+                getRepository().save(user);
             }
             return user;
         } else {
@@ -101,15 +132,12 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User registerUser(
-            UserDTO userDTO,
-            UsersRepository usersRepository
-    ) {
+    protected User registerUser(UserDTO userDTO) {
         // Create user document
         userDTO.setProperties(CoreUserPropertyService.getDefaultUserProperty());
         userDTO.setProfile(CoreUserProfileService.getDefaultProfile());
         userDTO.setRights(CoreRightService.getDefaultRightList());
-        return usersRepository.create(userDTO);
+        return getRepository().create(userDTO);
     }
 
     /**
@@ -118,20 +146,17 @@ public abstract class CoreAuthorizationService extends CoreService {
      * @param usersRepository source for work with users collection
      * @return user document
      */
-    protected static User logoutUser(
-            Request request,
-            UsersRepository usersRepository
-    ) {
+    protected User logoutUser(Request request) {
         // Not include in token value
         final int NOT_IN_LIST = -1;
         // Create filter object
         UsersFilter filter = new UsersFilter();
         // Set exludes field for filter
-        filter.setExcludes(CoreUserService.ALL_ALLOWED);
+        filter.setExcludes(getGlobalExcludes());
         // Get user document from database (full document)
-        User user = CoreUserService.getUserByToken(
+        User user = getUserByToken(
                 request, 
-                usersRepository, 
+                getRepository(), 
                 filter
         );
         // Check user document on exist
@@ -151,7 +176,7 @@ public abstract class CoreAuthorizationService extends CoreService {
                 // Remove from issued tokens list token from request
                 user.getIssuedTokens().remove(tokenIndex);
                 // Save changes in database
-                usersRepository.save(user);
+                getRepository().save(user);
                 // return user document
                 return user;
             } else {
@@ -165,13 +190,10 @@ public abstract class CoreAuthorizationService extends CoreService {
         }
     }
     
-    protected static UsersFilter getUsersFilter(User user, RuleDTO rule) {
+    protected UsersFilter getUsersFilter(User user, RuleDTO rule) {
         String[] excludes = getExcludes(
                 rule, 
-                true, 
-                CoreUserService.ALL_ALLOWED, 
-                CoreUserService.PUBLIC_ALLOWED, 
-                CoreUserService.PUBLIC_AND_PRIVATE_ALLOWED
+                true
         );
         
         return new UsersFilter(user.getId(), excludes);

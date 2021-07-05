@@ -1,10 +1,7 @@
 package Controllers.v1;
 
 import Controllers.base.BaseTagsController;
-import DataTransferObjects.v1.RuleDTO;
 import Models.Standalones.Tag;
-import Repositories.v1.TagsRepository;
-import Repositories.v1.UsersRepository;
 import Utils.responses.SuccessResponse;
 import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
@@ -18,68 +15,34 @@ import java.util.List;
  */
 public class TagsController extends BaseTagsController {
     public static void routes(Datastore store, JsonTransformer transformer) {
-        TagsRepository tagsRepository = new TagsRepository(store);
-        UsersRepository usersRepository = new UsersRepository(store);
+        TagService service = new TagService(store);
         // Route for get tags list
         get("", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Tag> tags = TagService.getTagsList(
-                    req,
-                    tagsRepository,
-                    rule,
-                    false
-            );
+            List<Tag> tags = service.getTagsList(req, RIGHT, READ, false);
             return new SuccessResponse<>(MSG_LIST, tags);
         }, transformer);
         // Route for get tags list by for user by id
         get("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            List<Tag> tags = TagService.getTagsList(
-                    req, 
-                    tagsRepository, 
-                    rule,
-                    true
-            );
+            List<Tag> tags = service.getTagsList(req, RIGHT, READ, true);
             return new SuccessResponse<>(MSG_LIST, tags);
         }, transformer);
         // Route fot create tag document
         post("/owner/:user_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, CREATE);
-            Tag tag = TagService.createTag(
-                    req,
-                    tagsRepository,
-                    usersRepository,
-                    rule
-            );
+            Tag tag = service.createTag(req, RIGHT, CREATE);
             return new SuccessResponse<>(MSG_CREATED, tag);
         }, transformer);
         // Route for get tag document by tag id & user id
         get("/owner/:user_id/tag/:tag_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, READ);
-            Tag tag = TagService.getTagById(
-                    req,
-                    tagsRepository,
-                    rule
-            );
+            Tag tag = service.getTagById(req, RIGHT, READ);
             return new SuccessResponse<>(MSG_ENTITY, tag);
         }, transformer);
         // Route for update tag document
         put("/owner/:user_id/tag/:tag_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, UPDATE);
-            Tag tag = TagService.updateTag(
-                    req,
-                    tagsRepository,
-                    rule
-            );
+            Tag tag = service.updateTag(req, RIGHT, UPDATE);
             return new SuccessResponse<>(MSG_UPDATED, tag);
         }, transformer);
         delete("/owner/:user_id/tag/:tag_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RIGHT, DELETE);
-            Tag tag = TagService.deleteTag(
-                    req,
-                    tagsRepository,
-                    rule
-            );
+            Tag tag = service.deleteTag(req, RIGHT, DELETE);
             return new SuccessResponse<>(MSG_DELETED, tag);
         }, transformer);
     }

@@ -211,7 +211,7 @@ public class RightManager {
     ) {
         try {
             UsersFilter filter = new UsersFilter();
-            filter.setExcludes(UserService.ALL_ALLOWED);
+            filter.setExcludes(new String[] {});
             User user = CoreUserService.getUserByToken(
                     request, 
                     usersRepository, 

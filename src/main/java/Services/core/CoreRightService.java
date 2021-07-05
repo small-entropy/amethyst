@@ -4,8 +4,10 @@ import DataTransferObjects.v1.UserRightDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedRight;
 import Repositories.v1.RightsRepository;
+import Services.base.BaseDocumentService;
 import Utils.common.ParamsManager;
 import Utils.constants.DefaultRights;
+import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -15,7 +17,18 @@ import spark.Request;
  * Abstract class with main methods for work with user rights
  * @author small-entropy
  */
-public abstract class CoreRightService {
+public abstract class CoreRightService 
+        extends BaseDocumentService<RightsRepository>{
+    
+    public CoreRightService(Datastore datastore, List<String> blackList) {
+        super(
+                datastore,
+                new RightsRepository(datastore, blackList),
+                new String[] {},
+                new String[] {},
+                new String[] {}
+        );
+    }
 
     /**
      * Method for get default list of rights
@@ -45,12 +58,11 @@ public abstract class CoreRightService {
      * @return list of user rights
      * @throws DataException throw if can not found user or rights
      */
-    protected static List<EmbeddedRight> getUserRights(
-            Request request, 
-            RightsRepository rightsRepository
+    protected List<EmbeddedRight> getUserRights(
+            Request request
     ) throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
-        return rightsRepository.getList(userId);
+        return getRepository().getList(userId);
     }
     
     /**
@@ -60,44 +72,36 @@ public abstract class CoreRightService {
      * @return user right document
      * @throws DataException throw if can not found user or right
      */
-    protected static EmbeddedRight getUserRightById(
-            Request request, 
-            RightsRepository rightsRepository
-    ) throws DataException {
+    protected EmbeddedRight getUserRightById(Request request) 
+            throws DataException {
        ObjectId rightId = ParamsManager.getRightId(request);
        ObjectId userId = ParamsManager.getUserId(request);
-       return rightsRepository.getRightByIdParam(rightId, userId);
+       return getRepository().getRightByIdParam(rightId, userId);
     }
     
-    protected static EmbeddedRight createUserRight(
-            Request request, 
-            RightsRepository rightsRepository
-    ) throws DataException {
+    protected EmbeddedRight createUserRight(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         UserRightDTO rightDTO = UserRightDTO.build(request, UserRightDTO.class);
-        return rightsRepository.createUserRight(userId, rightDTO);
+        return getRepository().createUserRight(userId, rightDTO);
     }
     
-    protected static List<EmbeddedRight> deleteRights(
-            Request request, 
-            RightsRepository rightsRepository
-    ) throws DataException {
+    protected List<EmbeddedRight> deleteRights(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId rightId = ParamsManager.getRightId(request);
-        return rightsRepository.removeRight(rightId, userId);
+        return getRepository().removeRight(rightId, userId);
     }
     
-    protected static EmbeddedRight updateRight(
-            Request request, 
-            RightsRepository rightsRepository
-    ) throws DataException {
+    protected EmbeddedRight updateRight(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId rightId = ParamsManager.getRightId(request);
         UserRightDTO userRightDTO = UserRightDTO.build(
                 request, 
                 UserRightDTO.class
         ); 
-        return rightsRepository.updateUserRight(
+        return getRepository().updateUserRight(
                 rightId, 
                 userId, 
                 userRightDTO

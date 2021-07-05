@@ -4,12 +4,11 @@ import DataTransferObjects.v1.RuleDTO;
 import Exceptions.AccessException;
 import Exceptions.DataException;
 import Models.Standalones.Tag;
-import Repositories.v1.TagsRepository;
-import Repositories.v1.UsersRepository;
 import Services.core.CoreTagService;
 import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.v1.RightManager;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -21,48 +20,45 @@ import spark.Request;
  */
 public class TagService extends CoreTagService {
     
-    /** List of excludes fields for public read documents */
-    private static final String[] PRIVATE_EXCLUDES = new String[] {
-        "owner",
-        "properties",
-        "version",
-        "status"
-    };
-    
-    /** List of exludes fields for public read documents */
-    private static final String[] PUBLIC_EXCLUDES = new String[] {
-        "version",
-        "status"
-    };
+    public TagService(Datastore datastore) {
+        super(
+                datastore,
+                new String[] {},
+                new String[] {
+                    "owner",
+                    "properties",
+                    "version",
+                    "status"
+                },
+                new String[] {
+                    "version",
+                    "status"
+                }
+        );
+    }
 
     /**
      * Method fot get list of tags documents
      * @param request Spark request object
-     * @param tagsRepository repository for tags collection
      * @param rule rule data transfer object
      * @return list of tags documents
      * @throws DataException throw if can not found tag documents
      */
-    public static List<Tag> getTagsList(
+    public List<Tag> getTagsList(
             Request request,
-            TagsRepository tagsRepository,
-            RuleDTO rule,
+            String right,
+            String action,
             boolean byOwner
     ) throws DataException {
-        String[] excludes = getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
+        RuleDTO rule = getRule(request, right, action);
+        String[] excludes = getExcludes(request, rule);
         var userId = (byOwner)
                 ? ParamsManager.getUserId(request)
                 : null;
         List<Tag> tags = getList(
                 request,
-                tagsRepository,
                 excludes,
-                null
+                userId
         );
         if (!tags.isEmpty()) {
             return tags;
@@ -75,8 +71,6 @@ public class TagService extends CoreTagService {
     /**
      * Method fot create tag documents
      * @param request Spark request object
-     * @param tagsRepository  repository for tags collection
-     * @param usersRepository  repository for users collection
      * @param rule rule data transfer object
      * @return created tag document
      * @throws AccessException throw if user has no access to 
@@ -84,31 +78,21 @@ public class TagService extends CoreTagService {
      * @throws DataException throw if can not found createad 
      *                       documents or creator user
      */
-    public static Tag createTag(
+    public Tag createTag(
             Request request,
-            TagsRepository tagsRepository,
-            UsersRepository usersRepository,
-            RuleDTO rule
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) 
                 ? rule.isMyGlobal() 
                 : rule.isOtherGlobal();
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
-            Tag tag = createTag(
-                    userId,
-                    request,
-                    tagsRepository,
-                    usersRepository
-            );
-            String[] excludes = getExcludes(
-                    request, 
-                    rule, 
-                    PUBLIC_EXCLUDES, 
-                    PRIVATE_EXCLUDES
-            );
-            return getTagByDocument(tag, tagsRepository, excludes);
+            Tag tag = createTag(userId, request);
+            String[] excludes = getExcludes(request, rule);
+            return getTagByDocument(tag, excludes);
         } else {
             Error error = new Error("Has no access to create tag");
             throw new AccessException("CanNotCreate", error);
@@ -118,27 +102,17 @@ public class TagService extends CoreTagService {
     /**
      * Method get tag document 
      * @param request Spark request object
-     * @param tagsRepository repository for tags collection
-     * @param rule rule data transfer obejct
      * @return founded tag document
      * @throws DataException throw if can not found tag document
      */
-    public static Tag getTagById(
+    public Tag getTagById(
             Request request,
-            TagsRepository tagsRepository,
-            RuleDTO rule
+            String right,
+            String action
     ) throws DataException {
-        String[] excludes = getExcludes(
-                request, 
-                rule, 
-                PUBLIC_EXCLUDES, 
-                PRIVATE_EXCLUDES
-        );
-        var tag = getTagByRequestByUserId(
-                request, 
-                tagsRepository, 
-                excludes
-        );
+        RuleDTO rule = getRule(request, right, action);
+        String[] excludes = getExcludes(request, rule);
+        var tag = getTagByRequestByUserId(request, excludes);
         if (tag != null) {
             return tag;
         } else {
@@ -150,17 +124,16 @@ public class TagService extends CoreTagService {
     /**
      * Method for update tag document
      * @param request Spark request object
-     * @param tagsRepository repository for tags collection
-     * @param rule rule data transfer object
      * @return updated tag document
      * @throws AccessException throw if has no access to update tag document
      * @throws DataException throw if can't get ids from params or find tag
      */
-    public static Tag updateTag(
+    public Tag updateTag(
             Request request,
-            TagsRepository tagsRepository,
-            RuleDTO rule
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess = (isTrusted) 
                 ? rule.isMyPrivate() 
@@ -168,19 +141,9 @@ public class TagService extends CoreTagService {
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId tagId = ParamsManager.getTagId(request);
-            Tag tag = updateTag(
-                    userId,
-                    tagId,
-                    request,
-                    tagsRepository
-            );
-            String[] excludes = getExcludes(
-                    request, 
-                    rule, 
-                    PUBLIC_EXCLUDES, 
-                    PRIVATE_EXCLUDES
-            );
-            return getTagByDocument(tag, tagsRepository, excludes);
+            Tag tag = updateTag(userId, tagId, request);
+            String[] excludes = getExcludes(request, rule);
+            return getTagByDocument(tag, excludes);
         } else {
             Error error = new Error("Has no access to update tag document");
             throw new AccessException("CanNotUpdate", error);
@@ -196,16 +159,17 @@ public class TagService extends CoreTagService {
      * @throws AccessException if has no access to delete tag document
      * @throws DataException if can't get ids from params or find tag
      */
-    public static Tag deleteTag(
+    public Tag deleteTag(
             Request request,
-            TagsRepository tagsRepository,
-            RuleDTO rule
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean hasAccess = RightManager.chechAccess(request, rule);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId tagId = ParamsManager.getTagId(request);
-            return deleteTag(userId, tagId, tagsRepository);
+            return deleteTag(userId, tagId);
         } else {
             Error error = new Error("Has no access to delete tag document");
             throw new AccessException("CanNotDelete", error);

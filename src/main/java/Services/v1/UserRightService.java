@@ -6,8 +6,9 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.Embeddeds.EmbeddedRight;
 import Services.core.CoreRightService;
-import Repositories.v1.RightsRepository;
 import Utils.common.Comparator;
+import dev.morphia.Datastore;
+import java.util.Arrays;
 import java.util.List;
 import spark.Request;
 
@@ -15,16 +16,26 @@ import spark.Request;
  * Class service for work with user right document
  */
 public class UserRightService extends CoreRightService {
+    
+    public UserRightService(Datastore datastore) {
+        super(
+                datastore,
+                Arrays.asList("users_right", "catalogs_right")
+        );
+    }
 
-    public static EmbeddedRight updateRight(
-            Request request, 
-            RightsRepository rightsRepository, 
-            RuleDTO rule
+    public EmbeddedRight updateRight(
+            Request request,  
+            String right,
+            String action
     ) throws DataException, AccessException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) 
+                ? rule.isMyGlobal()
+                : rule.isOtherGlobal();
         if (hasAccess) {
-            return updateRight(request, rightsRepository);
+            return updateRight(request);
         } else {
             String message = (isTrusted) 
                     ? "Has not rights to create right document for own user document"
@@ -34,15 +45,18 @@ public class UserRightService extends CoreRightService {
         }
     }
 
-    public static List<EmbeddedRight> deleteRight(
-            Request request, 
-            RightsRepository rightsRepository, 
-            RuleDTO rule
+    public List<EmbeddedRight> deleteRight(
+            Request request,
+            String right,
+            String action
     ) throws DataException, AccessException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) 
+                ? rule.isMyGlobal() 
+                : rule.isOtherGlobal();
         if (hasAccess) {
-            return deleteRights(request, rightsRepository);
+            return deleteRights(request);
         } else {
             String message = (isTrusted) 
                     ? "Has not rights to create right document for own user document"
@@ -52,15 +66,18 @@ public class UserRightService extends CoreRightService {
         }
     }
 
-    public static EmbeddedRight createUserRight(
+    public EmbeddedRight createUserRight(
             Request request, 
-            RightsRepository rightsRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) 
+                ? rule.isMyGlobal() 
+                : rule.isOtherGlobal();
         if (hasAccess) {
-            return createUserRight(request, rightsRepository);
+            return createUserRight(request);
         } else {
             String message = (isTrusted) 
                     ? "Has not rights to create right document for own user document"
@@ -73,21 +90,21 @@ public class UserRightService extends CoreRightService {
     /**
      * Method for get user right list
      * @param request Spark request object
-     * @param rightsRepository user data source
-     * @param rule rule data transfer object
      * @return user document rights list
      * @throws AccessException no access exception
      * @throws DataException throws if can not found user or user rights
      */
-    public static List<EmbeddedRight> getUserRights(
+    public List<EmbeddedRight> getUserRights(
             Request request, 
-            RightsRepository rightsRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws AccessException, DataException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted)
+                ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
-            return getUserRights(request, rightsRepository);
+            return getUserRights(request);
         } else {
             String message = (isTrusted)
                     ? "Has not rights for read own private fields"
@@ -100,22 +117,23 @@ public class UserRightService extends CoreRightService {
     /**
      * Method for get user right by id from request params with rule check
      * @param request Spark request object;
-     * @param rightsRepository user right datasource
-     * @param rule rule data transfer obejct
      * @return user right document
      * @throws DataException throw if can not found user or right
      * @throws TokenException throw if token not send or token incorrect
      * @throws AccessException  throw if user has not access for this method
      */
-    public static EmbeddedRight getUserRightById(
+    public EmbeddedRight getUserRightById(
             Request request, 
-            RightsRepository rightsRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws DataException, TokenException, AccessException {
+        RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted)
+                ? rule.isMyGlobal()
+                : rule.isOtherGlobal();
         if (hasAccess) {
-            return getUserRightById(request, rightsRepository);
+            return getUserRightById(request);
         } else {
             String message = (isTrusted)
                     ? "Has not rights for read own private fields"

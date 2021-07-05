@@ -1,11 +1,9 @@
 package Controllers.v1;
 
 import Controllers.base.BaseAuthorizationController;
-import DataTransferObjects.v1.RuleDTO;
 import Models.Standalones.User;
 import Utils.responses.SuccessResponse;
 import Services.v1.AuthorizationService;
-import Repositories.v1.UsersRepository;
 import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import static spark.Spark.get;
@@ -28,12 +26,12 @@ public class AuthorizationController extends BaseAuthorizationController {
             JsonTransformer transformer
     ) {
        
-        UsersRepository usersRepository = new UsersRepository(datastore);
+        AuthorizationService service = new AuthorizationService(datastore);
 
         // Route for register user
         post("/register", (req, res) -> {
             // Register user by request data
-            User user = AuthorizationService.registerUser(req, usersRepository);
+            User user = service.registerUser(req);
             // Get first token
             String token = user.getFirstToken();
             // Set response headers
@@ -44,10 +42,8 @@ public class AuthorizationController extends BaseAuthorizationController {
 
         // Route for user login
         post("/login", (req, res) -> {
-            // Get rule for user by request
-            RuleDTO rule = getRule_byUsername(req, usersRepository, RULE, READ);
             // Get user document
-            User user = AuthorizationService.loginUser(req, usersRepository, rule);
+            User user = service.loginUser(req, RULE, READ);
             String token = user.getFirstToken();
             // Set headers for authorization
             setAuthHeaders(res, token);
@@ -57,25 +53,21 @@ public class AuthorizationController extends BaseAuthorizationController {
         
         // Route for change password for user by token
         post("/change-password/:user_id", (req, res) -> {
-            // Get rule for get user data
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
             // Change password
-            User user = AuthorizationService.changePassword(req, usersRepository, rule);
+            User user = service.changePassword(req, RULE, READ);
             // Return success answer
             return new SuccessResponse<>(MSG_PASSWORD_CHANGED, user);
         }, transformer);
 
         // Route for user autologin
         get("/autologin", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
-            User user = AuthorizationService.autoLoginUser(req, usersRepository, rule);
+            User user = service.autoLoginUser(req, RULE, READ);
             return new SuccessResponse<>(MSG_AUTOLOGIN, user);
         }, transformer);
 
         // Logout user
         get("/logout", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
-            User user = AuthorizationService.logoutUser(req, usersRepository, rule);
+            User user = service.logoutUser(req, RULE, READ);
             return new SuccessResponse<>(MSG_LOGOUT, user);
         }, transformer);
     }

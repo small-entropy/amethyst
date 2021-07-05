@@ -9,6 +9,7 @@ import Filters.common.UsersFilter;
 import Models.Standalones.User;
 import Services.core.CoreAuthorizationService;
 import Repositories.v1.UsersRepository;
+import dev.morphia.Datastore;
 import spark.Request;
 
 /**
@@ -16,6 +17,22 @@ import spark.Request;
  * @author small-entropy
  */
 public class AuthorizationService extends CoreAuthorizationService {
+    
+    public AuthorizationService(Datastore datastore) {
+        super(
+                datastore,
+                new String[] {}, 
+                new String[] {
+                    "issuedToken", 
+                    "password", 
+                    "properties", 
+                    "rights", 
+                    "version",
+                    "status"
+                },
+                new String[] { "password", "properties", "status"}
+        );
+    }
 
     /**
      * Method to autologin by token in header ot query params
@@ -26,26 +43,23 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @throws AuthorizationException
      * 
      */
-    public static User autoLoginUser(
+    public User autoLoginUser(
             Request request, 
-            UsersRepository usersRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws AuthorizationException {
+        RuleDTO rule = getRule(request, right, action);
         UsersFilter filterForReturn = new UsersFilter();
         UsersFilter filterForSearch = new UsersFilter();
-        String[] excludes = AuthorizationService.getExcludes(
+        String[] excludes = getExcludes(
                 rule, 
-                true, 
-                UserService.ALL_ALLOWED, 
-                UserService.PUBLIC_AND_PRIVATE_ALLOWED, 
-                UserService.PUBLIC_ALLOWED
+                true
         );
         filterForReturn.setExcludes(excludes);
-        filterForSearch.setExcludes(UserService.ALL_ALLOWED);
+        filterForSearch.setExcludes(getGlobalExcludes());
         // Get user document by token
         User user = autoLoginUser(
-                request, 
-                usersRepository, 
+                request,
                 filterForReturn, 
                 filterForSearch
         );
@@ -65,18 +79,19 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @return user document
      * @throws AuthorizationException
      */
-    public static User loginUser(
+    public User loginUser(
             Request request, 
-            UsersRepository usersRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws AuthorizationException {
+        RuleDTO rule = getRule_byUsername(request, right, action);
         // Authorization user
-        User user = AuthorizationService.loginUser(request, usersRepository);
+        User user = loginUser(request);
         // Check user on exist
         if (user != null) {
             UsersFilter filter = getUsersFilter(user, rule);
             // Find & return document
-            return UserService.getUserById(filter, usersRepository);
+            return getUserById(filter);
         } else {
             Error error = new Error("Can not find user with for authorization");
             throw new AuthorizationException("UserNotFound", error);
@@ -89,20 +104,17 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @param usersRepository source for work with users collection
      * @return user document
      */
-    public static User registerUser(
-            Request request, 
-            UsersRepository usersRepository
-    ) {
+    public User registerUser(Request request) {
         // Crete user data transfer object from JSON
         UserDTO userDTO = UserDTO.build(request, UserDTO.class); 
         // Create user document in database
-        User user = AuthorizationService.registerUser(userDTO, usersRepository);
+        User user = registerUser(userDTO);
         // Options for find in documents
         UsersFilter filter = new UsersFilter(
                 user.getId(), 
-                UserService.PUBLIC_AND_PRIVATE_ALLOWED
+                getPrivateExcludes()
         );
-        return UserService.getUserById(filter, usersRepository);
+        return getRepository().findOneById(filter);
     }
 
     /**
@@ -113,17 +125,18 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @return user document
      * @throws AuthorizationException 
      */
-    public static User logoutUser(
+    public User logoutUser(
             Request request, 
-            UsersRepository usersRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws AuthorizationException {
-        User user = AuthorizationService.logoutUser(request, usersRepository);
+        User user = logoutUser(request);
         if (user != null) {
+            RuleDTO rule = getRule(request, right, action);
             UsersFilter filter = getUsersFilter(user, rule);
             // Get user document by user id with find options with rule 
             // excluded fields
-            return UserService.getUserById(filter, usersRepository);
+            return getUserById(filter);
         } else {
             Error error = new Error("Can not find user for logout");
             throw new AuthorizationException("UserNotFound", error);
@@ -142,13 +155,14 @@ public class AuthorizationService extends CoreAuthorizationService {
      * @throws DataException throw is user not found
      * @throws AuthorizationException throw if can not authotize user by token
      */
-    public static User changePassword(
+    public User changePassword(
             Request request, 
-            UsersRepository usersRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws TokenException, DataException, AuthorizationException {
+        RuleDTO rule = getRule(request, right, action);
         // Get user full document
-        User user = UserService.getUserWithTrust(request, usersRepository);
+        User user = getUserWithTrust(request);
         // Get user data transfer object
         UserDTO userDTO = UserDTO.build(request, UserDTO.class);
         // Call regenerate password for user
@@ -157,11 +171,11 @@ public class AuthorizationService extends CoreAuthorizationService {
                 userDTO.getNewPassword()
         );
         // Save changes in document
-        usersRepository.save(user);
+        getRepository().save(user);
         
         // Create filter object
         UsersFilter filter = getUsersFilter(user, rule);
         // Return user by rule
-        return UserService.getUserById(filter, usersRepository);
+        return getUserById(filter);
     }
 }

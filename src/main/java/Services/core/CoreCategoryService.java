@@ -135,7 +135,7 @@ public abstract class CoreCategoryService
             ObjectId catalogId, 
             Request request
     ) throws DataException {
-        User user = CoreUserService.getUserById(userId, getUsersRepository());
+        User user = getUserById(userId);
         Catalog catalog = CoreCatalogService.getCatalogById(
                 catalogId, 
                 getCatalogsRepository()

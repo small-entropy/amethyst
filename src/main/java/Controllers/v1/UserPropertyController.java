@@ -1,16 +1,12 @@
 package Controllers.v1;
 
 import Controllers.base.BaseUserPropertyController;
-import DataTransferObjects.v1.RuleDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
 import Utils.responses.SuccessResponse;
 import Services.v1.UserPropertyService;
-import Repositories.v1.PropertiesRepository;
-import Repositories.v1.UsersRepository;
 import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
-import java.util.Arrays;
 import java.util.List;
 import static spark.Spark.*;
 
@@ -19,27 +15,21 @@ import static spark.Spark.*;
  */
 public class UserPropertyController extends BaseUserPropertyController {
     
-    private static final List<String> BLACK_LIST = Arrays.asList("banned");
-    
     /**
      * Method with init routes for work with user property documents
      * @param datastore Morphia datastore
      * @param transformer JSON response transformer
      */
     public static void routes(Datastore datastore, JsonTransformer transformer) {
-        PropertiesRepository propertiesRepository = new PropertiesRepository(
-                datastore,
-                BLACK_LIST
-        );
-        
-        UsersRepository usersRepository = new UsersRepository(datastore);
-        
+        UserPropertyService service = new UserPropertyService(datastore);
         // Routes for work with user properties
         // Get user properties list by user UUID
         get("/:user_id/properties", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
-            List<EmbeddedProperty> properties = UserPropertyService
-                    .getUserProperties(req, propertiesRepository, rule);
+            List<EmbeddedProperty> properties = service.getUserProperties(
+                    req,
+                    RIGHT, 
+                    READ
+            );
             return new SuccessResponse<>(MSG_LIST, properties);
         }, transformer);
         
@@ -47,17 +37,21 @@ public class UserPropertyController extends BaseUserPropertyController {
         // This method only for create public property!
         // For create not public property use other method!
         post("/:user_id/properties", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, CREATE);
-            EmbeddedProperty userProperty = UserPropertyService
-                    .createUserProperty(req, propertiesRepository, rule);
+            EmbeddedProperty userProperty = service.createUserProperty(
+                    req, 
+                    RIGHT, 
+                    CREATE
+            );
             return new SuccessResponse<>(MSG_CREATED, userProperty);
         }, transformer);
         
         // Get user property by UUID (user find by UUID)
         get("/:user_id/properties/:property_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
-            EmbeddedProperty property = UserPropertyService
-                    .getUserPropertyById(req, propertiesRepository, rule);
+            EmbeddedProperty property = service.getUserPropertyById(
+                    req, 
+                    RIGHT, 
+                    READ
+            );
             if (property != null) {
                 return new SuccessResponse<>(MSG_ENTITY, property);
             } else {
@@ -69,17 +63,21 @@ public class UserPropertyController extends BaseUserPropertyController {
         // Update user property by property UUID (user find by UUID)
         put("/:user_id/properties/:property_id", (req, res) -> {
             // Get user rule for update users documents
-            RuleDTO rule = getRule(req, usersRepository, RULE, UPDATE);
-            EmbeddedProperty property = UserPropertyService
-                    .updateProperty(req, propertiesRepository, rule);
+            EmbeddedProperty property = service.updateProperty(
+                            req, 
+                            RIGHT,
+                            UPDATE
+                    );
             return new SuccessResponse<>(MSG_UPDATED, property);
         }, transformer);
         
         // Remove user property by UUID (user find by UUID)
         delete("/:user_id/properties/:property_id", (req, res) -> {
-            RuleDTO rule = getRule(req, usersRepository, RULE, DELETE);
-            List<EmbeddedProperty> properties = UserPropertyService
-                    .deleteUserProperty(req, propertiesRepository, rule);
+            List<EmbeddedProperty> properties = service.deleteUserProperty(
+                    req, 
+                    RIGHT,
+                    DELETE
+            );
             return new SuccessResponse<>(MSG_DELETED, properties);
         }, transformer);
     }

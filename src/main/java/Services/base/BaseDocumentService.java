@@ -13,7 +13,7 @@ import spark.Request;
  * 
  * @author small-entropey
  */
-public class BaseDocumentService <R> extends BaseService<R>{
+public abstract class BaseDocumentService <R> extends BaseService<R>{
    UsersRepository usersRepository;
    
    public BaseDocumentService(Datastore datastore, R repository) {

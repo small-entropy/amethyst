@@ -10,7 +10,7 @@ import Utils.constants.ResponseMessages;
  */
 public class BaseUserPropertyController extends AbstractController {
     
-    protected static final String RULE = DefaultRights.USERS.getName();
+    protected static final String RIGHT = DefaultRights.USERS.getName();
     
     protected static final String MSG_LIST = ResponseMessages.USER_PROPERTIES.getMessage();
     protected static final String MSG_CREATED = ResponseMessages.USER_PROPERTY_CREATED.getMessage();

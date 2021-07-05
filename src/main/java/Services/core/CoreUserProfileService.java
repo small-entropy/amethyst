@@ -3,9 +3,10 @@ package Services.core;
 import DataTransferObjects.v1.UserPropertyDTO;
 import Exceptions.DataException;
 import Models.Embeddeds.EmbeddedProperty;
-import Services.base.BasePropertyService;
 import Repositories.v1.ProfileRepository;
+import Services.base.BaseDocumentService;
 import Utils.common.ParamsManager;
+import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -16,7 +17,18 @@ import spark.Request;
  * Base class for work with profile property list
  * @author small-entropy
  */
-public abstract class CoreUserProfileService extends BasePropertyService {
+public abstract class CoreUserProfileService 
+        extends BaseDocumentService<ProfileRepository> {
+    
+    public CoreUserProfileService(Datastore datastore, List<String> blacList) {
+        super(
+                datastore,
+                new ProfileRepository(datastore, blacList),
+                new String[] {},
+                new String[] {},
+                new String[] {}
+        );
+    }
 
     /**
      * Method for get default profile properties list
@@ -34,57 +46,44 @@ public abstract class CoreUserProfileService extends BasePropertyService {
     /**
      * Method for create user by reqeuet body
      * @param request Spark request object
-     * @param profileRepository datasource for Profile
      * @return created user property
      * @throws DataException throw if con not be found user or property document
      */
-    public static EmbeddedProperty createUserProperty(
-            Request request, 
-            ProfileRepository profileRepository
-    ) throws DataException {
+    public EmbeddedProperty createUserProperty( Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
                 request, 
                 UserPropertyDTO.class
         ); 
-        return createUserProperty(
-                userId, 
-                userPropertyDTO, 
-                profileRepository
-        );
+        return getRepository().createUserProperty(userId, userPropertyDTO);
     }
     
     /**
      * Method for get user profile properties
      * @param request Spark request object
-     * @param profileRepository source for work with users collection
      * @return list of user properties
      * @throws DataException throw if con not be found user or profile
      *                       field is empty
      */
-    public static List<EmbeddedProperty> getUserProfile(
-            Request request, 
-            ProfileRepository profileRepository
-    ) throws DataException {
+    public List<EmbeddedProperty> getUserProfile(Request request) 
+            throws DataException {
         // Get user ID param from request URL
         ObjectId userId = ParamsManager.getUserId(request);
-        return getPropertiesList(userId, profileRepository);
+        return getRepository().getList(userId);
     }
     
     /**
      * Method for get user profile property by id
      * @param request Spark request object
-     * @param profileRepository source for work with users collection
      * @return founded user property
      * @throws DataException throw if con not be found user or property document
      */
-    public static EmbeddedProperty getUserProfilePropertyById(
-            Request request, 
-            ProfileRepository profileRepository
-    ) throws DataException {
+    public EmbeddedProperty getUserProfilePropertyById(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
-        return getPropertyById(userId, propertyId, profileRepository);
+        return getRepository().getUserPropertyById(propertyId, userId);
     }
     
     /**
@@ -94,37 +93,32 @@ public abstract class CoreUserProfileService extends BasePropertyService {
      * @return updated property document
      * @throws DataException throw if con not be found user or property document
      */
-    protected static EmbeddedProperty updateUserProperty(
-            Request request, 
-            ProfileRepository profileRepository
-    ) throws DataException {
+    protected EmbeddedProperty updateUserProperty(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
         UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
                 request, 
                 UserPropertyDTO.class
         );
-        return updateUserProperty(
+        return getRepository().updateUserProperty(
                 propertyId, 
                 userId, 
-                userPropertyDTO, 
-                profileRepository
+                userPropertyDTO
         );
+
     }
     
     /**
      * Method for delete profile user property from list by request params data
      * @param request Spark requeset object
-     * @param profileRepository profile datasource object
      * @return actual profule value
      * @throws DataException throw if con not be found user or property document
      */
-    protected static List<EmbeddedProperty> deleteUserProfileProperty(
-            Request request, 
-            ProfileRepository profileRepository
-    ) throws DataException {
+    protected List<EmbeddedProperty> deleteUserProfileProperty(Request request) 
+            throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
-        return profileRepository.removeProperty(propertyId, userId);
+        return getRepository().removeProperty(propertyId, userId);
     }
 }

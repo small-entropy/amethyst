@@ -5,12 +5,11 @@ import Exceptions.DataException;
 import Exceptions.TokenException;
 import Models.Standalones.User;
 import Services.core.CoreUserService;
-import Repositories.v1.UsersRepository;
 import Utils.common.Comparator;
 import Utils.common.ParamsManager;
 import Utils.common.QueryManager;
 import Utils.common.RequestUtils;
-import java.util.Arrays;
+import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -19,6 +18,22 @@ import spark.Request;
  * Class service for work with users collection
  */
 public class UserService extends CoreUserService {
+    
+    public UserService(Datastore datastore) {
+        super(
+                datastore, 
+                new String[] {}, 
+                new String[] {
+                    "issuedToken", 
+                    "password", 
+                    "properties", 
+                    "rights", 
+                    "version",
+                    "status"
+                },
+                new String[] { "password", "properties", "status" }
+        );
+    }
 
     /**
      * Method for deactivate user account
@@ -28,10 +43,9 @@ public class UserService extends CoreUserService {
      * @throws TokenException
      * @throws DataException
      */
-    public static User markToRemove(
-            Request request, 
-            UsersRepository usersRepository
-    ) throws TokenException, DataException {
+    public User markToRemove(Request request) 
+            throws TokenException, DataException 
+    {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -46,7 +60,7 @@ public class UserService extends CoreUserService {
                 // Get id from query params
                 ObjectId userId = ParamsManager.getUserId(request);
                 // Find user by id
-                User user = getUserById(userId, usersRepository);
+                User user = getUserById(userId);
                 // Check founded user
                 // If user found - deactivate user & save changes
                 // If user not found - return null
@@ -54,7 +68,7 @@ public class UserService extends CoreUserService {
                     // Deactivate user
                     user.deactivate();
                     // Save changes in database
-                    usersRepository.save(user);
+                    getRepository().save(user);
                     // Return saved document
                     return user;
                 } else {
@@ -80,41 +94,34 @@ public class UserService extends CoreUserService {
      * @return founded user document
      * @throws DataException
      */
-    public static User getUserById(
-            Request request, 
-            UsersRepository usersRepository
-    ) throws DataException {
+    public User getUserById(Request request) throws DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         ObjectId userId = ParamsManager.getUserId(request);
         String[] excludes = isTrusted
-                ? PUBLIC_AND_PRIVATE_ALLOWED
-                : PUBLIC_ALLOWED;
-        return getUserById(userId, excludes, usersRepository);
+                ? getPrivateExcludes()
+                : getGlobalExcludes();
+        return getUserById(userId, excludes);
     }
     
    /**
      * Method for get user list
      * @param request Spark request object
-     * @param usersRepository
-     * @param rule
      * @return list of users documents
      * @throws DataException
      */
-    public static List<User> getList(
+    public List<User> getList(
             Request request, 
-            UsersRepository usersRepository, 
-            RuleDTO rule
+            String right,
+            String action
     ) throws DataException {
         int skip = QueryManager.getSkip(request);
         int limit = QueryManager.getLimit(request);
-        String[] excludes = UserService.getExcludes(
+        RuleDTO rule = getRule(request, right, action);
+        String[] excludes = getExcludes(
                 rule,
-                true,
-                ALL_ALLOWED,
-                PUBLIC_ALLOWED,
-                PUBLIC_AND_PRIVATE_ALLOWED
+                true
         );
         // Get users list
-        return getList(skip, limit, excludes, usersRepository);
+        return getList(skip, limit, excludes);
     }
 }

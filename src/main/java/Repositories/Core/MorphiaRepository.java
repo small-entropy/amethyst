@@ -123,7 +123,6 @@ public class MorphiaRepository<M extends Standalone, F extends Filter, D>
      * @param filter filter object
      * @return 
      */
-    @Override
     public M findOneById(F filter) {
         FindOptions findOptions = new FindOptions()
                 .projection()

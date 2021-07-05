@@ -1,12 +1,10 @@
 package Controllers.v1;
 
 import Controllers.base.BaseUserController;
-import DataTransferObjects.v1.RuleDTO;
 import Exceptions.DataException;
 import Models.Standalones.User;
 import Utils.responses.SuccessResponse;
 import Services.v1.UserService;
-import Repositories.v1.UsersRepository;
 import Utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -24,14 +22,12 @@ public class UserController extends BaseUserController {
      */
     public static void routes(Datastore store, JsonTransformer transformer) {
         
-        UsersRepository usersRepository = new UsersRepository(store);
+        UserService service = new UserService(store);
         
         // Route for work with users list
         get("", (req, res) -> {
-            // Get rule data transfer object for request
-            RuleDTO rule = getRule(req, usersRepository, RULE, READ);
             // Get list of users documents
-            List<User> users = UserService.getList(req, usersRepository, rule);
+            List<User> users = service.getList(req, RULE, READ);
             // Check users list size.
             // If size equal - fail method status & message
             // If size not equal - success method status & message
@@ -46,7 +42,7 @@ public class UserController extends BaseUserController {
         // Routes for work with user document
         // Get user document by UUID
         get("/:user_id", (req, res) -> {
-            User user = UserService.getUserById(req, usersRepository);
+            User user = service.getUserById(req);
             if (user != null) {
                 return new SuccessResponse<>(MSG_ENTITY, user);
             } else {
@@ -57,7 +53,7 @@ public class UserController extends BaseUserController {
         
         // Mark to remove user document by UUID
         delete("/:user_id", (req, res) -> {
-            User user = UserService.markToRemove(req, usersRepository);
+            User user = service.markToRemove(req);
             return new SuccessResponse<>(MSG_DELTED, user);
         }, transformer);
     }
