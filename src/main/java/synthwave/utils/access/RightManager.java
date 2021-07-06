@@ -1,13 +1,13 @@
-package platform.utils.access.v1;
+package synthwave.utils.access;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.services.core.CoreUserService;
 import synthwave.services.v1.UserService;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import platform.utils.helpers.Comparator;
+import synthwave.utils.helpers.Comparator;
 import spark.Request;
 
 /**

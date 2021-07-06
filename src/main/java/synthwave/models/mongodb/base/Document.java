@@ -1,7 +1,8 @@
-package platform.models.mongodb.morphia;
+package synthwave.models.mongodb.base;
 
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
+import platform.models.mongodb.morphia.Standalone;
 
 /**
  * Abstract class for Amethyst abstract document

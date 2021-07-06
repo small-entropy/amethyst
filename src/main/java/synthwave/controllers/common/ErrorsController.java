@@ -27,7 +27,7 @@ public class ErrorsController extends BaseErrorsController {
                 case "NotEquals" -> HttpErrors.CONFLICT.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            ErrorsController.sendError(res, statusCode, error);
+            sendError(res, statusCode, error);
         });
         
         // Custom exception handler for DataException
@@ -41,7 +41,7 @@ public class ErrorsController extends BaseErrorsController {
                     HttpErrors.INTERNAL_SERVER_ERROR.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            ErrorsController.sendError(res, statusCode, error);
+            sendError(res, statusCode, error);
         });
         
         // Custom exception handler for AccessException
@@ -53,7 +53,7 @@ public class ErrorsController extends BaseErrorsController {
                     "CanNotDelete" -> HttpErrors.NOT_ACCEPTABLE.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            ErrorsController.sendError(res, statusCode, error);
+            sendError(res, statusCode, error);
         });
         
         // Custom exception handler for AuthorizationExceptions
@@ -63,7 +63,7 @@ public class ErrorsController extends BaseErrorsController {
                 case "WrongPassword" -> HttpErrors.CONFLICT.getCode();
                 default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
             };
-            ErrorsController.sendError(res, statusCode, error);
+            sendError(res, statusCode, error);
         });
     }
 }

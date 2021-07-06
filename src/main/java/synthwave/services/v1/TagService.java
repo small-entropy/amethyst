@@ -1,13 +1,13 @@
 package synthwave.services.v1;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Tag;
 import synthwave.services.core.CoreTagService;
-import platform.utils.helpers.Comparator;
+import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
-import platform.utils.access.v1.RightManager;
+import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

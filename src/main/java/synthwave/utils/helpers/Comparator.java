@@ -1,8 +1,9 @@
-package platform.utils.helpers;
+package synthwave.utils.helpers;
 
-import platform.utils.access.jwt.JsonWebToken;
+import synthwave.utils.jwt.JsonWebToken;
 import platform.constants.RequestParams;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import platform.utils.helpers.RequestUtils;
 import spark.Request;
 
 

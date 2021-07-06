@@ -1,10 +1,10 @@
 package synthwave.services.base;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import platform.utils.access.v1.RightManager;
+import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
 import spark.Request;

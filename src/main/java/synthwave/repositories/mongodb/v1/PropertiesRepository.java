@@ -5,7 +5,7 @@
  */
 package synthwave.repositories.mongodb.v1;
 
-import synthwave.models.mongodb.base.BasePropertyRepository;
+import synthwave.repositories.mongodb.base.BasePropertyRepository;
 import dev.morphia.Datastore;
 import java.util.List;
 

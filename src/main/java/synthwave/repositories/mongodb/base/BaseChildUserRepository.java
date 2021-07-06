@@ -1,4 +1,4 @@
-package synthwave.models.mongodb.base;
+package synthwave.repositories.mongodb.base;
 
 import platform.exceptions.DataException;
 import synthwave.filters.UsersFilter;

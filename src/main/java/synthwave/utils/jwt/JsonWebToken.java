@@ -1,4 +1,4 @@
-package platform.utils.access.jwt;
+package synthwave.utils.jwt;
 
 import synthwave.models.mongodb.standalones.User;
 import com.auth0.jwt.JWT;

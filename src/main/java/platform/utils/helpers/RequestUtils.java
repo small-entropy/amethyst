@@ -1,5 +1,4 @@
 package platform.utils.helpers;
-import platform.utils.helpers.QueryManager;
 import spark.Request;
 
 /**

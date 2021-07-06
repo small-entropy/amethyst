@@ -4,7 +4,7 @@ import platform.repositories.mongodb.orm.MorphiaRepository;
 import synthwave.dto.UserDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
-import platform.utils.access.jwt.JsonWebToken;
+import synthwave.utils.jwt.JsonWebToken;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;

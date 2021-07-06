@@ -1,10 +1,10 @@
-package synthwave.models.mongodb.base;
+package synthwave.repositories.mongodb.base;
 
 import synthwave.dto.UserPropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import platform.utils.helpers.Searcher;
+import synthwave.utils.helpers.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;

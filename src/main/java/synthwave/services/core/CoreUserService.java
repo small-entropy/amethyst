@@ -1,11 +1,11 @@
 package synthwave.services.core;
 
-import platform.utils.helpers.Comparator;
-import platform.utils.access.jwt.JsonWebToken;
+import synthwave.utils.helpers.Comparator;
+import synthwave.utils.jwt.JsonWebToken;
 import platform.utils.helpers.HeadersUtils;
 import platform.utils.helpers.ParamsManager;
 import platform.utils.helpers.QueryManager;
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.dto.UserDTO;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
@@ -13,7 +13,7 @@ import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import synthwave.services.base.BaseService;
-import platform.utils.access.v1.RightManager;
+import synthwave.utils.access.RightManager;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
 import java.util.List;

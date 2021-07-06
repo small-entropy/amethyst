@@ -1,12 +1,12 @@
 package synthwave.services.core;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.dto.UserDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
-import platform.utils.access.jwt.JsonWebToken;
+import synthwave.utils.jwt.JsonWebToken;
 import platform.utils.helpers.RequestUtils;
-import platform.utils.access.v1.RightManager;
+import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import spark.Request;

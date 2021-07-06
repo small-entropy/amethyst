@@ -1,6 +1,6 @@
 package synthwave.services.v1;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.dto.UserDTO;
 import platform.exceptions.AuthorizationException;
 import platform.exceptions.DataException;

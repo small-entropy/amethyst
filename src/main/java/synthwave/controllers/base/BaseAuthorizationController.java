@@ -1,10 +1,10 @@
 package synthwave.controllers.base;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import platform.constants.DefaultRights;
 import platform.constants.ResponseMessages;
-import platform.utils.access.v1.RightManager;
+import synthwave.utils.access.RightManager;
 import spark.Request;
 
 /**

@@ -9,7 +9,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.embeddeds.EmbeddedTag;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Version;
-import platform.models.mongodb.morphia.Document;
+import synthwave.models.mongodb.base.Document;
 
 import java.util.List;
 

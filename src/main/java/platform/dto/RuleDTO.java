@@ -1,6 +1,4 @@
-package synthwave.dto;
-
-import platform.dto.BaseDTO;
+package platform.dto;
 
 /**
  * Class of data transfer object for rule

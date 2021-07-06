@@ -1,4 +1,4 @@
-package platform.utils.helpers;
+package synthwave.utils.helpers;
 
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;

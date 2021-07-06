@@ -1,11 +1,11 @@
 package synthwave.services.v1;
 
-import synthwave.dto.RuleDTO;
+import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.services.core.CoreCategoryService;
-import platform.utils.helpers.Comparator;
+import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.List;
