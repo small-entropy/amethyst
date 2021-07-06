@@ -15,16 +15,16 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 public class AbstractPropertyRepository extends AbstractChildUserRepository {
-    // Property with name of field
+    /** Property with name of field */
     private final String field;
-    // Black list for user proeprties
+    /** Black list for user properties */
     private final List<String> blackList;
             
     /**
-     * Constructor for source instanse
+     * Constructor for source instance
      * @param datastore Morphia datastore object
      * @param field name of field
-     * @param blaclList blacl list
+     * @param blaclList black list
      */
     public AbstractPropertyRepository(
             Datastore datastore,
@@ -53,7 +53,7 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     }
     
     /**
-     * Method for craete user proeprty document
+     * Method for create user property document
      * @param userId user id from request params
      * @param userPropertyDTO user property data transfer object
      * @return user property document
@@ -81,10 +81,10 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     }
     
     /**
-     * Method for check on exist propertie in properties list
+     * Method for check on exist properties in properties list
      * @param key name of property
      * @param user user document
-     * @return ckeck result
+     * @return check result
      */
     private boolean hasProperty(String key, User user) {
         boolean hasProperty = false;
@@ -114,11 +114,11 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     }
 
     /**
-     * Method for get user property by id from requst & user document
+     * Method for get user property by id from request & user document
      * @param propertyId property id from request
      * @param user user document
      * @return user property document
-     * @throws DataException throw if not found usr or property
+     * @throws DataException throw if not found user or property
      */
     private EmbeddedProperty getUserPropertyById(
             ObjectId propertyId, 
@@ -129,11 +129,11 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     }
     
     /**
-     * Method for get property by id from reqyst in properties list
+     * Method for get property by id from request in properties list
      * @param propertyId property id from request
      * @param properties list of user properties
      * @return user property document
-     * @throws DataException throw if not found usr or property
+     * @throws DataException throw if not found user or property
      */
     private EmbeddedProperty getUserPropertyById(
             ObjectId propertyId, 
@@ -207,7 +207,7 @@ public class AbstractPropertyRepository extends AbstractChildUserRepository {
     
     /**
      * Method for update user property document
-     * @param propertyId property id param fom requiers
+     * @param propertyId property id param from request
      * @param userId user id param from request
      * @param userPropertyDTO user property data transfer object
      * @return updated user property document

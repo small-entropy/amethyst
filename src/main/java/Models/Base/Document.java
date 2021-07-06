@@ -4,7 +4,7 @@ import Models.Embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
 
 /**
- * Absstarct class for Amethyst abstarct document
+ * Abstract class for Amethyst abstract document
  * @author small-entropy
  */
 public abstract class Document extends Standalone {

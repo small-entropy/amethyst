@@ -22,11 +22,23 @@ import spark.Request;
 public abstract class CoreCatalogService
         extends BaseDocumentService<CatalogsRepository> {
     
-    
+    /**
+     * Default constructor for core catalog service. 
+     * Create instance by datastore
+     * @param datastore Morphis datastore objet
+     */
     public CoreCatalogService(Datastore datastore) {
         super(datastore, new CatalogsRepository(datastore));
     }
     
+    /**
+     * Constructor for core catalog service. Create instance by
+     * datastore & exclude fields (for some levels)
+     * @param datastore Morphia datastore object
+     * @param globalExcludes 
+     * @param publicExcludes 
+     * @param privateExcludes 
+     */
     public CoreCatalogService(
             Datastore datastore,
             String[] globalExcludes,

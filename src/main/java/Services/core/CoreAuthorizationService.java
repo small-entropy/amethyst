@@ -4,7 +4,6 @@ import DataTransferObjects.v1.RuleDTO;
 import DataTransferObjects.v1.UserDTO;
 import Filters.common.UsersFilter;
 import Models.Standalones.User;
-import Repositories.v1.UsersRepository;
 import Utils.common.JsonWebToken;
 import Utils.common.RequestUtils;
 import Utils.v1.RightManager;
@@ -19,6 +18,13 @@ import spark.Request;
 public abstract class CoreAuthorizationService 
         extends CoreUserService {
     
+	/**
+	 * Default constructor for core authorization service
+	 * @param datastore Morphia datastore object 
+	 * @param globalExcludes global exclude fields
+	 * @param publicExcludes public exclude fields
+	 * @param privateExcludes private exclude fields
+	 */
     public CoreAuthorizationService(
             Datastore datastore,
             String[] globalExcludes,
@@ -36,8 +42,7 @@ public abstract class CoreAuthorizationService
     /**
      * Method for get rule by username from request body
      * @param request Spark request object
-     * @param usersRepository datastore source for users collection
-     * @param right right string
+     * @param right right name
      * @param action action name
      * @return 
      */
@@ -90,7 +95,7 @@ public abstract class CoreAuthorizationService
 
 
     /**
-     * Method for auth user
+     * Method for authorization user
      * @param request Spark request object
      * @param usersRepository source for work with users collection
      * @return user document
@@ -128,7 +133,7 @@ public abstract class CoreAuthorizationService
 
     /**
      * Base method for register user
-     * @param userDTO user data transfer obejct
+     * @param userDTO user data transfer object
      * @param usersRepository source for work with users collection
      * @return user document
      */
@@ -151,7 +156,7 @@ public abstract class CoreAuthorizationService
         final int NOT_IN_LIST = -1;
         // Create filter object
         UsersFilter filter = new UsersFilter();
-        // Set exludes field for filter
+        // Set exclude fields for filter
         filter.setExcludes(getGlobalExcludes());
         // Get user document from database (full document)
         User user = getUserByToken(
@@ -190,6 +195,13 @@ public abstract class CoreAuthorizationService
         }
     }
     
+    /**
+     * Method for get users filter object by user document &
+     * rule data transfer object
+     * @param user user document
+     * @param rule rule data transfer object
+     * @return user filter object
+     */
     protected UsersFilter getUsersFilter(User user, RuleDTO rule) {
         String[] excludes = getExcludes(
                 rule, 
