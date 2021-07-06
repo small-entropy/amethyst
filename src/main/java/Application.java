@@ -1,10 +1,19 @@
 // Import UserController class
-import Controllers.common.ApiController;
-import Controllers.common.CORSController;
-import Controllers.core.ErrorsController;
-import Controllers.v1.*;
+import synthwave.controllers.v1.CompaniesController;
+import synthwave.controllers.v1.UserRightsController;
+import synthwave.controllers.v1.ProductsController;
+import synthwave.controllers.v1.CategoriesController;
+import synthwave.controllers.v1.AuthorizationController;
+import synthwave.controllers.v1.UserPropertyController;
+import synthwave.controllers.v1.UserProfileController;
+import synthwave.controllers.v1.UserController;
+import synthwave.controllers.v1.TagsController;
+import synthwave.controllers.v1.CatalogsController;
+import platform.middlewares.ResponseTypeJSON;
+import platform.middlewares.CORS;
+import synthwave.controllers.common.ErrorsController;
 // Import JsonTransformer class
-import Utils.transformers.JsonTransformer;
+import platform.utils.transformers.JsonTransformer;
 // Import MongoClient class
 import com.mongodb.client.MongoClients;
 // Import Morphia classes
@@ -80,7 +89,7 @@ public class Application {
         final JsonTransformer toJson = new JsonTransformer();
 
         // Enable CORS
-        CORSController.enable(
+        CORS.enable(
                 CORSConfigs.ORIGINS.getValue(),
                 CORSConfigs.HEADERS.getValue(),
                 CORSConfigs.METHODS.getValue()
@@ -131,7 +140,7 @@ public class Application {
                 );
             });
             // Callback after call all routes with /api/* pattern
-            ApiController.afterCallCommon();
+            ResponseTypeJSON.afterCall();
         });
 
         // Errors handling
