@@ -81,7 +81,7 @@ public class Application {
                 options
         );
         // Map all models from package
-        store.getMapper().mapPackage("Models.Standalones");
+        store.getMapper().mapPackage("synthwave.models.mongodb.standalones");
         // Ensure database indexes by models
         store.ensureIndexes();
 
