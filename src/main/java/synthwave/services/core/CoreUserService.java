@@ -12,7 +12,7 @@ import platform.exceptions.TokenException;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import platform.services.BaseService;
+import synthwave.services.base.BaseService;
 import platform.utils.access.v1.RightManager;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;

@@ -1,4 +1,4 @@
-package platform.services;
+package synthwave.services.base;
 
 import synthwave.dto.RuleDTO;
 import synthwave.filters.UsersFilter;

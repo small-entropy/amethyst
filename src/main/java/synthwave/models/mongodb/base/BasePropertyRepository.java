@@ -1,4 +1,4 @@
-package platform.repositories.mongodb.base;
+package synthwave.models.mongodb.base;
 
 import synthwave.dto.UserPropertyDTO;
 import platform.exceptions.DataException;

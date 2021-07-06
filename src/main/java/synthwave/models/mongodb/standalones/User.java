@@ -5,7 +5,7 @@ import platform.exceptions.AuthorizationException;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
-import platform.models.mongodb.Standalone;
+import platform.models.mongodb.morphia.Standalone;
 
 import java.util.List;
 

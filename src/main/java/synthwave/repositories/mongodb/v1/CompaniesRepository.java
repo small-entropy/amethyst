@@ -5,7 +5,7 @@ import platform.exceptions.DataException;
 import synthwave.filters.CompaniesFilter;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import synthwave.models.mongodb.standalones.Company;
-import platform.repositories.mongodb.morphia.MorphiaRepository;
+import platform.repositories.mongodb.orm.MorphiaRepository;
 import dev.morphia.Datastore;
 
 /**

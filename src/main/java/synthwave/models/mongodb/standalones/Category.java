@@ -4,7 +4,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;
 import synthwave.models.mongodb.embeddeds.EmbeddedCatalog;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import dev.morphia.annotations.*;
-import platform.models.mongodb.Document;
+import platform.models.mongodb.morphia.Document;
 
 import java.util.List;
 import org.bson.types.ObjectId;

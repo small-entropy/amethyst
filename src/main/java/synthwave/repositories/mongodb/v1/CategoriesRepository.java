@@ -7,7 +7,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;
 import synthwave.models.mongodb.embeddeds.EmbeddedCatalog;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
-import platform.repositories.mongodb.morphia.MorphiaRepository;
+import platform.repositories.mongodb.orm.MorphiaRepository;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
 import static dev.morphia.query.experimental.filters.Filters.and;

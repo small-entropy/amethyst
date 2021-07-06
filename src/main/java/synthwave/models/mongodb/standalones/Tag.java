@@ -7,7 +7,7 @@ import dev.morphia.annotations.Index;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
-import platform.models.mongodb.Document;
+import platform.models.mongodb.morphia.Document;
 
 /**
  * Model for tag collection

@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package platform.repositories.mongodb.morphia;
+package platform.repositories.mongodb.orm;
 
 import platform.exceptions.DataException;
 import platform.repositories.mongodb.base.BaseRepository;
 import platform.filters.Filter;
 import dev.morphia.Datastore;
 import dev.morphia.query.FindOptions;
-import platform.models.mongodb.Standalone;
+import platform.models.mongodb.morphia.Standalone;
 
 import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;

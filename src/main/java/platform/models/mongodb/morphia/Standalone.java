@@ -1,4 +1,4 @@
-package platform.models.mongodb;
+package platform.models.mongodb.morphia;
 
 import dev.morphia.annotations.Id;
 import org.bson.types.ObjectId;

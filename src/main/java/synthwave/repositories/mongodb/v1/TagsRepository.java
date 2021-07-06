@@ -4,7 +4,7 @@ import synthwave.dto.TagDTO;
 import synthwave.filters.TagsFilter;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import synthwave.models.mongodb.standalones.Tag;
-import platform.repositories.mongodb.morphia.MorphiaRepository;
+import platform.repositories.mongodb.orm.MorphiaRepository;
 import dev.morphia.Datastore;
 
 /**

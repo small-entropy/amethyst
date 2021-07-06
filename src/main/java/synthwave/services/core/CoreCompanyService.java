@@ -6,7 +6,7 @@ import synthwave.filters.CompaniesFilter;
 import synthwave.models.mongodb.standalones.Company;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.CompaniesRepository;
-import platform.services.BaseDocumentService;
+import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.QueryManager;
 import dev.morphia.Datastore;
 import java.util.List;

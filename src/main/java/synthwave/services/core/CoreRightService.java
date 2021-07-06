@@ -4,7 +4,7 @@ import synthwave.dto.UserRightDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.repositories.mongodb.v1.RightsRepository;
-import platform.services.BaseDocumentService;
+import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.ParamsManager;
 import platform.constants.DefaultRights;
 import dev.morphia.Datastore;

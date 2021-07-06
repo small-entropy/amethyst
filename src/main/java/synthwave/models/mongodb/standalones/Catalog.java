@@ -3,7 +3,7 @@ package synthwave.models.mongodb.standalones;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
-import platform.models.mongodb.Document;
+import platform.models.mongodb.morphia.Document;
 
 /**
  * Model class for work with catalog focument

@@ -4,7 +4,7 @@ import synthwave.dto.CatalogDTO;
 import synthwave.filters.CatalogsFilter;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
-import platform.repositories.mongodb.morphia.MorphiaRepository;
+import platform.repositories.mongodb.orm.MorphiaRepository;
 import dev.morphia.Datastore;
 
 /**

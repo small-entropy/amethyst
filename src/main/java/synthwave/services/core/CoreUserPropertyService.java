@@ -4,7 +4,7 @@ import synthwave.dto.UserPropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.repositories.mongodb.v1.PropertiesRepository;
-import platform.services.BaseDocumentService;
+import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;

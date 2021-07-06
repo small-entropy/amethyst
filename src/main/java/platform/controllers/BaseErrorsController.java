@@ -1,6 +1,5 @@
 package platform.controllers;
 
-import synthwave.controllers.common.ErrorsController;
 import platform.utils.responses.ErrorResponse;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.google.gson.Gson;
@@ -72,7 +71,7 @@ public class BaseErrorsController {
             String message
     ) {
         response.status(statusCode);
-        response.type(ErrorsController.RESPONSE_TYPE);
+        response.type(RESPONSE_TYPE);
         ErrorResponse errorResponse = new ErrorResponse(message, null);
         response.body(GSON.toJson(errorResponse));
     }
@@ -83,18 +82,18 @@ public class BaseErrorsController {
     public static void errors_InternalServerError() {
         // Error handler for internal server error
         internalServerError((req, res) -> {
-            res.type(ErrorsController.RESPONSE_TYPE);
+            res.type(RESPONSE_TYPE);
             String message = HttpErrors.INTERNAL_SERVER_ERROR.getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
-            return ErrorsController.GSON.toJson(response);
+            return GSON.toJson(response);
         });
 
         // Error handler for not found error
         notFound((req, res) -> {
-            res.type(ErrorsController.RESPONSE_TYPE);
+            res.type(RESPONSE_TYPE);
             String message = HttpErrors.NOT_FOUND.getMessage();
             ErrorResponse response = new ErrorResponse(message, null);
-            return ErrorsController.GSON.toJson(response);
+            return GSON.toJson(response);
         });
     }
 
@@ -118,7 +117,7 @@ public class BaseErrorsController {
         });
         // Custom exception handler for IllegalArgumentException
         exception(IllegalArgumentException.class, (error, req, res) -> {
-            ErrorsController.sendError(
+            sendError(
                     res,
                     HttpErrors.CONFLICT.getCode(),
                     error.getMessage()

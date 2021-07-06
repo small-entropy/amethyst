@@ -1,4 +1,4 @@
-package platform.models.mongodb;
+package platform.models.mongodb.morphia;
 
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
