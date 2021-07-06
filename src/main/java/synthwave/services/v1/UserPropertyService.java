@@ -1,6 +1,6 @@
 package synthwave.services.v1;
 // Import user model (class)
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;

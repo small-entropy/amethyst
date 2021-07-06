@@ -1,6 +1,6 @@
 package synthwave.repositories.mongodb.v1;
 
-import synthwave.dto.v1.TagDTO;
+import synthwave.dto.TagDTO;
 import synthwave.filters.TagsFilter;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import synthwave.models.mongodb.standalones.Tag;

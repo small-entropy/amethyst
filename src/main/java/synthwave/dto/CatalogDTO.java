@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package synthwave.dto.v1;
+package synthwave.dto;
 
 import platform.dto.BaseDTO;
 import synthwave.models.mongodb.standalones.User;

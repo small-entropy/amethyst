@@ -1,6 +1,6 @@
 package synthwave.services.core;
 
-import synthwave.dto.v1.CategoryDTO;
+import synthwave.dto.CategoryDTO;
 import platform.exceptions.DataException;
 import synthwave.filters.CategoriesFilter;
 import synthwave.models.mongodb.standalones.Catalog;

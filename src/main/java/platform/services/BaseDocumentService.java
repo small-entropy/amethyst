@@ -1,6 +1,6 @@
 package platform.services;
 
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;

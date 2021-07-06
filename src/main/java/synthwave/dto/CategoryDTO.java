@@ -1,4 +1,4 @@
-package synthwave.dto.v1;
+package synthwave.dto;
 
 import platform.dto.BaseDTO;
 import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;

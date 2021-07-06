@@ -1,6 +1,6 @@
 package synthwave.controllers.v1;
 
-import platform.controllers.BaseController;
+import synthwave.controllers.base.BaseController;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import static spark.Spark.*;

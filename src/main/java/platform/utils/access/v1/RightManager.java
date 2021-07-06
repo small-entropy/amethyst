@@ -1,6 +1,6 @@
 package platform.utils.access.v1;
 
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;

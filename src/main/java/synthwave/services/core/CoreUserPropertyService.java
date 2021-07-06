@@ -1,6 +1,6 @@
 package synthwave.services.core;
 
-import synthwave.dto.v1.UserPropertyDTO;
+import synthwave.dto.UserPropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.repositories.mongodb.v1.PropertiesRepository;

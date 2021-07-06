@@ -1,7 +1,7 @@
 package synthwave.repositories.mongodb.v1;
 
 import platform.repositories.mongodb.morphia.MorphiaRepository;
-import synthwave.dto.v1.UserDTO;
+import synthwave.dto.UserDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import platform.utils.access.jwt.JsonWebToken;

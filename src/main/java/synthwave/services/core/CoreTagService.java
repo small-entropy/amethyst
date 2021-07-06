@@ -1,6 +1,6 @@
 package synthwave.services.core;
 
-import synthwave.dto.v1.TagDTO;
+import synthwave.dto.TagDTO;
 import platform.exceptions.DataException;
 import synthwave.filters.TagsFilter;
 import synthwave.models.mongodb.standalones.Tag;

@@ -1,6 +1,6 @@
 package synthwave.repositories.mongodb.v1;
 
-import synthwave.dto.v1.CompanyDTO;
+import synthwave.dto.CompanyDTO;
 import platform.exceptions.DataException;
 import synthwave.filters.CompaniesFilter;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;

@@ -1,8 +1,8 @@
-package platform.controllers;
+package synthwave.controllers.base;
 
 import platform.constants.DefaultActions;
 import platform.utils.helpers.HeadersUtils;
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import platform.utils.access.v1.RightManager;
 import spark.Request;

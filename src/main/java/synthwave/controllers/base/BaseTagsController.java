@@ -1,6 +1,5 @@
 package synthwave.controllers.base;
 
-import platform.controllers.BaseController;
 import platform.constants.DefaultRights;
 import platform.constants.ResponseMessages;
 

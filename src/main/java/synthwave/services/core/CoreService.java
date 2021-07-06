@@ -1,6 +1,6 @@
 package synthwave.services.core;
 
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import platform.utils.access.v1.RightManager;
 import java.util.Arrays;
 import spark.Request;

@@ -1,6 +1,6 @@
 package synthwave.repositories.mongodb.v1;
 
-import synthwave.dto.v1.UserRightDTO;
+import synthwave.dto.UserRightDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;

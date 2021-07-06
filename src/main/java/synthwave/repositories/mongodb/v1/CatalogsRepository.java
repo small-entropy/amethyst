@@ -1,6 +1,6 @@
 package synthwave.repositories.mongodb.v1;
 
-import synthwave.dto.v1.CatalogDTO;
+import synthwave.dto.CatalogDTO;
 import synthwave.filters.CatalogsFilter;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;

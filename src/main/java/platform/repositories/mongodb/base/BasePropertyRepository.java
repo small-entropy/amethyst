@@ -1,6 +1,6 @@
 package platform.repositories.mongodb.base;
 
-import synthwave.dto.v1.UserPropertyDTO;
+import synthwave.dto.UserPropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;

@@ -1,7 +1,6 @@
 package synthwave.controllers.base;
 
-import platform.controllers.BaseController;
-import synthwave.dto.v1.RuleDTO;
+import synthwave.dto.RuleDTO;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import platform.constants.DefaultRights;
 import platform.constants.ResponseMessages;
