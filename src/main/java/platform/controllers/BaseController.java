@@ -1,7 +1,7 @@
 package platform.controllers;
 
 import platform.constants.DefaultActions;
-import platform.request.HeadersUtils;
+import platform.utils.helpers.HeadersUtils;
 import synthwave.dto.v1.RuleDTO;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import platform.utils.access.v1.RightManager;

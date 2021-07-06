@@ -3,7 +3,7 @@ package platform.utils.responses;
 /**
  * Common class for create response objects
  */
-public abstract class AbstractResponse {
+public abstract class BaseResponse {
     // Response status
     private final String status;
     // Response message
@@ -15,7 +15,7 @@ public abstract class AbstractResponse {
      * Constructor for create response with only status
      * @param status response status
      */
-    public AbstractResponse(String status) {
+    public BaseResponse(String status) {
         this.status = status;
     }
 
@@ -24,7 +24,7 @@ public abstract class AbstractResponse {
      * @param status response status
      * @param message response message
      */
-    public AbstractResponse(String status, String message) {
+    public BaseResponse(String status, String message) {
         this.status = status;
         this.message = message;
     }
@@ -35,7 +35,7 @@ public abstract class AbstractResponse {
      * @param message response message
      * @param meta response meta
      */
-    public AbstractResponse(String status, String message, StandardMeta meta) {
+    public BaseResponse(String status, String message, StandardMeta meta) {
         this.status = status;
         this.message = message;
         this.meta = meta;

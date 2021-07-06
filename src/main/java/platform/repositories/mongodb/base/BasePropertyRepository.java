@@ -4,7 +4,7 @@ import synthwave.dto.v1.UserPropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import platform.helpers.Searcher;
+import platform.utils.helpers.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;

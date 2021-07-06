@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package platform.request;
+package platform.utils.helpers;
 
 import platform.exceptions.DataException;
 import platform.constants.RequestParams;

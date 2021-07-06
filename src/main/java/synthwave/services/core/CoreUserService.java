@@ -1,10 +1,10 @@
 package synthwave.services.core;
 
-import platform.helpers.Comparator;
+import platform.utils.helpers.Comparator;
 import platform.utils.access.jwt.JsonWebToken;
-import platform.request.HeadersUtils;
-import platform.request.ParamsManager;
-import platform.request.QueryManager;
+import platform.utils.helpers.HeadersUtils;
+import platform.utils.helpers.ParamsManager;
+import platform.utils.helpers.QueryManager;
 import synthwave.dto.v1.RuleDTO;
 import synthwave.dto.v1.UserDTO;
 import platform.exceptions.DataException;

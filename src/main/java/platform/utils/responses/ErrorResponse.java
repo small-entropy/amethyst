@@ -3,7 +3,7 @@ package platform.utils.responses;
 /**
  * Class for error response
  */
-public class ErrorResponse extends AbstractResponse {
+public class ErrorResponse extends BaseResponse {
     /**
      * Constructor for error response by message & meta
      * @param message value of message

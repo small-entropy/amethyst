@@ -7,7 +7,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.services.core.CoreUserService;
 import synthwave.services.v1.UserService;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import platform.helpers.Comparator;
+import platform.utils.helpers.Comparator;
 import spark.Request;
 
 /**

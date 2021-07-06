@@ -5,7 +5,7 @@ import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import platform.repositories.mongodb.base.BaseChildUserRepository;
-import platform.helpers.Searcher;
+import platform.utils.helpers.Searcher;
 import dev.morphia.Datastore;
 import java.util.Iterator;
 import java.util.List;

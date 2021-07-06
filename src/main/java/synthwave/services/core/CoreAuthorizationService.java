@@ -5,7 +5,7 @@ import synthwave.dto.v1.UserDTO;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import platform.utils.access.jwt.JsonWebToken;
-import platform.request.RequestUtils;
+import platform.utils.helpers.RequestUtils;
 import platform.utils.access.v1.RightManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;

@@ -1,5 +1,5 @@
-package platform.request;
-import platform.request.QueryManager;
+package platform.utils.helpers;
+import platform.utils.helpers.QueryManager;
 import spark.Request;
 
 /**

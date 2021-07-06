@@ -1,7 +1,6 @@
-package platform.helpers;
+package platform.utils.helpers;
 
 import platform.utils.access.jwt.JsonWebToken;
-import platform.request.RequestUtils;
 import platform.constants.RequestParams;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import spark.Request;

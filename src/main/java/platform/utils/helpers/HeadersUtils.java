@@ -1,4 +1,4 @@
-package platform.request;
+package platform.utils.helpers;
 import spark.Request;
 
 enum HeadersFields {

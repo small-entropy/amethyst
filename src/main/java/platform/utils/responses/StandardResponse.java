@@ -4,7 +4,7 @@ package platform.utils.responses;
  * Class for create standard response object
  * @param <D> type of data field
  */
-public class StandardResponse<D> extends AbstractResponse {
+public class StandardResponse<D> extends BaseResponse {
     // Response data property
     private D data;
 

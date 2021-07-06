@@ -7,7 +7,7 @@ import synthwave.models.mongodb.standalones.Company;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.CompaniesRepository;
 import platform.services.BaseDocumentService;
-import platform.request.QueryManager;
+import platform.utils.helpers.QueryManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

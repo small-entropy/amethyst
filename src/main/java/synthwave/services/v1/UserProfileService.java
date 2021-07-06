@@ -5,7 +5,7 @@ import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.services.core.CoreUserProfileService;
-import platform.helpers.Comparator;
+import platform.utils.helpers.Comparator;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
