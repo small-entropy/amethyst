@@ -1,10 +1,14 @@
 package synthwave.controllers.v1;
 
-import synthwave.controllers.base.BaseAuthorizationController;
+import synthwave.controllers.messages.AuthorizationMessages;
 import synthwave.models.mongodb.standalones.User;
+import platform.constants.DefaultRights;
+import platform.controllers.BaseController;
+import platform.utils.helpers.HeadersUtils;
 import platform.utils.responses.SuccessResponse;
 import synthwave.services.v1.AuthorizationService;
 import platform.utils.transformers.JsonTransformer;
+import spark.Response;
 import dev.morphia.Datastore;
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -12,63 +16,134 @@ import static spark.Spark.post;
 /**
  * Class with authorization routes
  * @version 1
- * @author entropy
+ * @author small-entropy
  */
-public class AuthorizationController extends BaseAuthorizationController {
-    
+public class AuthorizationController 
+	extends BaseController<AuthorizationService, JsonTransformer> {
+
+	/**
+	 * Default constructor for authorization controller
+	 * @param datastore Morphia datastore object
+	 * @param transformer transformer object
+	 */
+	public AuthorizationController(
+			Datastore datastore,
+			JsonTransformer transformer
+	) {
+		super(
+				new AuthorizationService(datastore), 
+				transformer,
+				DefaultRights.USERS.getName()
+		);
+	}
+	
+	/**
+     * Method for set authorization headers in response
+     * @param response Spark response object
+     * @param token user JSON web token
+     */
+    protected static void setAuthHeaders(Response response, String token) {
+        response.header(
+                HeadersUtils.getAuthHeaderField(),
+                HeadersUtils.getAuthHeaderValue(token)
+        );
+    }
+	
+    /**
+     * Method with registration route
+     */
+	protected void registerRoute() {
+        post("/register", (req, res) -> {
+            User user = getService().registerUser(req);
+            String token = user.getFirstToken();
+            setAuthHeaders(res, token);
+            return new SuccessResponse<>(
+            		AuthorizationMessages.REGISTERED.getMessage(), 
+            		user
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for login route
+	 */
+	protected void loginRoute() {
+        post("/login", (request, response) -> {
+            User user = getService().loginUser(
+            		request, 
+            		getRule(), 
+            		getReadActionName()
+            );
+            String token = user.getFirstToken();
+            setAuthHeaders(response, token);
+            return new SuccessResponse<>(
+            		AuthorizationMessages.LOGIN.getMessage(), 
+            		user
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method with route for change password
+	 */
+	protected void changePasswordRoute() {
+		post("/change-password/:user_id", (request, response) -> {
+            User user = getService().changePassword(
+            		request, 
+            		getRule(), 
+            		getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		AuthorizationMessages.PASSWORD_CHANGED.getMessage(), 
+            		user
+            );
+        }, getTransformer());
+
+	}
+	
+	/**
+	 * Method with route for autologin
+	 */
+	protected void autoLoginRoute() {
+        get("/autologin", (request, response) -> {
+            User user = getService().autoLoginUser(
+            		request, 
+            		getRule(), 
+            		getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		AuthorizationMessages.AUTOLOGIN.getMessage(), 
+            		user
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method with route for user login
+	 */
+	protected void logoutRoute() {
+        get("/logout", (request, response) -> {
+            User user = getService().logoutUser(
+            		request, 
+            		getRule(), 
+            		getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		AuthorizationMessages.LOGOUT.getMessage(), 
+            		user
+            );
+        }, getTransformer());
+	}
+	
     /**
      * Method with define authorization routes
-     * @param datastore Morphia datastore
-     * @param transformer JSON response transformer
      */
-    public static void routes(
-            Datastore datastore, 
-            JsonTransformer transformer
-    ) {
-       
-        AuthorizationService service = new AuthorizationService(datastore);
-
-        // Route for register user
-        post("/register", (req, res) -> {
-            // Register user by request data
-            User user = service.registerUser(req);
-            // Get first token
-            String token = user.getFirstToken();
-            // Set response headers
-            setAuthHeaders(res, token);
-            // Return response
-            return new SuccessResponse<>(MSG_REGISTERED, user);
-        }, transformer);
-
-        // Route for user login
-        post("/login", (req, res) -> {
-            // Get user document
-            User user = service.loginUser(req, RULE, READ);
-            String token = user.getFirstToken();
-            // Set headers for authorization
-            setAuthHeaders(res, token);
-            // Return answer
-            return new SuccessResponse<>(MSG_LOGIN, user);
-        }, transformer);
-        
-        // Route for change password for user by token
-        post("/change-password/:user_id", (req, res) -> {
-            // Change password
-            User user = service.changePassword(req, RULE, READ);
-            // Return success answer
-            return new SuccessResponse<>(MSG_PASSWORD_CHANGED, user);
-        }, transformer);
-
-        // Route for user autologin
-        get("/autologin", (req, res) -> {
-            User user = service.autoLoginUser(req, RULE, READ);
-            return new SuccessResponse<>(MSG_AUTOLOGIN, user);
-        }, transformer);
-
-        // Logout user
-        get("/logout", (req, res) -> {
-            User user = service.logoutUser(req, RULE, READ);
-            return new SuccessResponse<>(MSG_LOGOUT, user);
-        }, transformer);
+	@Override
+    public void getRoutes() {
+		registerRoute();
+		loginRoute();
+		changePasswordRoute();
+		autoLoginRoute();
+		logoutRoute();
     }
 }

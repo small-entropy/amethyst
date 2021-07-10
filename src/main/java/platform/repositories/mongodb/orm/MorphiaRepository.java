@@ -110,7 +110,6 @@ public class MorphiaRepository<M extends Standalone, F extends Filter, D>
                 .exclude(filter.getExcludes())
                 .skip(filter.getSkip())
                 .limit(filter.getLimit());
-        System.out.println(Arrays.toString(filter.getExcludes()));
         // Find in datastore by filter options & return list
         return getStore()
                 .find(getModelClass())

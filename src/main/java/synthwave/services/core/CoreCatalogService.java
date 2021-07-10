@@ -186,7 +186,6 @@ public abstract class CoreCatalogService
         // Return update result
         return getRepository().update(catalogDTO, filter);
     }
-    
     /**
      * Method for deactivate catalog document
      * @param userId user id

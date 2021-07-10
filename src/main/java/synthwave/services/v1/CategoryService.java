@@ -151,6 +151,17 @@ public class CategoryService extends CoreCategoryService {
         }
     }
 
+    /**
+     * Method for update category document
+     * @param request Spark request object
+     * @param right right name
+     * @param action action name
+     * @return updated document
+     * @throws AccessException throw when user have not 
+     * 						   access to update document
+     * @throws DataException throw when can't be found 
+     * 						 some data
+     */
     public Category updateCategory(
             Request request,  
             String right,
@@ -173,6 +184,15 @@ public class CategoryService extends CoreCategoryService {
         }
     }
     
+    /**
+     * Method for mark to remove category document
+     * @param request Spark request object
+     * @param right right name
+     * @param action action name
+     * @return 
+     * @throws AccessException
+     * @throws DataException
+     */
     public Category deleteCategory(
             Request request,
             String right,
