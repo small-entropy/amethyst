@@ -1,7 +1,9 @@
 package synthwave.controllers.v1;
 
-import synthwave.controllers.base.BaseCategoriesController;
+import synthwave.controllers.messages.CategoriesMessages;
 import synthwave.models.mongodb.standalones.Category;
+import platform.constants.DefaultRights;
+import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
 import synthwave.services.v1.CategoryService;
 import platform.utils.transformers.JsonTransformer;
@@ -13,78 +15,155 @@ import static spark.Spark.*;
  * Class-controller for categories
  * @author small-entropy
  */
-public class CategoriesController extends BaseCategoriesController {
+public class CategoriesController 
+	extends BaseController<CategoryService, JsonTransformer> {
     
-    public static void routes(Datastore datastoer, JsonTransformer transformer) {
-        CategoryService service = new CategoryService(datastoer);
-        
-        // Route for get categories list
-        get("", (req, res) -> {
-            List<Category> categories = service.getCategoriesList(
-                    req, 
-                    RIGHT, 
-                    READ
+	/**
+	 * Default categories controller constructor.
+	 * @param datastore Morphia datastore object
+	 * @param transformer response transformer
+	 */
+	public CategoriesController(
+			Datastore datastore,
+			JsonTransformer transformer
+	) {
+		super(
+			new CategoryService(datastore),
+			transformer,
+			DefaultRights.CATEGORIES.getName()
+		);
+	}
+	
+	/**
+	 * Method for get categories list
+	 */
+	protected void getCategoriesListRoute() {
+		get("", (request, response) -> {
+            List<Category> categories = getService().getCategoriesList(
+                    request, 
+                    getRight(), 
+                    getReadActionName()
             );
-            return new SuccessResponse<>(MSG_LIST, categories);
-        }, transformer);
-        
-        // Route for get all categories by owner id
-        get("/owner/:user_id", (req, res) -> {
-            List<Category> categories = service.getCategoriesByUser(
-                    req, 
-                    RIGHT, 
-                    READ
+            return new SuccessResponse<>(
+            		CategoriesMessages.LIST.getMessage(), 
+            		categories
             );
-            return new SuccessResponse<>(MSG_LIST, categories);
-        }, transformer);
-        
-        get("/catalog/:catalog_id", (req, res) -> {
-            List<Category> categories = service.getCatalogCategories(
-                    req,
-                    RIGHT,
-                    READ
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get categories list by owner
+	 */
+	protected void getCategoriesListByOwnerRoute() {
+		get("/owner/:user_id", (request, response) -> {
+            List<Category> categories = getService().getCategoriesByUser(
+                    request, 
+                    getRight(), 
+                    getReadActionName()
             );
-            return new SuccessResponse<>(MSG_LIST, categories);
-        }, transformer);
-        
-        // Route for create category for catelog
-        post("/catalog/:catalog_id/owner/:user_id", (req, res) -> {
-            Category category = service.createCategory(
-                    req, 
-                    RIGHT,
-                    CREATE
+            return new SuccessResponse<>(
+            		CategoriesMessages.LIST.getMessage(), 
+            		categories
             );
-            return new SuccessResponse<>(MSG_CREATED, category);
-        }, transformer);
-        
-        // Route for get category
-        get("/owner/:user_id/category/:category_id", (req, res) -> {
-            Category category = service.getCategoryById(
-                    req, 
-                    RIGHT,
-                    READ
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get categories list by catalog
+	 */
+	protected void getCategoriesListByCatalogRoute() {
+        get("/catalog/:catalog_id", (request, response) -> {
+            List<Category> categories = getService().getCatalogCategories(
+                    request,
+                    getRight(),
+                    getReadActionName()
             );
-            return new SuccessResponse<>(MSG_ENTITY, category);
-        }, transformer);
-        
-        // Route for update category
-        put("/owner/:user_id/category/:category_id", (req, res) -> {
-            Category category = service.updateCategory(
-                    req,
-                    RIGHT,
-                    UPDATE
+            return new SuccessResponse<>(
+            		CategoriesMessages.LIST.getMessage(), 
+            		categories
+           );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for create category entity
+	 */
+	protected void createCategoryRoute() {
+		post("/catalog/:catalog_id/owner/:user_id", (request, response) -> {
+            Category category = getService().createCategory(
+                    request, 
+                    getRight(),
+                    getCreateActionName()
             );
-            return new SuccessResponse<>(MSG_UPDATED, category);
-        }, transformer);
-        
-        // Route for mark to delete category
-        delete("/owner/:user_id/category/:category_id", (req, res) -> {
-            Category category = service.deleteCategory(
-                    req, 
-                    RIGHT,
-                    DELETE
+            return new SuccessResponse<>(
+            		CategoriesMessages.CREATED.getMessage(), 
+            		category
             );
-            return new SuccessResponse<>(MSG_DELETED, category);
-        }, transformer);
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get category entity by owner id and entity id
+	 */
+	protected void getCategoryByOwnerAndIdRoute() {
+		get("/owner/:user_id/category/:category_id", (request, response) -> {
+            Category category = getService().getCategoryById(
+                    request, 
+                    getRight(),
+                    getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		CategoriesMessages.ENTITY.getMessage(), 
+            		category
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for update category entity
+	 */
+	protected void updateCategoryRoute() {
+		put("/owner/:user_id/category/:category_id", (request, response) -> {
+            Category category = getService().updateCategory(
+                    request,
+                    getRight(),
+                    getUpdateActionName()
+            );
+            return new SuccessResponse<>(
+            		CategoriesMessages.UPDATED.getMessage(), 
+            		category
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for deactivate category entity
+	 */
+	protected void deleteCategoryRoute() {
+		 delete("/owner/:user_id/category/:category_id", (request, ressponse) -> {
+	            Category category = getService().deleteCategory(
+	                    request, 
+	                    getRight(),
+	                    getDeleteActionName()
+	            );
+	            return new SuccessResponse<>(
+	            		CategoriesMessages.DELETED.getMessage(), 
+	            		category
+	            );
+	        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get/register all routes
+	 */
+	@Override
+    public void register() {
+    	createCategoryRoute();
+    	getCategoriesListRoute();
+    	getCategoriesListByOwnerRoute();
+    	getCategoriesListByCatalogRoute();
+    	getCategoryByOwnerAndIdRoute();
+    	updateCategoryRoute();
+    	deleteCategoryRoute();
     }
 }

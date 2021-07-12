@@ -26,7 +26,7 @@ public abstract class BaseController <S, T> {
     /** Property with name of delete action */
     private final String deleteActionName = DefaultActions.DELETE.getName();
 	
-    private String rule = "default-rule";
+    private String right = "default-rule";
 	
 	/**
 	 * Default constructor for base controller. Create instance
@@ -38,25 +38,25 @@ public abstract class BaseController <S, T> {
 	public BaseController(
 			S service, 
 			T transformer,
-			String rule
+			String right
 	) {
 		this.service = service;
 		this.transformer = transformer;
-		this.rule = rule;
+		this.right = right;
 	}
 	
-	public String getRule() {
-		return rule;
+	public String getRight() {
+		return right;
 	}
 	
-	public void setRule(String rule) {
-		this.rule = rule;
+	public void setRight(String right) {
+		this.right = right;
 	}
 	
 	/**
 	 * Method for get controller routes
 	 */
-	public void getRoutes() {}
+	public void register() {}
 
 	/**
 	 * Getter for response transformer

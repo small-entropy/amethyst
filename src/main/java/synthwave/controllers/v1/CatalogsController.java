@@ -1,7 +1,9 @@
 package synthwave.controllers.v1;
 
-import synthwave.controllers.base.BaseCatalogsController;
+import synthwave.controllers.messages.CatalogsMessages;
 import synthwave.models.mongodb.standalones.Catalog;
+import platform.constants.DefaultRights;
+import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
 import synthwave.services.v1.CatalogService;
 import platform.utils.transformers.JsonTransformer;
@@ -14,54 +16,139 @@ import static spark.Spark.*;
  * Class controller for work with catalogs routes
  * @author small-entropy
  */
-public class CatalogsController extends BaseCatalogsController {
+public class CatalogsController 
+	extends BaseController<CatalogService, JsonTransformer> {
     
+	/**
+	 * Default constructor for catalogs controller object
+	 * @param datastore Morphia datastore
+	 * @param transformer response transformer object
+	 */
+	public CatalogsController(
+			Datastore datastore,
+			JsonTransformer transformer
+	) {
+		super(
+				new CatalogService(datastore), 
+				transformer,
+				DefaultRights.CATALOGS.getName()
+		);
+	}
+	
+	/**
+	 * Method for get catalogs entities
+	 */
+	protected void getCatalogstRoute() {
+		get("", (request, ressponse) -> {
+            List<Catalog> catalogs = getService().getCatalogs(
+            		request, 
+            		getRight(), 
+            		getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		CatalogsMessages.LIST.getMessage(), 
+            		catalogs
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for create catalog entity
+	 */
+	protected void createCatalogRoute() {
+		 post("/owner/:user_id", (requser, response) -> {
+	            Catalog catalog = getService().createCatalog(
+	            		requser, 
+	            		getRight(), 
+	            		getCreateActionName()
+	            );
+	            return new SuccessResponse<>(
+	            		CatalogsMessages.CREATED.getMessage(), 
+	            		catalog
+	            );
+	        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get catalogs entities by owner 
+	 */
+	protected void getCatalogsByOwnerRoute() {
+		get("/owner/:user_id", (request, ressponse) -> {
+            List<Catalog> catalogs = getService().getCatalogsByUser(
+                    request, 
+                    getRight(), 
+                    getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		CatalogsMessages.ENTITY.getMessage(), 
+            		catalogs
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get catalog entity by owner id and entity id
+	 */
+	protected void getCatalogByOwnerAndIdRoute() {
+		get("/owner/:user_id/catalog/:catalog_id", (request, ressponse) -> {
+            Catalog catalog = getService().getCatalogById(
+            		request, 
+            		getRight(), 
+            		getReadActionName()
+            );
+            return new SuccessResponse<>(
+            		CatalogsMessages.ENTITY.getMessage(), 
+            		catalog
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for update catalog entity
+	 */
+	protected void updateCatalogRoute() {
+		put("/owner/:user_id/catalog/:catalog_id", (request, response) -> {
+            Catalog catalog = getService().updateCatalog(
+            		request, 
+            		getRight(), 
+            		getUpdateActionName()
+            );
+            return new SuccessResponse<>(
+            		CatalogsMessages.UPDATED.getMessage(), 
+            		catalog
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for deactivate catalog entity
+	 */
+	protected void deleteCatalogRoute() {
+		delete("/owner/:user_id/catalog/:catalog_id", (request, response) -> {
+            Catalog catalog = getService().deleteCatalog(
+            		request, 
+            		getRight(), 
+            		getDeleteActionName()
+            );
+            return new SuccessResponse<>(
+            		CatalogsMessages.DELETED.getMessage(), 
+            		catalog
+            );
+        }, getTransformer());
+	}
+	
     /**
-     * Static method for initialize catalogs routes
+     * Method for initialize catalogs routes
      * @param store Morphia datastore object
      * @param transformer converter to JSON
      */
-    public static void routes(Datastore datastore, JsonTransformer transformer) {
-        CatalogService service = new CatalogService(datastore);
-        
-        // Route for work with catalog list
-        get("", (req, res) -> {
-            List<Catalog> catalogs = service.getCatalogs(req, RIGHT, READ);
-            return new SuccessResponse<>(MSG_LIST, catalogs);
-        }, transformer);
-
-        // Route for create catalog
-        post("/owner/:user_id", (req, res) -> {
-            Catalog catalog = service.createCatalog(req, RIGHT, CREATE);
-            return new SuccessResponse<>(MSG_CREATED, catalog);
-        }, transformer);
-        
-        // Route for create catalog document
-        get("/owner/:user_id", (req, res) -> {
-            List<Catalog> catalogs = service.getCatalogsByUser(
-                    req, 
-                    RIGHT, 
-                    READ
-            );
-            return new SuccessResponse<>(MSG_LIST, catalogs);
-        }, transformer);
-        
-        // Route for get user catalog by id
-        get("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            Catalog catalog = service.getCatalogById(req, RIGHT, READ);
-            return new SuccessResponse<>(MSG_ENTITY, catalog);
-        }, transformer);
-        
-        // Route for update catalog
-        put("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            Catalog catalog = service.updateCatalog(req, RIGHT, UPDATE);
-            return new SuccessResponse<>(MSG_UPDATED, catalog);
-        }, transformer); 
-        
-        // Route for delete catalog
-        delete("/owner/:user_id/catalog/:catalog_id", (req, res) -> {
-            Catalog catalog = service.deleteCatalog(req, RIGHT, DELETE);
-            return new SuccessResponse<>(MSG_DELETED, catalog);
-        }, transformer);
+	@Override
+    public void register() { 
+        createCatalogRoute();
+    	getCatalogstRoute();
+        getCatalogsByOwnerRoute();
+        getCatalogByOwnerAndIdRoute();
+        updateCatalogRoute();
+        deleteCatalogRoute();
     }
 }

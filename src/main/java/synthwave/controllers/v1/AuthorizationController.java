@@ -71,7 +71,7 @@ public class AuthorizationController
         post("/login", (request, response) -> {
             User user = getService().loginUser(
             		request, 
-            		getRule(), 
+            		getRight(), 
             		getReadActionName()
             );
             String token = user.getFirstToken();
@@ -90,7 +90,7 @@ public class AuthorizationController
 		post("/change-password/:user_id", (request, response) -> {
             User user = getService().changePassword(
             		request, 
-            		getRule(), 
+            		getRight(), 
             		getReadActionName()
             );
             return new SuccessResponse<>(
@@ -108,7 +108,7 @@ public class AuthorizationController
         get("/autologin", (request, response) -> {
             User user = getService().autoLoginUser(
             		request, 
-            		getRule(), 
+            		getRight(),
             		getReadActionName()
             );
             return new SuccessResponse<>(
@@ -125,7 +125,7 @@ public class AuthorizationController
         get("/logout", (request, response) -> {
             User user = getService().logoutUser(
             		request, 
-            		getRule(), 
+            		getRight(), 
             		getReadActionName()
             );
             return new SuccessResponse<>(
@@ -139,7 +139,7 @@ public class AuthorizationController
      * Method with define authorization routes
      */
 	@Override
-    public void getRoutes() {
+    public void register() {
 		registerRoute();
 		loginRoute();
 		changePasswordRoute();

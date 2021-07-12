@@ -9,18 +9,8 @@ public enum ResponseMessages {
     USERS_LIST("User list successfully founded"),
     USER("Successfully found user"),
     USER_DEACTIVATED("Successfully marked to remove"),
-    // Authorization messages
-    REGISTERED("User successfully registered"),
-    AUTOLOGIN("Successfully login by token"),
-    LOGIN("Login is success"),
-    LOGOUT("User successfully logout"),
-    PASSWORD_CHANGED("Password successfully changes"),
     // Catalogs messages
-    CATALOGS_LIST("Successfully get list of catalogs"),
-    CATALOG("Successfully get catalog"),
-    CATALOG_CREATED("Successfully created catalog"),
-    CATALOG_UPDATED("Successfully catapog updated"),
-    CATALOG_DELETED("Successfully deleted catalog"),
+    
     // Profile messages
     PROFILE("Successfully get user profile"),
     PROFILE_PROPERTY("Successfully get user profile property"),
@@ -40,11 +30,7 @@ public enum ResponseMessages {
     RIGHT_UPDATED("User right successfully updated"),
     RIGHT_DELETED("Successfully removed user right"),
     // Category messages
-    CATEGORIES("Successfully get categories"),
-    CATEGORY("Successfully get category"),
-    CATEGORY_CREATED("Successfully created category"),
-    CATEGORY_UPDATED("Successfully updated category"),
-    CATEGORY_DELETED("Successfulle deleted category"),
+    
     // Products messages
     PRODUCTS("Successfully get products"),
     PRODUCT("Successfully get product"),
@@ -56,13 +42,8 @@ public enum ResponseMessages {
     TAG("Successfully get tag "),
     TAG_CREATED("Successfully created tag"),
     TAG_UPDATED("Successfully updated tag"),
-    TAG_DELETED("Successfully deleted tag"),
-    // Comapnites
-    COMPANIES("Successfull get companies"),
-    COMPANY("Successfull get tag"),
-    COMPANY_CREATED("Successfull created company"),
-    COMPANY_UPDATED("Successfull updated company"),
-    COMPANY_DELETED("Successfull deleted company");
+    TAG_DELETED("Successfully deleted tag");
+
     // Property for text message
     private final String message;
 

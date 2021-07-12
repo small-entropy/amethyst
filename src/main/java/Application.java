@@ -75,15 +75,15 @@ public class Application {
                 .build();
         
         // Create database connection
-        final Datastore store = Morphia.createDatastore(
+        final Datastore datastore = Morphia.createDatastore(
                 MongoClients.create(), 
                 "Amethyst", 
                 options
         );
         // Map all models from package
-        store.getMapper().mapPackage("synthwave.models.mongodb.standalones");
+        datastore.getMapper().mapPackage("synthwave.models.mongodb.standalones");
         // Ensure database indexes by models
-        store.ensureIndexes();
+        datastore.ensureIndexes();
 
         // Create JsonTransformer
         final JsonTransformer toJson = new JsonTransformer();
@@ -101,40 +101,40 @@ public class Application {
             path(RoutesPath.VERSION_ONE.getValue(), () -> {
                 // Grouped API routes for work with users
                 path(RoutesPath.USERS.getValue(), () -> {
-                    new AuthorizationController(store, toJson).getRoutes();
+                    new AuthorizationController(datastore, toJson).register();
                     // Routes for work with user document
-                    UserController.routes(store, toJson);
+                    UserController.routes(datastore, toJson);
                     // Routes for work with user property documents
-                    UserPropertyController.routes(store, toJson);
+                    UserPropertyController.routes(datastore, toJson);
                     // Routs for work with profile documents
-                    UserProfileController.routes(store, toJson);
+                    UserProfileController.routes(datastore, toJson);
                     // Routes for work with user rights documents
-                    UserRightsController.routes(store, toJson);
+                    UserRightsController.routes(datastore, toJson);
                 });
                 // Grouped API routes for work with catalogs
                 path(
                         RoutesPath.CATALOGS.getValue(), 
-                        () -> CatalogsController.routes(store, toJson)
+                        () -> new CatalogsController(datastore, toJson).register()
                 );
                 // Groupted API routes for categories
                 path(
                         RoutesPath.CATEGORIES.getValue(), 
-                        () -> CategoriesController.routes(store, toJson)
+                        () -> new CategoriesController(datastore, toJson).register()
                 );
                 // Grouped API routes for companies
                 path(
                         RoutesPath.COMPANIES.getValue(),
-                        () -> CompaniesController.routes(store, toJson)
+                        () -> new CompaniesController(datastore, toJson).register()
                 );
                 // Grouped API routes for tags
                 path(
                         RoutesPath.TAGS.getValue(),
-                        () -> TagsController.routes(store, toJson)
+                        () -> TagsController.routes(datastore, toJson)
                 );
                 // Grouped API routes for work with products
                 path(
                         RoutesPath.PRODUCTS.getValue(), 
-                        () -> ProductsController.routes(store, toJson)
+                        () -> ProductsController.routes(datastore, toJson)
                 );
             });
             // Callback after call all routes with /api/* pattern
