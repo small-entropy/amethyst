@@ -1,7 +1,9 @@
 package synthwave.controllers.v1;
 
-import synthwave.controllers.base.BaseUserProfileController;
+import platform.constants.DefaultRights;
+import platform.controllers.BaseController;
 import platform.exceptions.DataException;
+import synthwave.controllers.messages.UserProfileMessages;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import platform.utils.responses.SuccessResponse;
 import synthwave.services.v1.UserProfileService;
@@ -13,62 +15,119 @@ import static spark.Spark.*;
 /**
  * Class with routes for work with profile documents
  */
-public class UserProfileController extends BaseUserProfileController {
+public class UserProfileController 
+	extends BaseController<UserProfileService, JsonTransformer> {
+	
+	/**
+	 * Default user profile controller. Create instance by
+	 * datastore & response transformer
+	 * @param datastore Morphia datastore object
+	 * @param transformer responser transformer 
+	 */
+	public UserProfileController(
+			Datastore datastore,
+			JsonTransformer transformer
+	) {
+		super(
+				new UserProfileService(datastore),
+				transformer,
+				DefaultRights.USERS.getName()
+		);
+	}
+	
+	/**
+	 * Method for get user profile by user id
+	 */
+	protected void getUserProfileByUserIdRoute() {
+        get("/:user_id/profile", (request, response)-> {
+            List<EmbeddedProperty> profile = getService().getUserProfile(
+            		request
+            );
+            return new SuccessResponse<>(
+            		UserProfileMessages.LIST.getMessage(), 
+            		profile
+            );
+        }, getTransformer());
+	}
     
-    /**
-     * Method with init routes for work with profile property documents
-     * @param datastore Morphia datastore
-     * @param transformer JSON response transformer
-     */
-    public static void routes(Datastore datastore, JsonTransformer transformer) {
-        
-        UserProfileService service = new UserProfileService(datastore);
-        
-        // Route for get user profile
-        get("/:user_id/profile", (req, res)-> {
-            List<EmbeddedProperty> profile = service.getUserProfile(req);
-            return new SuccessResponse<>(MSG_LIST, profile);
-        }, transformer);
-        
-        // Route for create profile property
-        post("/:user_id/profile", (req, res) -> {
-            EmbeddedProperty property = service.createUserProfileProperty(req);
-            return new SuccessResponse<>(MSG_CREATED, property);
-        }, transformer);
-        
-        // Route for get user profile property by ID
-        get("/:user_id/profile/:property_id", (req, res) -> {
-            EmbeddedProperty property = service.getUserProfilePropertyById(
-                    req
+	/**
+	 * Message for crate profile property
+	 */
+	protected void createProfilePropertyRoute() {
+		post("/:user_id/profile", (request, response) -> {
+            EmbeddedProperty property = getService().createUserProfileProperty(
+            		request
+            );
+            return new SuccessResponse<>(
+            		UserProfileMessages.CREATED.getMessage(), 
+            		property
+            );
+        }, getTransformer());
+	}
+
+	/**
+	 * Method for get profile property by user id & property id
+	 */
+	protected void getProfilPropertyByUserIdAndIdRoute() {
+		get("/:user_id/profile/:property_id", (request, response) -> {
+            EmbeddedProperty property = getService().getUserProfilePropertyById(
+                    request
             );
             if (property != null) {
-                return new SuccessResponse<>(MSG_ENTITY, property);
+                return new SuccessResponse<>(
+                		UserProfileMessages.ENTITY.getMessage(), 
+                		property
+                );
             } else {
                 Error error = new Error("Can found property with this id");
                 throw new DataException("NotFound", error);
             }
-        }, transformer);
-        
-        // Update user profile property by property UUID (user find by UUID)
-        put("/:user_id/profile/:property_id", (req, res) -> {
-            // Try update user profile property
-            EmbeddedProperty property = service.updateUserProperty(
-                    req, 
-                    RIGHT, 
-                    UPDATE
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for update profile property entity
+	 */
+	protected void updateProfilePropertyRoute() {
+		put("/:user_id/profile/:property_id", (request, response) -> {
+            EmbeddedProperty property = getService().updateUserProperty(
+                    request, 
+                    getRight(), 
+                    getUpdateActionName()
             );
-            // Return successfully response
-            return new SuccessResponse<>(MSG_UPDATED, property);
-        }, transformer);
-        
-        // Remove user profile property by UUID (user find by UUID)
-        delete("/:user_id/profile/:property_id", (req, res) -> {
-            List<EmbeddedProperty> profile = service.deleteProfileProperty(
-                    req, 
-                    RIGHT, 
-                    DELETE
+            return new SuccessResponse<>(
+            		UserProfileMessages.UPDATED.getMessage(), 
+            		property
             );
-            return new SuccessResponse<>(MSG_DELETED, profile);
-        }, transformer);
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for delete profile property
+	 */
+	protected void deleteProfilePropertyRoute() {
+		delete("/:user_id/profile/:property_id", (request, response) -> {
+            List<EmbeddedProperty> profile = getService().deleteProfileProperty(
+                    request, 
+                    getRight(), 
+                    getDeleteActionName()
+            );
+            return new SuccessResponse<>(
+            		UserProfileMessages.DELETED.getMessage(), 
+            		profile
+            );
+        }, getTransformer());
+	}
+	
+    /**
+     * Method register routes for work with user profile data
+     */
+	@Override
+    public void register() {
+		createProfilePropertyRoute();
+		getUserProfileByUserIdRoute();
+		getProfilPropertyByUserIdAndIdRoute();
+		updateProfilePropertyRoute();
+		deleteProfilePropertyRoute();
     }
 }

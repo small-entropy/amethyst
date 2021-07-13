@@ -14,6 +14,7 @@ import static spark.Spark.*;
 /**
  * Class-controller for categories
  * @author small-entropy
+ * @version 1
  */
 public class CategoriesController 
 	extends BaseController<CategoryService, JsonTransformer> {

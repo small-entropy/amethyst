@@ -42,7 +42,10 @@ public class AuthorizationController
      * @param response Spark response object
      * @param token user JSON web token
      */
-    protected static void setAuthHeaders(Response response, String token) {
+    protected static void setAuthHeaders(
+    		Response response, 
+    		String token
+    ) {
         response.header(
                 HeadersUtils.getAuthHeaderField(),
                 HeadersUtils.getAuthHeaderValue(token)

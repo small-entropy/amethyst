@@ -15,6 +15,7 @@ import static spark.Spark.*;
 /**
  * Class controller for work with catalogs routes
  * @author small-entropy
+ * @version 1
  */
 public class CatalogsController 
 	extends BaseController<CatalogService, JsonTransformer> {

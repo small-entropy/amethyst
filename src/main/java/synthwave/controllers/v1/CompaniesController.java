@@ -14,6 +14,7 @@ import static spark.Spark.*;
 /**
  * Class controller for work with companies routes
  * @author small-entropy
+ * @version 1
  */
 public class CompaniesController 
 	extends BaseController<CompanyService, JsonTransformer> {

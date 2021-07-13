@@ -15,6 +15,7 @@ import spark.Request;
 /**
  * Class for authorization service
  * @author small-entropy
+ * @version 1
  */
 public class AuthorizationService extends CoreAuthorizationService {
     

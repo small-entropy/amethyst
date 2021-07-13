@@ -102,14 +102,10 @@ public class Application {
                 // Grouped API routes for work with users
                 path(RoutesPath.USERS.getValue(), () -> {
                     new AuthorizationController(datastore, toJson).register();
-                    // Routes for work with user document
-                    UserController.routes(datastore, toJson);
-                    // Routes for work with user property documents
-                    UserPropertyController.routes(datastore, toJson);
-                    // Routs for work with profile documents
-                    UserProfileController.routes(datastore, toJson);
-                    // Routes for work with user rights documents
-                    UserRightsController.routes(datastore, toJson);
+                    new UserController(datastore, toJson).register();
+                    new UserPropertyController(datastore, toJson).register();
+                    new UserProfileController(datastore, toJson).register();
+                    new UserRightsController(datastore, toJson).register();
                 });
                 // Grouped API routes for work with catalogs
                 path(
@@ -129,12 +125,12 @@ public class Application {
                 // Grouped API routes for tags
                 path(
                         RoutesPath.TAGS.getValue(),
-                        () -> TagsController.routes(datastore, toJson)
+                        () -> new TagsController(datastore, toJson).register()
                 );
                 // Grouped API routes for work with products
                 path(
                         RoutesPath.PRODUCTS.getValue(), 
-                        () -> ProductsController.routes(datastore, toJson)
+                        () -> new ProductsController(datastore, toJson).register()
                 );
             });
             // Callback after call all routes with /api/* pattern

@@ -1,7 +1,9 @@
 package synthwave.controllers.v1;
 
-import synthwave.controllers.base.BaseUserPropertyController;
+import platform.constants.DefaultRights;
+import platform.controllers.BaseController;
 import platform.exceptions.DataException;
+import synthwave.controllers.messages.UserPropertiesMessages;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import platform.utils.responses.SuccessResponse;
 import synthwave.services.v1.UserPropertyService;
@@ -13,72 +15,120 @@ import static spark.Spark.*;
 /**
  * Static class with routes for work with user property documents
  */
-public class UserPropertyController extends BaseUserPropertyController {
-    
-    /**
-     * Method with init routes for work with user property documents
-     * @param datastore Morphia datastore
-     * @param transformer JSON response transformer
-     */
-    public static void routes(Datastore datastore, JsonTransformer transformer) {
-        UserPropertyService service = new UserPropertyService(datastore);
-        // Routes for work with user properties
-        // Get user properties list by user UUID
-        get("/:user_id/properties", (req, res) -> {
-            List<EmbeddedProperty> properties = service.getUserProperties(
-                    req,
-                    RIGHT, 
-                    READ
+public class UserPropertyController 
+	extends BaseController<UserPropertyService, JsonTransformer> {
+	
+	public UserPropertyController(
+			Datastore datastore,
+			JsonTransformer transformer
+	) {
+		super(
+				new UserPropertyService(datastore),
+				transformer,
+				DefaultRights.USERS.getName()
+		);
+	}
+	
+	/**
+	 * Get user properties list by user id
+	 */
+	protected void getPropertiesListByUserIdRoute() {
+        get("/:user_id/properties", (request, response) -> {
+            List<EmbeddedProperty> properties = getService().getUserProperties(
+                    request,
+                    getRight(), 
+                    getReadActionName()
             );
-            return new SuccessResponse<>(MSG_LIST, properties);
-        }, transformer);
-        
-        // Create new user property (user find by UUID)
-        // This method only for create public property!
-        // For create not public property use other method!
-        post("/:user_id/properties", (req, res) -> {
-            EmbeddedProperty userProperty = service.createUserProperty(
-                    req, 
-                    RIGHT, 
-                    CREATE
+            return new SuccessResponse<>(
+            		UserPropertiesMessages.LIST.getMessage(), 
+            		properties
             );
-            return new SuccessResponse<>(MSG_CREATED, userProperty);
-        }, transformer);
-        
-        // Get user property by UUID (user find by UUID)
-        get("/:user_id/properties/:property_id", (req, res) -> {
-            EmbeddedProperty property = service.getUserPropertyById(
-                    req, 
-                    RIGHT, 
-                    READ
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for create user property
+	 */
+	protected void createUserPropoertyRoute() {
+		post("/:user_id/properties", (request, response) -> {
+            EmbeddedProperty userProperty = getService().createUserProperty(
+                    request, 
+                    getRight(), 
+                    getCreateActionName()
+            );
+            return new SuccessResponse<>(
+            		UserPropertiesMessages.CREATED.getMessage(), 
+            		userProperty
+            );
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for get user property by user id & property id
+	 */
+	protected void getUserPropertyByUserIdAndId() {
+		get("/:user_id/properties/:property_id", (request, ressponse) -> {
+            EmbeddedProperty property = getService().getUserPropertyById(
+                    request, 
+                    getRight(), 
+                    getReadActionName()
             );
             if (property != null) {
-                return new SuccessResponse<>(MSG_ENTITY, property);
+                return new SuccessResponse<>(
+                		UserPropertiesMessages.ENTITY.getMessage(), 
+                		property
+                );
             } else {
                 Error error = new Error("Can not find user property");
                 throw new DataException("NotFound", error);
             }
-        }, transformer);
-        
-        // Update user property by property UUID (user find by UUID)
-        put("/:user_id/properties/:property_id", (req, res) -> {
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for update user property
+	 */
+	protected void updatePropertyRoute() {
+		put("/:user_id/properties/:property_id", (request, response) -> {
             // Get user rule for update users documents
-            EmbeddedProperty property = service.updateProperty(
-                            req, 
-                            RIGHT,
-                            UPDATE
+            EmbeddedProperty property = getService().updateProperty(
+                            request, 
+                            getRight(),
+                            getUpdateActionName()
                     );
-            return new SuccessResponse<>(MSG_UPDATED, property);
-        }, transformer);
-        
-        // Remove user property by UUID (user find by UUID)
-        delete("/:user_id/properties/:property_id", (req, res) -> {
-            List<EmbeddedProperty> properties = service.deleteUserProperty(
-                    req, 
-                    RIGHT,
-                    DELETE
+            return new SuccessResponse<>(
+            		UserPropertiesMessages.UPDATED.getMessage(), 
+            		property
             );
-            return new SuccessResponse<>(MSG_DELETED, properties);
-        }, transformer);
+        }, getTransformer());
+	}
+	
+	/**
+	 * Method for remove user property
+	 */
+	protected void deleteUserPropertyRoute() {
+		delete("/:user_id/properties/:property_id", (request, response) -> {
+            List<EmbeddedProperty> properties = getService().deleteUserProperty(
+                    request, 
+                    getRight(),
+                    getDeleteActionName()
+            );
+            return new SuccessResponse<>(
+            		UserPropertiesMessages.DELETED.getMessage(), 
+            		properties
+            );
+        }, getTransformer());
+	}
+    
+    /**
+     * Method register routes for work with user properties
+     */
+	@Override
+    public void register() {
+		createUserPropoertyRoute();
+		getPropertiesListByUserIdRoute();
+		getUserPropertyByUserIdAndId();
+		updatePropertyRoute();
+		deleteUserPropertyRoute();
     }
 }
