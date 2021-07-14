@@ -1,5 +1,6 @@
 package synthwave.models.mongodb.standalones;
 
+import synthwave.models.mongodb.base.DocumentExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedCatalog;
 import synthwave.models.mongodb.embeddeds.EmbeddedCategory;
 import synthwave.models.mongodb.embeddeds.EmbeddedCompany;
@@ -9,7 +10,6 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.embeddeds.EmbeddedTag;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Version;
-import synthwave.models.mongodb.base.Document;
 
 import java.util.List;
 
@@ -18,14 +18,12 @@ import java.util.List;
  * @author small-entropy
  */
 @Entity("products")
-public class Product extends Document {
+public class Product extends DocumentExtended {
     
     private String brief;
     private EmbeddedCatalog catalog;
     private List<EmbeddedPrice> prices;
     private List<EmbeddedCategory> categories;
-    private List<EmbeddedProperty> properties;
-    private List<EmbeddedProperty> requirements;
     private List<EmbeddedProperty> scores;
     private List<EmbeddedTag> tags;
     private EmbeddedCompany seller;
@@ -43,9 +41,9 @@ public class Product extends Document {
             String description, 
             EmbeddedCatalog catalog, 
             List<EmbeddedPrice> prices, 
-            List<EmbeddedCategory> categories, 
+            List<EmbeddedCategory> categories,
+            List<EmbeddedProperty> profile,
             List<EmbeddedProperty> properties, 
-            List<EmbeddedProperty> requirements, 
             List<EmbeddedProperty> scores, 
             List<EmbeddedTag> tags, 
             EmbeddedCompany seller, 
@@ -54,13 +52,11 @@ public class Product extends Document {
             String status, 
             Long version
     ) {
-        super(name, title, description, owner);
+        super(name, title, description, owner, profile, properties);
         this.brief = brief;
         this.catalog = catalog;
         this.prices = prices;
         this.categories = categories;
-        this.properties = properties;
-        this.requirements = requirements;
         this.scores = scores;
         this.tags = tags;
         this.seller = seller;
@@ -193,38 +189,6 @@ public class Product extends Document {
      */
     public void setCategories(List<EmbeddedCategory> categories) {
         this.categories = categories;
-    }
-
-    /**
-     * Getter for properties list
-     * @return current value for properties list
-     */
-    public List<EmbeddedProperty> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Setter properties list
-     * @param properties new value for peorpties list
-     */
-    public void setProperties(List<EmbeddedProperty> properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Getter for requirements list
-     * @return current value of requirements list
-     */
-    public List<EmbeddedProperty> getRequirements() {
-        return requirements;
-    }
-
-    /**
-     * Setter for requirements list
-     * @param requirements new value for requirements list
-     */
-    public void setRequirements(List<EmbeddedProperty> requirements) {
-        this.requirements = requirements;
     }
 
     /**

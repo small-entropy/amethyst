@@ -1,11 +1,11 @@
 package synthwave.models.mongodb.standalones;
+import synthwave.models.mongodb.base.StandaloneExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import platform.exceptions.AuthorizationException;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
-import platform.models.mongodb.morphia.Standalone;
 
 import java.util.List;
 
@@ -18,13 +18,11 @@ import java.util.List;
     ),
     @Index(fields = @Field("profile"))
 })
-public class User extends Standalone {
+public class User extends StandaloneExtended {
 
     private String username;
     private String password;
     private List<String> issuedToken;
-    private List<EmbeddedProperty> properties;
-    private List<EmbeddedProperty> profile;
     private List<EmbeddedRight> rights;
     @Version private Long version;
 
@@ -66,20 +64,10 @@ public class User extends Standalone {
             List<EmbeddedProperty> profile,
             List<EmbeddedRight> rights
     ) {
-        super(id);
+        super(id, profile, properties);
         this.username = username;
         this.password = getHashedPassword(password);
-        this.properties = properties;
-        this.profile = profile;
         this.rights = rights;
-    }
-
-    /**
-     * Setter for profile field
-     * @param profile list of user properties for profile
-     */
-    public void setProfile(List<EmbeddedProperty> profile) {
-        this.profile = profile;
     }
 
     /**
@@ -96,46 +84,6 @@ public class User extends Standalone {
      */
     public void setRights(List<EmbeddedRight> rights) {
         this.rights = rights;
-    }
-
-    /**
-     * Getter for profile property
-     * @return value of profile property
-     */
-    public List<EmbeddedProperty> getProfile() {
-        return profile;
-    }
-
-    /**
-     * Setter for profile property
-     * @param properties new value for profile property
-     */
-    public void setProperties(List<EmbeddedProperty> properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Method for add one property to profile user properties list
-     * @param property user property for profile
-     */
-    public void addProfileProperty(EmbeddedProperty property) {
-        this.profile.add(property);
-    }
-
-    /**
-     * Method for get user properties field
-     * @return list of user properties
-     */
-    public List<EmbeddedProperty> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Add user property to user properties list
-     * @param property new user property
-     */
-    public void addProperty(EmbeddedProperty property) {
-        this.properties.add(property);
     }
 
     /**

@@ -1,6 +1,6 @@
 package synthwave.services.core;
 
-import synthwave.dto.UserPropertyDTO;
+import synthwave.dto.PropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.repositories.mongodb.v1.PropertiesRepository;
@@ -48,11 +48,11 @@ public abstract class CoreUserPropertyService
             Request request
     ) throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
-        UserPropertyDTO userPropertyDTO =  UserPropertyDTO.build(
+        PropertyDTO propertyDTO =  PropertyDTO.build(
                 request, 
-                UserPropertyDTO.class
+                PropertyDTO.class
         );
-        return getRepository().createUserProperty(userId, userPropertyDTO);
+        return getRepository().createUserProperty(userId, propertyDTO);
     }
 
     /**
@@ -90,16 +90,16 @@ public abstract class CoreUserPropertyService
      */
     protected EmbeddedProperty updateUserProperty(Request request) 
             throws DataException {
-        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+        PropertyDTO propertyDTO = PropertyDTO.build(
                 request, 
-                UserPropertyDTO.class
+                PropertyDTO.class
         );
         ObjectId propertyId = ParamsManager.getPropertyId(request);
         ObjectId userId = ParamsManager.getUserId(request);
         return getRepository().updateUserProperty(
                 propertyId, 
                 userId, 
-                userPropertyDTO
+                propertyDTO
         );
     }
     

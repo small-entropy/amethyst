@@ -1,5 +1,6 @@
 package synthwave.models.mongodb.standalones;
 
+import synthwave.models.mongodb.base.DocumentExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.Entity;
@@ -8,7 +9,7 @@ import dev.morphia.annotations.Index;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
-import synthwave.models.mongodb.base.Document;
+import platform.models.mongodb.morphia.Document;
 
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -28,9 +29,7 @@ import org.bson.types.ObjectId;
             options = @IndexOptions(unique = true)
     )
 })
-public class Company extends Document {
-    
-    private List<EmbeddedProperty> profile;
+public class Company extends DocumentExtended {
     @Version private Long version;
 
     public Company() {
@@ -43,10 +42,10 @@ public class Company extends Document {
             String title, 
             String description, 
             EmbeddedOwner owner,
-            List<EmbeddedProperty> profile
+            List<EmbeddedProperty> profile,
+            List<EmbeddedProperty> properties
     ) {
-        super(id, name, title, description, owner);
-        this.profile = profile;
+        super(id, name, title, description, owner, profile, properties);
     }
     
     public Company(
@@ -54,20 +53,11 @@ public class Company extends Document {
             String title, 
             String description, 
             EmbeddedOwner owner,
-            List<EmbeddedProperty> profile
+            List<EmbeddedProperty> profile,
+            List<EmbeddedProperty> properties
     ) {
-        super(name, title, description, owner);
-        this.profile = profile;
+        super(name, title, description, owner, profile, properties);
     }
-    
-    public List<EmbeddedProperty> getProfile() {
-        return profile;
-    }
-
-    public void setProfile(List<EmbeddedProperty> profile) {
-        this.profile = profile;
-    }
-
 
     public Long getVersion() {
         return version;

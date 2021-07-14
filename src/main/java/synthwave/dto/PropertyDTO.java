@@ -2,12 +2,12 @@ package synthwave.dto;
 
 import platform.dto.BaseDTO;
 
-public class UserPropertyDTO extends BaseDTO {
+public class PropertyDTO extends BaseDTO {
     private String key;
     private Object value;
     private boolean notPublic;
 
-    UserPropertyDTO() {}
+    PropertyDTO() {}
 
     public String getKey() {
         return key;

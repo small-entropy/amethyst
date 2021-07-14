@@ -7,7 +7,7 @@ import dev.morphia.annotations.Index;
 import dev.morphia.annotations.IndexOptions;
 import dev.morphia.annotations.Indexes;
 import dev.morphia.annotations.Version;
-import synthwave.models.mongodb.base.Document;
+import platform.models.mongodb.morphia.Document;
 
 /**
  * Model for tag collection

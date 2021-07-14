@@ -1,9 +1,9 @@
 package synthwave.models.mongodb.standalones;
 
+import synthwave.models.mongodb.base.DocumentExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
 import dev.morphia.annotations.*;
-import synthwave.models.mongodb.base.Document;
 
 /**
  * Model class for work with catalog focument
@@ -18,7 +18,7 @@ import synthwave.models.mongodb.base.Document;
     @Index(fields = @Field("title")),
     @Index(fields = @Field("owner"))
 })
-public class Catalog extends Document {
+public class Catalog extends DocumentExtended {
     @Version private Long version;
             
     public Catalog() {
@@ -30,7 +30,7 @@ public class Catalog extends Document {
             String title, 
             EmbeddedOwner owner
     ) {
-        super(name, title, owner);
+        super(name, title, owner, null, null);
     }
     
     public Catalog(

@@ -1,10 +1,11 @@
 package synthwave.models.mongodb.standalones;
 
+import synthwave.models.mongodb.base.DocumentExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;
 import synthwave.models.mongodb.embeddeds.EmbeddedCatalog;
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
+import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import dev.morphia.annotations.*;
-import synthwave.models.mongodb.base.Document;
 
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -23,7 +24,7 @@ import org.bson.types.ObjectId;
     @Index(fields = @Field("catalog")),
     @Index(fields = @Field("owner"))
 })
-public class Category extends Document {
+public class Category extends DocumentExtended {
     
     private EmbeddedCatalog catalog;
     private List<EmbeddedBreadcrumb> breadcrumbs;
@@ -43,7 +44,7 @@ public class Category extends Document {
             List<EmbeddedBreadcrumb> breadcrumbs,
             EmbeddedOwner owner
     ) {
-        super(id, name, title, description, owner);
+        super(id, name, title, description, owner, null, null);
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
     }
@@ -56,7 +57,38 @@ public class Category extends Document {
             List<EmbeddedBreadcrumb> breadcrumbs,
             EmbeddedOwner owner
     ) {
-        super(name, title, description, owner);
+        super(name, title, description, owner, null, null);
+        this.catalog = catalog;
+        this.breadcrumbs = breadcrumbs;
+    }
+    
+    public Category(
+            ObjectId id, 
+            String name, 
+            String title, 
+            String description,
+            EmbeddedCatalog catalog,
+            List<EmbeddedBreadcrumb> breadcrumbs,
+            EmbeddedOwner owner,
+            List<EmbeddedProperty> profile,
+            List<EmbeddedProperty> properties
+    ) {
+        super(id, name, title, description, owner, profile, properties);
+        this.catalog = catalog;
+        this.breadcrumbs = breadcrumbs;
+    }
+    
+    public Category(
+            String name, 
+            String title, 
+            String description,
+            EmbeddedCatalog catalog,
+            List<EmbeddedBreadcrumb> breadcrumbs,
+            EmbeddedOwner owner,
+            List<EmbeddedProperty> profile,
+            List<EmbeddedProperty> properties
+    ) {
+        super(name, title, description, owner, profile, properties);
         this.catalog = catalog;
         this.breadcrumbs = breadcrumbs;
     }

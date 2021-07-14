@@ -1,4 +1,4 @@
-package synthwave.repositories.mongodb.base;
+package synthwave.repositories.mongodb.childs;
 
 import platform.exceptions.DataException;
 import synthwave.filters.UsersFilter;
@@ -11,7 +11,7 @@ import org.bson.types.ObjectId;
  * Abstract class with additional method for user datasource
  * @author small-entropy
  */
-public abstract class BaseChildUserRepository extends  UsersRepository {
+public abstract class BaseChildUserRepository extends UsersRepository {
     
     /**
      * Constructor for datasouce

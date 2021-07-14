@@ -1,9 +1,9 @@
 package synthwave.services.core;
 
-import synthwave.dto.UserPropertyDTO;
+import synthwave.dto.PropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.repositories.mongodb.v1.ProfileRepository;
+import synthwave.repositories.mongodb.v1.UserProfileRepository;
 import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
@@ -18,12 +18,12 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreUserProfileService 
-        extends BaseDocumentService<ProfileRepository> {
+        extends BaseDocumentService<UserProfileRepository> {
     
     public CoreUserProfileService(Datastore datastore, List<String> blacList) {
         super(
                 datastore,
-                new ProfileRepository(datastore, blacList),
+                new UserProfileRepository(datastore, blacList),
                 new String[] {},
                 new String[] {},
                 new String[] {}
@@ -52,11 +52,11 @@ public abstract class CoreUserProfileService
     public EmbeddedProperty createUserProperty( Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
-        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+        PropertyDTO propertyDTO = PropertyDTO.build(
                 request, 
-                UserPropertyDTO.class
+                PropertyDTO.class
         ); 
-        return getRepository().createUserProperty(userId, userPropertyDTO);
+        return getRepository().createUserProperty(userId, propertyDTO);
     }
     
     /**
@@ -97,14 +97,14 @@ public abstract class CoreUserProfileService
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
-        UserPropertyDTO userPropertyDTO = UserPropertyDTO.build(
+        PropertyDTO propertyDTO = PropertyDTO.build(
                 request, 
-                UserPropertyDTO.class
+                PropertyDTO.class
         );
         return getRepository().updateUserProperty(
                 propertyId, 
                 userId, 
-                userPropertyDTO
+                propertyDTO
         );
 
     }

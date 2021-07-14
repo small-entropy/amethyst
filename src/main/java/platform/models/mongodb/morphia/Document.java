@@ -1,8 +1,7 @@
-package synthwave.models.mongodb.base;
+package platform.models.mongodb.morphia;
 
 import synthwave.models.mongodb.embeddeds.EmbeddedOwner;
 import org.bson.types.ObjectId;
-import platform.models.mongodb.morphia.Standalone;
 
 /**
  * Abstract class for Amethyst abstract document
@@ -73,7 +72,7 @@ public abstract class Document extends Standalone {
         this.name = name;
         this.title = title;
         this.description = description;
-        this.owner = owner;
+        this.owner = owner;;
     }
     
     /**

@@ -15,6 +15,7 @@ public class CompanyDTO extends BaseDTO {
     private String description;
     private User owner;
     private List<EmbeddedProperty> profile;
+    private List<EmbeddedProperty> properties;
 
     public CompanyDTO() {}
 
@@ -23,14 +24,24 @@ public class CompanyDTO extends BaseDTO {
             String title, 
             String description, 
             User owner, 
-            List<EmbeddedProperty> profile
+            List<EmbeddedProperty> profile,
+            List<EmbeddedProperty> properties
     ) {
         this.name = name;
         this.title = title;
         this.description = description;
         this.owner = owner;
         this.profile = profile;
+        this.properties = properties;
     }
+    
+    public List<EmbeddedProperty> getProperties() {
+		return properties;
+	}
+    
+    public void setProperties(List<EmbeddedProperty> properties) {
+		this.properties = properties;
+	}
 
     public String getDescription() {
         return description;

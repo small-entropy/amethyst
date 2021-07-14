@@ -41,7 +41,8 @@ public class CompaniesRepository
                 companyDTO.getTitle(),
                 companyDTO.getDescription(),
                 owner,
-                companyDTO.getProfile()
+                companyDTO.getProfile(),
+                companyDTO.getProperties()
         );
         // Save company document in database
         save(company);
