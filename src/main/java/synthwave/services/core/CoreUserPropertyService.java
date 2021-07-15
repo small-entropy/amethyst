@@ -3,7 +3,7 @@ package synthwave.services.core;
 import synthwave.dto.PropertyDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.repositories.mongodb.v1.PropertiesRepository;
+import synthwave.repositories.mongodb.v1.UserPropertiesRepository;
 import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
@@ -16,12 +16,12 @@ import spark.Request;
  * Base user properties service
  */
 public abstract class CoreUserPropertyService 
-        extends BaseDocumentService<PropertiesRepository> {
+        extends BaseDocumentService<UserPropertiesRepository> {
     
     public CoreUserPropertyService(Datastore datastore, List<String> blaclist) {
         super(
                 datastore,
-                new PropertiesRepository(datastore, blaclist),
+                new UserPropertiesRepository(datastore, blaclist),
                 new String[] {},
                 new String[] {},
                 new String[] {}
@@ -52,7 +52,7 @@ public abstract class CoreUserPropertyService
                 request, 
                 PropertyDTO.class
         );
-        return getRepository().createUserProperty(userId, propertyDTO);
+        return getRepository().createProperty(userId, propertyDTO);
     }
 
     /**
@@ -64,7 +64,7 @@ public abstract class CoreUserPropertyService
     protected List<EmbeddedProperty> getUserProperties(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
-        return getRepository().getList(userId);
+        return getRepository().getPropertiesList(userId);
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class CoreUserPropertyService
     ) throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
-        return getRepository().getUserPropertyById(propertyId, userId);
+        return getRepository().getDocumentPropertyByEntityIdAndId(propertyId, userId);
 
     }
 
@@ -96,7 +96,7 @@ public abstract class CoreUserPropertyService
         );
         ObjectId propertyId = ParamsManager.getPropertyId(request);
         ObjectId userId = ParamsManager.getUserId(request);
-        return getRepository().updateUserProperty(
+        return getRepository().updateProperty(
                 propertyId, 
                 userId, 
                 propertyDTO

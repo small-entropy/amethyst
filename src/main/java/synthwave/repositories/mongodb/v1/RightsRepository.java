@@ -1,9 +1,9 @@
 package synthwave.repositories.mongodb.v1;
 
 import synthwave.dto.UserRightDTO;
+import synthwave.filters.UsersFilter;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.childs.BaseChildUserRepository;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.utils.helpers.Searcher;
 import dev.morphia.Datastore;
@@ -15,7 +15,7 @@ import org.bson.types.ObjectId;
  * Class for user datasource
  * @author small-entory
  */
-public class RightsRepository extends BaseChildUserRepository {
+public class RightsRepository extends UsersRepository {
     
     private final List<String> blackList;
     
@@ -180,5 +180,23 @@ public class RightsRepository extends BaseChildUserRepository {
         
         save(user);
         return right;
+    }
+    
+    /**
+     * Method for get full user document
+     * @param userId user id from request params
+     * @return user document
+     * @throws DataException throw if can not find list of user properties
+     */
+    public User getUserDocument(ObjectId userId) throws DataException {
+        String[] excludes = new String[]{};
+        UsersFilter filter = new UsersFilter(userId, excludes);
+        User user = findOneById(filter);
+        if (user != null) {
+            return user;
+        } else {
+            Error error = new Error("Can not find user by id from request");
+            throw new DataException("NotFound", error);
+        }
     }
 }

@@ -6,7 +6,6 @@ import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.services.core.CoreRightService;
-import synthwave.utils.helpers.Comparator;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
@@ -29,18 +28,11 @@ public class UserRightService extends CoreRightService {
             String right,
             String action
     ) throws DataException, AccessException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal()
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return updateRight(request);
         } else {
-            String message = (isTrusted) 
-                    ? "Has not rights to create right document for own user document"
-                    : "Has not rughts to reate right document for other user document";
-            Error error = new Error(message);
+            Error error = new Error("Has not rights to create right document for user document");
             throw new AccessException("CanNotCreate", error);
         }
     }
@@ -50,18 +42,11 @@ public class UserRightService extends CoreRightService {
             String right,
             String action
     ) throws DataException, AccessException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal() 
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return deleteRights(request);
         } else {
-            String message = (isTrusted) 
-                    ? "Has not rights to create right document for own user document"
-                    : "Has not rughts to reate right document for other user document";
-            Error error = new Error(message);
+            Error error = new Error("Has not rights to create right document for user document");
             throw new AccessException("CanNotCreate", error);
         }
     }
@@ -71,18 +56,11 @@ public class UserRightService extends CoreRightService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal() 
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return createUserRight(request);
         } else {
-            String message = (isTrusted) 
-                    ? "Has not rights to create right document for own user document"
-                    : "Has not rughts to reate right document for other user document";
-            Error error = new Error(message);
+            Error error = new Error("Has not rights to create right document for user document");
             throw new AccessException("CanNotCreate", error);
         }
     }
@@ -99,17 +77,11 @@ public class UserRightService extends CoreRightService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted)
-                ? rule.isMyGlobal() : rule.isOtherGlobal();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return getUserRights(request);
         } else {
-            String message = (isTrusted)
-                    ? "Has not rights for read own private fields"
-                    : "HAs not rights for read other private fields";
-            Error error = new Error(message);
+            Error error = new Error("Has not rights for read private fields");
             throw new AccessException("CanNotRead", error);
         }
     }
@@ -127,19 +99,17 @@ public class UserRightService extends CoreRightService {
             String right,
             String action
     ) throws DataException, TokenException, AccessException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted)
-                ? rule.isMyGlobal()
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return getUserRightById(request);
         } else {
-            String message = (isTrusted)
-                    ? "Has not rights for read own private fields"
-                    : "Has not rights for read other private fields";
-            Error error = new Error(message);
+            Error error = new Error("Has not rights for read private fields");
             throw new AccessException("CanNotRead", error);
         }
     }
+    
+    @Override
+    protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
+		return (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+	}
 }

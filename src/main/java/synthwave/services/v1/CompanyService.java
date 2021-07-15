@@ -71,10 +71,7 @@ public class CompanyService extends CoreCompanyService {
             String action
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted)
-                ? rule.isMyGlobal()
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasGlobalAccess(request, rule);
         if (hasAccess) {
             ObjectId ownerId = ParamsManager.getUserId(request);
             Company company = createCompany(
@@ -134,9 +131,7 @@ public class CompanyService extends CoreCompanyService {
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted)
-                ? rule.isMyPrivate()
-                : rule.isOtherPrivate();
+        boolean hasAccess = checkHasAccess(rule, isTrusted);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId companyId = ParamsManager.getCompanyId(request);
@@ -169,8 +164,7 @@ public class CompanyService extends CoreCompanyService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean hasAccess = RightManager.chechAccess(request, rule);
+        boolean hasAccess = checkHasGlobalAccess(request, right, action);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId companyId = ParamsManager.getCompanyId(request);
@@ -180,5 +174,4 @@ public class CompanyService extends CoreCompanyService {
             throw new AccessException("CanNotDelete", error);
         }
     }
-
 }

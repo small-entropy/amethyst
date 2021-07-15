@@ -65,9 +65,7 @@ public class CategoryService extends CoreCategoryService {
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal() 
-                : rule.isOtherGlobal();
+        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId catalogId = ParamsManager.getCatalogId(request);
@@ -169,9 +167,7 @@ public class CategoryService extends CoreCategoryService {
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
+        boolean hasAccess = checkHasAccess(rule, isTrusted);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId categoryId = ParamsManager.getCategoryId(request);
@@ -198,11 +194,7 @@ public class CategoryService extends CoreCategoryService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal() 
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasGlobalAccess(request, right, action); 
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId categoryId = ParamsManager.getCategoryId(request);

@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package synthwave.repositories.mongodb.v1;
 
 import synthwave.filters.UsersFilter;
@@ -9,10 +14,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- * Class of repository for profile documents
+ * Class of source for user properties documents
  * @author small-entropy
  */
-public class UserProfileRepository 
+public class UserPropertiesRepository 
 	extends BasePropertyRepository<User, UsersFilter, UsersRepository> {
     
     /**
@@ -20,9 +25,8 @@ public class UserProfileRepository
      * @param datastore Morphia datastore object
      * @param blaclList blaclist for profile documents
      */
-    public UserProfileRepository(Datastore datastore, List<String> blacklist) {
-    	super("profile", blacklist, new UsersRepository(datastore));
-    	
+    public UserPropertiesRepository(Datastore datastore, List<String> blaclList) {
+        super("properties", blaclList, new UsersRepository(datastore));
     }
     
     @Override
@@ -35,4 +39,4 @@ public class UserProfileRepository
     public void save(User entity) {
     	this.getRepository().save(entity);
     }
-}
+}   

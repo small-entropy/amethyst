@@ -84,10 +84,7 @@ public class TagService extends CoreTagService {
             String action
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal() 
-                : rule.isOtherGlobal();
+        boolean hasAccess = checkHasGlobalAccess(request, rule);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             Tag tag = createTag(userId, request);
@@ -134,10 +131,7 @@ public class TagService extends CoreTagService {
             String action
     ) throws AccessException, DataException {
         RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
+        boolean hasAccess = checkHasAccess(request, rule);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId tagId = ParamsManager.getTagId(request);
@@ -164,8 +158,7 @@ public class TagService extends CoreTagService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean hasAccess = RightManager.chechAccess(request, rule);
+        boolean hasAccess = checkHasGlobalAccess(request, right, action);
         if (hasAccess) {
             ObjectId userId = ParamsManager.getUserId(request);
             ObjectId tagId = ParamsManager.getTagId(request);
@@ -174,5 +167,10 @@ public class TagService extends CoreTagService {
             Error error = new Error("Has no access to delete tag document");
             throw new AccessException("CanNotDelete", error);
         }
+    }
+    
+    @Override
+    protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
+    	return  (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
     }
 }

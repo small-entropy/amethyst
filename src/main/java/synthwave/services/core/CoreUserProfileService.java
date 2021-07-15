@@ -56,7 +56,7 @@ public abstract class CoreUserProfileService
                 request, 
                 PropertyDTO.class
         ); 
-        return getRepository().createUserProperty(userId, propertyDTO);
+        return getRepository().createProperty(userId, propertyDTO);
     }
     
     /**
@@ -70,20 +70,20 @@ public abstract class CoreUserProfileService
             throws DataException {
         // Get user ID param from request URL
         ObjectId userId = ParamsManager.getUserId(request);
-        return getRepository().getList(userId);
+        return getRepository().getPropertiesList(userId);
     }
     
     /**
      * Method for get user profile property by id
      * @param request Spark request object
      * @return founded user property
-     * @throws DataException throw if con not be found user or property document
+     * @throws DataException throw if can't be found user or property document
      */
     public EmbeddedProperty getUserProfilePropertyById(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
-        return getRepository().getUserPropertyById(propertyId, userId);
+        return getRepository().getDocumentPropertyByEntityIdAndId(propertyId, userId);
     }
     
     /**
@@ -101,7 +101,7 @@ public abstract class CoreUserProfileService
                 request, 
                 PropertyDTO.class
         );
-        return getRepository().updateUserProperty(
+        return getRepository().updateProperty(
                 propertyId, 
                 userId, 
                 propertyDTO

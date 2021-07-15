@@ -1,12 +1,10 @@
 package synthwave.services.v1;
 // Import user model (class)
-import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.services.core.CoreUserPropertyService;
-import synthwave.utils.helpers.Comparator;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;
@@ -39,24 +37,11 @@ public class UserPropertyService extends CoreUserPropertyService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        // Compare token ID in token and in params
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        // If id in token and id in params equals - get rule value for user own private fields.
-        // If id in token and id in params not equals - get rule value for user other private fields.
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
-        // Check user access on create private fields.
-        // If user has access to create private fields - try do it.
-        // If user has not access to create private fields - throw exception.
-        if (hasAccess) {
+    	boolean hasAccess = checkHasAccess(request, right, action);
+    	if (hasAccess) {
             return createUserProperty(request);
         } else {
-            String message = (isTrusted)
-                    ? "Can crate user property for current user"
-                    : "Can create user property for user";
-            Error error = new Error(message);
+            Error error = new Error("Can create user property for user");
             throw new AccessException("CanNotCreate", error);
         }
     }
@@ -74,24 +59,11 @@ public class UserPropertyService extends CoreUserPropertyService {
             String right,
             String action
     ) throws TokenException, DataException, AccessException {
-        RuleDTO rule = getRule(request, right, action);
-        // Compare token ID in token and in params
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        // If id in token and id in params equals - get rule value for user own private fields.
-        // If id in token and id in params not equals - get rule value for user other private fields.
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
-        // Check user access on create private fields.
-        // If user has access to create private fields - try do it.
-        // If user has not access to create private fields - throw exception.
+    	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return getUserProperties(request);
         } else {
-            String message = (isTrusted)
-                    ? "Can not rights for read own private fields"
-                    : "Can not rights for read other private fields";
-            Error error = new Error(message);
+            Error error = new Error("Can not rights for read private fields");
             throw new AccessException("CanNotRead", error);
         }
     }
@@ -108,24 +80,11 @@ public class UserPropertyService extends CoreUserPropertyService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        // Compare token ID in token and in params
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        // If id in token and id in params equals - get rule value for user own private fields.
-        // If id in token and id in params not equals - get rule value for user other private fields.
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
-        // Check user access on create private fields.
-        // If user has access to create private fields - try do it.
-        // If user has not access to create private fields - throw exception.
+    	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return getUserPropertyById(request);
         } else {
-            String message = (isTrusted)
-                    ? "Can not rights for read own private fields"
-                    : "Can not rights for read other private fields";
-            Error error = new Error(message);
+            Error error = new Error("Can not rights for read private fields");
             throw new AccessException("CanNotRead", error);
         }
     }
@@ -142,11 +101,7 @@ public class UserPropertyService extends CoreUserPropertyService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
+    	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return updateUserProperty(request);
         } else {
@@ -167,11 +122,7 @@ public class UserPropertyService extends CoreUserPropertyService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPrivate() 
-                : rule.isOtherPrivate();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return deleteUserProperty(request);
         } else {

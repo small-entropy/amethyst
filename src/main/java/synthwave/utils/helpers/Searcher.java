@@ -18,7 +18,7 @@ public class Searcher {
      * @param properties list of user properties
      * @return user property
      */
-    public static EmbeddedProperty getUserPropertyByIdFromList(
+    public static EmbeddedProperty getPropertyByIdFromList(
             ObjectId propertyId, 
             List<EmbeddedProperty> properties
     ) {

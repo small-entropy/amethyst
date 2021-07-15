@@ -5,6 +5,7 @@ import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;
 import synthwave.utils.access.RightManager;
+import synthwave.utils.helpers.Comparator;
 import dev.morphia.Datastore;
 import org.bson.types.ObjectId;
 import spark.Request;
@@ -17,6 +18,40 @@ public abstract class BaseDocumentService <R> extends BaseService<R> {
 	
 	/** Property with repository for work with users data */
 	UsersRepository usersRepository;
+	
+	public boolean checkHasAccess(Request request, String right, String action) {
+		RuleDTO rule = getRule(request, right, action);
+		return checkHasAccess(request, rule);
+	}
+	
+	public boolean checkHasAccess(Request request, RuleDTO rule) {
+		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+		return checkHasAccess(rule, isTrusted);
+	}
+	
+	public boolean checkHasAccess(RuleDTO rule, boolean isTrusted) {
+		boolean hasAccess;
+		if (rule != null) {
+			 return checkExistHasAccess(rule, isTrusted);
+		} else {
+			hasAccess = false;
+		}
+		return hasAccess;
+	}
+	
+	public boolean checkHasGlobalAccess(Request request, String right, String action) {
+		RuleDTO rule = getRule(request, right, action);
+        return  checkHasGlobalAccess(request, rule);
+	}
+	
+	public boolean checkHasGlobalAccess(Request request, RuleDTO rule) {
+		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+        return (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
+	}
+	
+	protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
+		return (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
+	}
 	
 	/**
 	 * Default constructor for create base document service. Create instance 

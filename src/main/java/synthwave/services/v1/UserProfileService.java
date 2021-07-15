@@ -58,11 +58,7 @@ public class UserProfileService extends CoreUserProfileService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPublic() 
-                : rule.isOtherPublic();
+    	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return updateUserProperty(request);
         } else {
@@ -83,11 +79,7 @@ public class UserProfileService extends CoreUserProfileService {
             String right,
             String action
     ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyPublic() 
-                : rule.isOtherPublic();
+        boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
             return deleteUserProfileProperty(request);
         } else {
@@ -95,4 +87,9 @@ public class UserProfileService extends CoreUserProfileService {
             throw new AccessException("CanNotDelete", error);
         }
     }
+    
+    @Override
+    protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
+		return (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
+	}
 }
