@@ -76,7 +76,7 @@ public abstract class CoreCatalogProfileService
 	 * @return founded catalog profile
 	 * @throws DataException throw if can't be found catalog
 	 */
-	public List<EmbeddedProperty> getProfile(Request request)
+	public List<EmbeddedProperty> getProperties(Request request)
 		throws DataException {
 		ObjectId catalogId = ParamsManager.getCategoryId(request);
 		return getRepository().getPropertiesList(catalogId);
