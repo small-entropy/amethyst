@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.users;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.services.core.CoreUserProfileService;
+import synthwave.services.core.users.CoreUserProfileService;
 import synthwave.utils.helpers.Comparator;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -13,6 +13,8 @@ import spark.Request;
 
 /**
  * Class controller for work with user profile properties
+ * @author small-entropy
+ * @version 1
  */
 public class UserProfileService extends CoreUserProfileService {
     
@@ -31,7 +33,7 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws DataException throw if user or property can not found
      * @throws TokenException throw if token not corect or not send
      */
-    public EmbeddedProperty createUserProfileProperty(Request request) 
+    public EmbeddedProperty createUserProperty(Request request) 
             throws DataException, TokenException {
         // Check equals id from request url & id from send token
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
@@ -60,7 +62,7 @@ public class UserProfileService extends CoreUserProfileService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return updateUserProperty(request);
+            return updateProperty(request);
         } else {
             Error error = new Error("Has no access to update user property");
             throw new AccessException("CanNotUpdate", error);
@@ -74,14 +76,14 @@ public class UserProfileService extends CoreUserProfileService {
      * @throws AccessException throw if user hasn't rigth to remove profile proeprty document
      * @throws DataException  throw if user or property can not be found
      */
-    public List<EmbeddedProperty> deleteProfileProperty(
+    public List<EmbeddedProperty> deleteUserProperty(
             Request request,
             String right,
             String action
     ) throws AccessException, DataException {
         boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return deleteUserProfileProperty(request);
+            return deleteProperty(request);
         } else {
             Error error = new Error("Has no accesss to delete user property");
             throw new AccessException("CanNotDelete", error);

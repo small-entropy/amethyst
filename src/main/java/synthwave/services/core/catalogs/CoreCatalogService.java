@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.catalogs;
 
 import synthwave.dto.CatalogDTO;
 import platform.exceptions.DataException;

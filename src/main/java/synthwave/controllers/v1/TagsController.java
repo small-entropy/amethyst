@@ -2,13 +2,14 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.TagsMessages;
 import synthwave.models.mongodb.standalones.Tag;
+import synthwave.services.v1.tags.TagService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import static spark.Spark.*;
-import synthwave.services.v1.TagService;
+
 import java.util.List;
 
 /**

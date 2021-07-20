@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.catalogs;
 
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.services.core.CoreCatalogService;
+import synthwave.services.core.catalogs.CoreCatalogService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
 import synthwave.utils.access.RightManager;

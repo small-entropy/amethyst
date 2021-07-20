@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.users;
 // Import models
 import platform.dto.RuleDTO;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.standalones.User;
-import synthwave.services.core.CoreUserService;
+import synthwave.services.core.users.CoreUserService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
 import platform.utils.helpers.QueryManager;

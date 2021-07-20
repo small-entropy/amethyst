@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.cateories;
 
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Category;
-import synthwave.services.core.CoreCategoryService;
+import synthwave.services.core.categories.CoreCategoryService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;

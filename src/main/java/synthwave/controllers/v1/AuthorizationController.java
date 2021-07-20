@@ -2,11 +2,11 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.AuthorizationMessages;
 import synthwave.models.mongodb.standalones.User;
+import synthwave.services.v1.users.AuthorizationService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.helpers.HeadersUtils;
 import platform.utils.responses.SuccessResponse;
-import synthwave.services.v1.AuthorizationService;
 import platform.utils.transformers.JsonTransformer;
 import spark.Response;
 import dev.morphia.Datastore;

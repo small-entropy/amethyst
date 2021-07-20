@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.tags;
 
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Tag;
-import synthwave.services.core.CoreTagService;
+import synthwave.services.core.tags.CoreTagService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
 import synthwave.utils.access.RightManager;

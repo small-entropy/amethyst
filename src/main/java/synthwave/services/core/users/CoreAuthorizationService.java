@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.users;
 
 import platform.dto.RuleDTO;
 import synthwave.dto.UserDTO;

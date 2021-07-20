@@ -1,11 +1,11 @@
-package synthwave.services.v1;
+package synthwave.services.v1.users;
 
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
-import synthwave.services.core.CoreRightService;
+import synthwave.services.core.users.CoreRightService;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;

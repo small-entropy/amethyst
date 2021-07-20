@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.categories;
 
 import synthwave.dto.CategoryDTO;
 import platform.exceptions.DataException;
@@ -9,6 +9,7 @@ import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.CatalogsRepository;
 import synthwave.repositories.mongodb.v1.CategoriesRepository;
 import synthwave.services.base.BaseDocumentService;
+import synthwave.services.core.catalogs.CoreCatalogService;
 import platform.utils.helpers.ParamsManager;
 import platform.utils.helpers.QueryManager;
 import dev.morphia.Datastore;

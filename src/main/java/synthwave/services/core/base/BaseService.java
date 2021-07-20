@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.base;
 
 import platform.dto.RuleDTO;
 import synthwave.utils.access.RightManager;
@@ -6,7 +6,7 @@ import java.util.Arrays;
 import spark.Request;
 
 
-public abstract class CoreService {
+public abstract class BaseService {
     
     protected static String[] getExcludes(
             Request request,

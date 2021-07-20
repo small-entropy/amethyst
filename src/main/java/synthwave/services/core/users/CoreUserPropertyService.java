@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.users;
 
 import synthwave.dto.PropertyDTO;
 import platform.exceptions.DataException;

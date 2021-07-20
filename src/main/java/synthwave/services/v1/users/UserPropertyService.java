@@ -1,10 +1,10 @@
-package synthwave.services.v1;
+package synthwave.services.v1.users;
 // Import user model (class)
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.services.core.CoreUserPropertyService;
+import synthwave.services.core.users.CoreUserPropertyService;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;

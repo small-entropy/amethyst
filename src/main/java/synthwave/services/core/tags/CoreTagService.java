@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.tags;
 
 import synthwave.dto.TagDTO;
 import platform.exceptions.DataException;

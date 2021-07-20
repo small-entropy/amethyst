@@ -2,10 +2,10 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.CompaniesMessages;
 import synthwave.models.mongodb.standalones.Company;
+import synthwave.services.v1.companies.CompanyService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
-import synthwave.services.v1.CompanyService;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;

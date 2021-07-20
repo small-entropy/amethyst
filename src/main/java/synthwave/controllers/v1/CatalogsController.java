@@ -2,10 +2,10 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.CatalogsMessages;
 import synthwave.models.mongodb.standalones.Catalog;
+import synthwave.services.v1.catalogs.CatalogService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
-import synthwave.services.v1.CatalogService;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;

@@ -5,8 +5,8 @@ import platform.controllers.BaseController;
 import platform.exceptions.DataException;
 import synthwave.controllers.messages.UserProfileMessages;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
+import synthwave.services.v1.users.UserProfileService;
 import platform.utils.responses.SuccessResponse;
-import synthwave.services.v1.UserProfileService;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;
@@ -40,7 +40,7 @@ public class UserProfileController
 	 */
 	protected void getUserProfileByUserIdRoute() {
         get("/:user_id/profile", (request, response)-> {
-            List<EmbeddedProperty> profile = getService().getUserProfile(
+            List<EmbeddedProperty> profile = getService().getProperties(
             		request
             );
             return new SuccessResponse<>(
@@ -55,7 +55,7 @@ public class UserProfileController
 	 */
 	protected void createProfilePropertyRoute() {
 		post("/:user_id/profile", (request, response) -> {
-            EmbeddedProperty property = getService().createUserProfileProperty(
+            EmbeddedProperty property = getService().createUserProperty(
             		request
             );
             return new SuccessResponse<>(
@@ -70,7 +70,7 @@ public class UserProfileController
 	 */
 	protected void getProfilPropertyByUserIdAndIdRoute() {
 		get("/:user_id/profile/:property_id", (request, response) -> {
-            EmbeddedProperty property = getService().getUserProfilePropertyById(
+            EmbeddedProperty property = getService().getPropertyById(
                     request
             );
             if (property != null) {
@@ -107,7 +107,7 @@ public class UserProfileController
 	 */
 	protected void deleteProfilePropertyRoute() {
 		delete("/:user_id/profile/:property_id", (request, response) -> {
-            List<EmbeddedProperty> profile = getService().deleteProfileProperty(
+            List<EmbeddedProperty> profile = getService().deleteUserProperty(
                     request, 
                     getRight(), 
                     getDeleteActionName()

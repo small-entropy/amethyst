@@ -20,7 +20,10 @@ public class UserProfileRepository
      * @param datastore Morphia datastore object
      * @param blaclList blaclist for profile documents
      */
-    public UserProfileRepository(Datastore datastore, List<String> blacklist) {
+    public UserProfileRepository(
+    		Datastore datastore, 
+    		List<String> blacklist
+    ) {
     	super("profile", blacklist, new UsersRepository(datastore));
     	
     }

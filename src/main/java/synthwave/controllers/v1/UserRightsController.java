@@ -2,10 +2,10 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.UserRightsMessages;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
+import synthwave.services.v1.users.UserRightService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;
-import synthwave.services.v1.UserRightService;
 import platform.utils.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import java.util.List;

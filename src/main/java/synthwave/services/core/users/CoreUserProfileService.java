@@ -1,4 +1,4 @@
-package synthwave.services.core;
+package synthwave.services.core.users;
 
 import synthwave.dto.PropertyDTO;
 import platform.exceptions.DataException;
@@ -20,7 +20,16 @@ import spark.Request;
 public abstract class CoreUserProfileService 
         extends BaseDocumentService<UserProfileRepository> {
     
-    public CoreUserProfileService(Datastore datastore, List<String> blacList) {
+	/**
+	 * Default constructor for core user profile service. Create
+	 * instance by datastore & blacklist
+	 * @param datastore Morphia datastore object
+	 * @param blacList blaclist
+	 */
+    public CoreUserProfileService(
+    		Datastore datastore, 
+    		List<String> blacList
+    ) {
         super(
                 datastore,
                 new UserProfileRepository(datastore, blacList),
@@ -44,12 +53,13 @@ public abstract class CoreUserProfileService
     }
     
     /**
-     * Method for create user by reqeuet body
+     * Method for create user by request body
      * @param request Spark request object
      * @return created user property
-     * @throws DataException throw if con not be found user or property document
+     * @throws DataException throw if can't be found user or 
+     * 						 property document
      */
-    public EmbeddedProperty createUserProperty( Request request) 
+    public EmbeddedProperty createProperty(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         PropertyDTO propertyDTO = PropertyDTO.build(
@@ -66,7 +76,7 @@ public abstract class CoreUserProfileService
      * @throws DataException throw if con not be found user or profile
      *                       field is empty
      */
-    public List<EmbeddedProperty> getUserProfile(Request request) 
+    public List<EmbeddedProperty> getProperties(Request request) 
             throws DataException {
         // Get user ID param from request URL
         ObjectId userId = ParamsManager.getUserId(request);
@@ -79,7 +89,7 @@ public abstract class CoreUserProfileService
      * @return founded user property
      * @throws DataException throw if can't be found user or property document
      */
-    public EmbeddedProperty getUserProfilePropertyById(Request request) 
+    public EmbeddedProperty getPropertyById(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
@@ -91,9 +101,9 @@ public abstract class CoreUserProfileService
      * @param request Spark request object
      * @param profileRepository profile datasource object
      * @return updated property document
-     * @throws DataException throw if con not be found user or property document
+     * @throws DataException throw if can't be found user or property document
      */
-    protected EmbeddedProperty updateUserProperty(Request request) 
+    protected EmbeddedProperty updateProperty(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
@@ -111,12 +121,13 @@ public abstract class CoreUserProfileService
     
     /**
      * Method for delete profile user property from list by request params data
-     * @param request Spark requeset object
-     * @return actual profule value
-     * @throws DataException throw if con not be found user or property document
+     * @param request Spark request object
+     * @return actual profile value
+     * @throws DataException throw if can't be found user or property document
      */
-    protected List<EmbeddedProperty> deleteUserProfileProperty(Request request) 
-            throws DataException {
+    protected List<EmbeddedProperty> deleteProperty(
+    		Request request
+    ) throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId propertyId = ParamsManager.getPropertyId(request);
         return getRepository().removeProperty(propertyId, userId);
