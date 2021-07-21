@@ -39,7 +39,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
     	if (hasAccess) {
-            return createUserProperty(request);
+            return creteaEmbeddedProperty(request);
         } else {
             Error error = new Error("Can create user property for user");
             throw new AccessException("CanNotCreate", error);
@@ -61,7 +61,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws TokenException, DataException, AccessException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return getUserProperties(request);
+            return getEmbeddedProperties(request);
         } else {
             Error error = new Error("Can not rights for read private fields");
             throw new AccessException("CanNotRead", error);
@@ -82,7 +82,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return getUserPropertyById(request);
+            return getEmbeddedProperty(request);
         } else {
             Error error = new Error("Can not rights for read private fields");
             throw new AccessException("CanNotRead", error);
@@ -103,7 +103,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return updateUserProperty(request);
+            return updatEmbeddedProperty(request);
         } else {
             Error error = new Error("Has no access to update user properties");
             throw new AccessException("CanNotUpdate", error);
@@ -124,7 +124,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
         boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return deleteUserProperty(request);
+            return deletEmbeddedProperty(request);
         } else {
             Error error = new Error("Has no access to delete user property");
             throw new AccessException("CanNotDelete", error);

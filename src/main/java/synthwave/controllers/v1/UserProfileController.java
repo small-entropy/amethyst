@@ -40,7 +40,7 @@ public class UserProfileController
 	 */
 	protected void getUserProfileByUserIdRoute() {
         get("/:user_id/profile", (request, response)-> {
-            List<EmbeddedProperty> profile = getService().getProperties(
+            List<EmbeddedProperty> profile = getService().getEmbeddedProperties(
             		request
             );
             return new SuccessResponse<>(
@@ -70,7 +70,7 @@ public class UserProfileController
 	 */
 	protected void getProfilPropertyByUserIdAndIdRoute() {
 		get("/:user_id/profile/:property_id", (request, response) -> {
-            EmbeddedProperty property = getService().getPropertyById(
+            EmbeddedProperty property = getService().getEmbeddedProperty(
                     request
             );
             if (property != null) {

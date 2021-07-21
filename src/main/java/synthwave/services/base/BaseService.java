@@ -8,7 +8,7 @@ import spark.Request;
  * Base class to create service for server service
  * @author small-entropy
  */
-public abstract class BaseService <R> {
+public abstract class BaseService <R>  {
 	
 	/** Service repository */
 	R repository;
