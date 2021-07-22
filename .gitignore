@@ -1,0 +1,8 @@
+/target/
+/.settings/
+/bin/
+/.idea/
+.classpath
+.project
+Amethyst.*
+nbactions.*
