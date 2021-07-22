@@ -24,7 +24,7 @@ import synthwave.services.base.BaseDocumentService;
  * @param <PR> parent repository
  * @param <R>  property repository
  */
-public abstract class BasePropertyService 
+public abstract class BaseEmbeddedPropertiesService 
 	<M extends Standalone, 
 	 F extends Filter, 
 	 PR, 
@@ -39,7 +39,7 @@ public abstract class BasePropertyService
 	 * @param datastore
 	 * @param repository
 	 */
-	public BasePropertyService(
+	public BaseEmbeddedPropertiesService(
 			Datastore datastore,
 			R repository
 	) {
@@ -67,7 +67,7 @@ public abstract class BasePropertyService
 	 * @return created embedded property
 	 * @throws DataException throw if can not be found some data
 	 */
-	public EmbeddedProperty creteaEmbeddedProperty(Request request) 
+	public EmbeddedProperty createEmbeddedProperty(Request request) 
 		throws DataException {
 		ObjectId entityId = getEntityIdFromRequest(request);
 		PropertyDTO propertyDTO = PropertyDTO.build(
@@ -111,7 +111,7 @@ public abstract class BasePropertyService
 	 * @return updated embedded property
 	 * @throws DataException throw if can't be found some data
 	 */
-	public EmbeddedProperty updatEmbeddedProperty(Request request) 
+	public EmbeddedProperty updateEmbeddedProperty(Request request) 
 		throws DataException {
 		ObjectId entityId = getEntityIdFromRequest(request);
 		ObjectId propertId = ParamsManager.getPropertyId(request);

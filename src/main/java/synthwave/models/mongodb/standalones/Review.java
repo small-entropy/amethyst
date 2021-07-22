@@ -5,7 +5,6 @@
  */
 package synthwave.models.mongodb.standalones;
 
-import synthwave.models.mongodb.standalones.User;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Reference;

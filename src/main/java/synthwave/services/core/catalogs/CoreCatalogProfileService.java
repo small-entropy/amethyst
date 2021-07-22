@@ -11,14 +11,14 @@ import synthwave.filters.CatalogsFilter;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.repositories.mongodb.v1.CatalogProfileRepository;
 import synthwave.repositories.mongodb.v1.CatalogsRepository;
-import synthwave.services.core.base.BasePropertyService;
+import synthwave.services.core.base.BaseEmbeddedPropertiesService;
 
 /**
  * Base class for work with catalog profile property list
  * @author small-entropy
  */
 public abstract class CoreCatalogProfileService 
-	extends BasePropertyService<Catalog, CatalogsFilter, CatalogsRepository, CatalogProfileRepository> {
+	extends BaseEmbeddedPropertiesService<Catalog, CatalogsFilter, CatalogsRepository, CatalogProfileRepository> {
 	
 	/**
 	 * Default core catalog profile service constructor. Create 

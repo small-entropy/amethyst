@@ -210,6 +210,12 @@ public class BasePropertyRepository
 		}
 	}
 	
+	/**
+	 * Method for get entity by id
+	 * @param entityId entity id as UUID
+	 * @param excludes excludes fields
+	 * @return founded entity
+	 */
 	public M findOneById(ObjectId entityId, String[] excludes) {
 		return null;
 	}

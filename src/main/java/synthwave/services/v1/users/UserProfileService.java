@@ -41,7 +41,7 @@ public class UserProfileService extends CoreUserProfileService {
         // If ids equals - try create user property.
         // If ids not equals - return null.
         if (isTrusted) {
-            return creteaEmbeddedProperty(request);
+            return createEmbeddedProperty(request);
         } else {
             Error error = new Error("Id from request not equal id from token");
             throw new TokenException("NotEquals", error);
@@ -62,7 +62,7 @@ public class UserProfileService extends CoreUserProfileService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return updatEmbeddedProperty(request);
+            return updateEmbeddedProperty(request);
         } else {
             Error error = new Error("Has no access to update user property");
             throw new AccessException("CanNotUpdate", error);

@@ -39,7 +39,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
     	if (hasAccess) {
-            return creteaEmbeddedProperty(request);
+            return createEmbeddedProperty(request);
         } else {
             Error error = new Error("Can create user property for user");
             throw new AccessException("CanNotCreate", error);
@@ -103,7 +103,7 @@ public class UserPropertyService extends CoreUserPropertyService {
     ) throws AccessException, DataException {
     	boolean hasAccess = checkHasAccess(request, right, action);
         if (hasAccess) {
-            return updatEmbeddedProperty(request);
+            return updateEmbeddedProperty(request);
         } else {
             Error error = new Error("Has no access to update user properties");
             throw new AccessException("CanNotUpdate", error);

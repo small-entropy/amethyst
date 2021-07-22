@@ -43,7 +43,7 @@ public class CatalogProfileService extends CoreCatalogProfileService {
 	) throws DataException, TokenException {
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
 		if (isTrusted) {
-			return creteaEmbeddedProperty(request);
+			return createEmbeddedProperty(request);
 		} else {
 			Error error = new Error("Id from request not equal with id from token");
 			throw new TokenException("NotEquals", error);
@@ -64,7 +64,7 @@ public class CatalogProfileService extends CoreCatalogProfileService {
 	) throws DataException, AccessException {
 		boolean hasAccess = checkHasAccess(request, right, action);
 		if (hasAccess) {
-			return updatEmbeddedProperty(request);
+			return updateEmbeddedProperty(request);
 		} else {
 			Error error = new Error("Has no access to update catalog profile");
 			throw new AccessException("CanNotUpdate", error);

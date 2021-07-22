@@ -6,7 +6,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UserPropertiesRepository;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.services.core.base.BasePropertyService;
+import synthwave.services.core.base.BaseEmbeddedPropertiesService;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -18,7 +18,7 @@ import spark.Request;
  * Base user properties service
  */
 public abstract class CoreUserPropertyService 
-        extends BasePropertyService<User, UsersFilter, UsersRepository, UserPropertiesRepository> {
+        extends BaseEmbeddedPropertiesService<User, UsersFilter, UsersRepository, UserPropertiesRepository> {
     
     public CoreUserPropertyService(Datastore datastore, List<String> blaclist) {
         super(
