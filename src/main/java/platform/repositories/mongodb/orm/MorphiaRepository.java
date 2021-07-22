@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package platform.repositories.mongodb.orm;
 
 import platform.exceptions.DataException;
@@ -14,7 +9,6 @@ import platform.models.mongodb.morphia.Standalone;
 
 import static dev.morphia.query.experimental.filters.Filters.and;
 import static dev.morphia.query.experimental.filters.Filters.eq;
-import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 

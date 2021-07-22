@@ -5,7 +5,7 @@ package platform.utils.responses;
  */
 public class StandardMeta {
     // Count property
-    private Integer count;
+    private int count;
     // Token property
     private String token;
 
@@ -18,13 +18,24 @@ public class StandardMeta {
      * Setter for count property
      * @param count new value of count property
      */
-    public void setCount(Integer count) {
+    public void setCount(int count) {
         this.count = count;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     /**
      * Setter for token property
      * @param token new value of token property
      */
-    public void setToken(String token) { this.token = token ; }
+    public void setToken(String token) { 
+        this.token = token ; 
+    }
+
+    public String getToken() {
+        return token;
+    }
+    
 }

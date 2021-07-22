@@ -1,7 +1,6 @@
 package synthwave.repositories.mongodb.v1;
 
 import synthwave.dto.CategoryDTO;
-import platform.exceptions.DataException;
 import synthwave.filters.CategoriesFilter;
 import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;
 import synthwave.models.mongodb.embeddeds.EmbeddedCatalog;

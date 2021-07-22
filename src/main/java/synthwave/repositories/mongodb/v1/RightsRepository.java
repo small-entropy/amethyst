@@ -127,10 +127,10 @@ public class RightsRepository extends UsersRepository {
     ) throws DataException {
         User user = getUserDocument(userId);
         List<EmbeddedRight> rights = user.getRights();
-        Iterator iterator = rights.iterator();
+        Iterator<EmbeddedRight> iterator = rights.iterator();
         String toCheck = rightId.toString();
         while(iterator.hasNext()) {
-            EmbeddedRight right = (EmbeddedRight) iterator.next();
+            EmbeddedRight right = iterator.next();
             if (right.getId().equals(toCheck) &&
                     !getBlackList().contains(right.getName())) {
                 iterator.remove();

@@ -2,15 +2,12 @@ package synthwave.repositories.mongodb.base;
 
 import org.bson.types.ObjectId;
 
-import dev.morphia.Datastore;
-
 import java.util.Iterator;
 import java.util.List;
 
 import platform.exceptions.DataException;
 import platform.filters.Filter;
 import platform.models.mongodb.morphia.Standalone;
-import platform.repositories.mongodb.orm.MorphiaRepository;
 import synthwave.dto.PropertyDTO;
 import synthwave.models.mongodb.base.DocumentExtended;
 import synthwave.models.mongodb.base.StandaloneExtended;

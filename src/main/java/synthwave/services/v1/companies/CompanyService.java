@@ -7,7 +7,6 @@ import synthwave.models.mongodb.standalones.Company;
 import synthwave.services.core.companies.CoreCompanyService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
-import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

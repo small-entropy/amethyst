@@ -7,8 +7,7 @@ package synthwave.models.mongodb.standalones;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Reference;
-import dev.morphia.annotations.Version;
+
 import org.bson.types.ObjectId;
 
 /**
@@ -18,11 +17,5 @@ import org.bson.types.ObjectId;
 @Entity("reviews")
 public class Review {
     @Id
-    private ObjectId id;
-    @Version private Long version;
-    private String text;
-    @Reference
-    private Product product;
-    @Reference
-    private User author;
+    private ObjectId id;    
 }

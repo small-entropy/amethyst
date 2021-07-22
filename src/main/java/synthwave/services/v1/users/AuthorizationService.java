@@ -7,7 +7,6 @@ import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.UsersRepository;
 import synthwave.services.core.users.CoreAuthorizationService;
 import dev.morphia.Datastore;
 import spark.Request;
