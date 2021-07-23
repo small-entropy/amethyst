@@ -1,5 +1,6 @@
 package synthwave.services.core.catalogs;
 
+import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -8,6 +9,7 @@ import platform.exceptions.DataException;
 import platform.utils.helpers.ParamsManager;
 import spark.Request;
 import synthwave.filters.CatalogsFilter;
+import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.repositories.mongodb.v1.CatalogProfileRepository;
 import synthwave.repositories.mongodb.v1.CatalogsRepository;
@@ -44,5 +46,19 @@ public abstract class CoreCatalogProfileService
     @Override
 	protected ObjectId getEntityIdFromRequest(Request request) throws DataException {
 		return ParamsManager.getCatalogId(request);
+	}
+
+	/**
+	 * Static method for get default catalog profile properties
+	 * @return catalog profile default properties list 
+	 */
+	public static List<EmbeddedProperty> getDefaultProfile() {
+		long currentDateTime = System.currentTimeMillis();
+		EmbeddedProperty registered = new EmbeddedProperty(
+			"registered", 
+			currentDateTime
+		);
+		return Arrays.asList(registered);
+
 	}
 }

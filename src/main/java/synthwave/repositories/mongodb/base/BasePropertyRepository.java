@@ -14,9 +14,7 @@ import synthwave.models.mongodb.base.StandaloneExtended;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.utils.helpers.Searcher;
 
-public class BasePropertyRepository 
-	<M extends Standalone, F extends Filter, R> 
-{
+public class BasePropertyRepository<M extends Standalone, F extends Filter, R> {
 	private R repository;
 	private String field;
 	private List<String> blacklist;

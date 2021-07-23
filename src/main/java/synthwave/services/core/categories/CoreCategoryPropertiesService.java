@@ -1,0 +1,54 @@
+package synthwave.services.core.categories;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.bson.types.ObjectId;
+
+import dev.morphia.Datastore;
+import spark.Request;
+
+import platform.exceptions.DataException;
+import platform.utils.helpers.ParamsManager;
+
+import synthwave.filters.CategoriesFilter;
+import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
+import synthwave.models.mongodb.standalones.Category;
+import synthwave.repositories.mongodb.v1.CategoriesRepository;
+import synthwave.repositories.mongodb.v1.CategoryPropertiesRepository;
+import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+
+/**
+ * Class with core methods for work with category properties field
+ * @author small-entropy 
+ */
+public abstract class CoreCategoryPropertiesService 
+    extends BaseEmbeddedPropertiesService<Category, CategoriesFilter, CategoriesRepository, CategoryPropertiesRepository> {
+    
+    /**
+     * Default constructor for create category properties service
+     * @param datastore Morphia datastore object
+     * @param blacklist blacklist of fields
+     */
+    public CoreCategoryPropertiesService(
+        Datastore datastore,
+        List<String> blacklist
+    ) {
+        super(datastore, new CategoryPropertiesRepository(datastore, blacklist));
+    }
+
+    @Override 
+    protected ObjectId getEntityIdFromRequest(Request request) throws DataException {
+        return ParamsManager.getCategoryId(request);
+    }
+
+    /**
+     * Method for get default list of category properties
+     * @return list of default category properties
+     */
+    public static List<EmbeddedProperty> getDefaultCategoryProperties() {
+        int defaultCount = 0;
+        EmbeddedProperty count = new EmbeddedProperty("count", defaultCount);
+        return Arrays.asList(count);
+    }
+}

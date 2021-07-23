@@ -10,13 +10,14 @@ import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.repositories.mongodb.base.BasePropertyRepository;
 
 /**
- * Class for create instaice catalog properties repository
+ * Class for create instance catalog properties repository
+ * @author small-entropy
  */
 public class CatalogPropertiesRepository 
     extends BasePropertyRepository<Catalog, CatalogsFilter, CatalogsRepository> {
 
     /**
-     * Default constructor for catalofs properties repository
+     * Default constructor for catalogs properties repository
      * @param datastore Morphia datastore object
      * @param blacklist blacklist of fields
      */

@@ -2,7 +2,7 @@ package synthwave.controllers.v1;
 
 import synthwave.controllers.messages.CategoriesMessages;
 import synthwave.models.mongodb.standalones.Category;
-import synthwave.services.v1.cateories.CategoryService;
+import synthwave.services.v1.categories.CategoryService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
 import platform.utils.responses.SuccessResponse;

@@ -19,16 +19,35 @@ public abstract class BaseDocumentService <R> extends BaseService<R> {
 	/** Property with repository for work with users data */
 	UsersRepository usersRepository;
 	
+	/**
+	 * Method for check access to action by request, right name & action name
+	 * @param request Spark request object
+	 * @param right name of right
+	 * @param action name of action
+	 * @return result of check
+	 */
 	public boolean checkHasAccess(Request request, String right, String action) {
 		RuleDTO rule = getRule(request, right, action);
 		return checkHasAccess(request, rule);
 	}
 	
+	/**
+	 * Method for check access to action by request & rule object
+	 * @param request Spark request object
+	 * @param rule rule data transfer object
+	 * @return result of check
+	 */
 	public boolean checkHasAccess(Request request, RuleDTO rule) {
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
 		return checkHasAccess(rule, isTrusted);
 	}
 	
+	/**
+	 * Method fir check access by rule object & truested state
+	 * @param rule rule data transfer object
+	 * @param isTrusted state of trusted
+	 * @return result of check
+	 */
 	public boolean checkHasAccess(RuleDTO rule, boolean isTrusted) {
 		boolean hasAccess;
 		if (rule != null) {
@@ -39,16 +58,35 @@ public abstract class BaseDocumentService <R> extends BaseService<R> {
 		return hasAccess;
 	}
 	
+	/**
+	 * Method for check access on work with global fields
+	 * @param request Spark request object
+	 * @param right name of right
+	 * @param action name of action
+	 * @return result of check
+	 */
 	public boolean checkHasGlobalAccess(Request request, String right, String action) {
 		RuleDTO rule = getRule(request, right, action);
         return  checkHasGlobalAccess(request, rule);
 	}
 	
+	/**
+	 * Method for check access on work with global fields
+	 * @param request Spark reqeust object
+	 * @param rule rule data transfer object
+	 * @return result of check
+	 */
 	public boolean checkHasGlobalAccess(Request request, RuleDTO rule) {
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         return (isTrusted) ? rule.isMyGlobal(): rule.isOtherGlobal();
 	}
 	
+	/**
+	 * Method for get result check rule
+	 * @param rule rule data transfer object
+	 * @param isTrusted state of trusted
+	 * @return result of check
+	 */
 	protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
 		return (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
 	}

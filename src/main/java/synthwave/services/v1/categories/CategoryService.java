@@ -1,4 +1,4 @@
-package synthwave.services.v1.cateories;
+package synthwave.services.v1.categories;
 
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;

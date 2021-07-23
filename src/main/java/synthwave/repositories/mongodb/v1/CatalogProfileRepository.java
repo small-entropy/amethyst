@@ -15,19 +15,19 @@ import synthwave.repositories.mongodb.base.BasePropertyRepository;
  * @version 1
  */
 public class CatalogProfileRepository 
-	extends BasePropertyRepository<Catalog, CatalogsFilter, CatalogsRepository>{
+	extends BasePropertyRepository<Catalog, CatalogsFilter, CatalogsRepository> {
 
 	/**
 	 * Default repository constructor. Create instance by
 	 * datastore object & blacklist
 	 * @param datastore Morphia datastore object
-	 * @param blackList blacklist property
+	 * @param blacklist blacklist property
 	 */
 	public CatalogProfileRepository(
 			Datastore datastore,
-			List<String> blackList
+			List<String> blacklist
 	) {
-		super("profile", blackList, new CatalogsRepository(datastore));
+		super("profile", blacklist, new CatalogsRepository(datastore));
 	}
 	
 	@Override

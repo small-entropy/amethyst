@@ -24,10 +24,7 @@ public class CatalogPropertiesService extends CoreCatalogPropertiesService {
      * @param datastore Morphia datastore object
      */
     public CatalogPropertiesService(Datastore datastore) {
-        super(
-            datastore,
-            Arrays.asList("count")
-        );
+        super(datastore,Arrays.asList("count"));
     }
 
     /**

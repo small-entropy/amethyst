@@ -25,10 +25,7 @@ public class CatalogProfileService extends CoreCatalogProfileService {
 	 * @param datastore MOrphia datastore object
 	 */
 	public CatalogProfileService(Datastore datastore) {
-		super(
-				datastore,
-				Arrays.asList("registered")
-		);
+		super(datastore, Arrays.asList("registered"));
 	}
 	
 	/**
