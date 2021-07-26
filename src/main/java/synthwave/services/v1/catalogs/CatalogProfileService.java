@@ -1,17 +1,10 @@
 package synthwave.services.v1.catalogs;
 
 import java.util.Arrays;
-import java.util.List;
 
 import dev.morphia.Datastore;
 import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.exceptions.DataException;
-import platform.exceptions.TokenException;
-import spark.Request;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.services.core.catalogs.CoreCatalogProfileService;
-import synthwave.utils.helpers.Comparator;
 
 /**
  * Class for work with catalog profile

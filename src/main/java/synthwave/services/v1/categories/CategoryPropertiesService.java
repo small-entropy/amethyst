@@ -1,16 +1,9 @@
 package synthwave.services.v1.categories;
 
 import java.util.Arrays;
-import java.util.List;
-
-import spark.Request;
 
 import dev.morphia.Datastore;
 import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.exceptions.DataException;
-
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.services.core.categories.CoreCategoryPropertiesService;
 
 /**
