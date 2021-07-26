@@ -1,0 +1,42 @@
+package synthwave.services.core.companies;
+
+import java.util.Arrays;
+import java.util.List;
+
+import dev.morphia.Datastore;
+import synthwave.filters.CompaniesFilter;
+import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
+import synthwave.models.mongodb.standalones.Company;
+import synthwave.repositories.mongodb.v1.CompaniesRepository;
+import synthwave.repositories.mongodb.v1.CompanyPropertiesRepository;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
+
+public abstract class CoreCompanyPropertiesService 
+    extends CRUDEmbeddedPropertyService<Company, CompaniesFilter, CompaniesRepository, CompanyPropertiesRepository> {
+
+    /**
+     * Default core company properties service constructor. Create
+     * instance by database & blacklist
+     * @param datastore Modphia datastore object
+     * @param blacklist blaclist of fileds
+     */
+    public CoreCompanyPropertiesService(
+        Datastore datastore, 
+        List<String> 
+    blacklist) {
+        super(datastore, new CompanyPropertiesRepository(datastore, blacklist));
+    }
+    
+    /**
+     * Static method for get default properties for company
+     * @return default list of properties
+     */
+    public static List<EmbeddedProperty> getDefaultProperties() {
+        long currentTime = System.currentTimeMillis();
+        EmbeddedProperty created = new EmbeddedProperty(
+            "created",
+            currentTime
+        );
+        return Arrays.asList(created);
+    }
+}

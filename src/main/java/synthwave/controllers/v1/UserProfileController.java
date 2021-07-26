@@ -40,9 +40,7 @@ public class UserProfileController
 	 */
 	protected void getUserProfileByUserIdRoute() {
         get("/:user_id/profile", (request, response)-> {
-            List<EmbeddedProperty> profile = getService().getEmbeddedProperties(
-            		request
-            );
+            List<EmbeddedProperty> profile = getService().list(request);
             return new SuccessResponse<>(
             		UserProfileMessages.LIST.getMessage(), 
             		profile
@@ -55,9 +53,7 @@ public class UserProfileController
 	 */
 	protected void createProfilePropertyRoute() {
 		post("/:user_id/profile", (request, response) -> {
-            EmbeddedProperty property = getService().createUserProperty(
-            		request
-            );
+            EmbeddedProperty property = getService().create(request);
             return new SuccessResponse<>(
             		UserProfileMessages.CREATED.getMessage(), 
             		property
@@ -70,9 +66,7 @@ public class UserProfileController
 	 */
 	protected void getProfilPropertyByUserIdAndIdRoute() {
 		get("/:user_id/profile/:property_id", (request, response) -> {
-            EmbeddedProperty property = getService().getEmbeddedProperty(
-                    request
-            );
+            EmbeddedProperty property = getService().entity(request);
             if (property != null) {
                 return new SuccessResponse<>(
                 		UserProfileMessages.ENTITY.getMessage(), 
@@ -90,7 +84,7 @@ public class UserProfileController
 	 */
 	protected void updateProfilePropertyRoute() {
 		put("/:user_id/profile/:property_id", (request, response) -> {
-            EmbeddedProperty property = getService().updateUserProperty(
+            EmbeddedProperty property = getService().update(
                     request, 
                     getRight(), 
                     getUpdateActionName()
@@ -107,7 +101,7 @@ public class UserProfileController
 	 */
 	protected void deleteProfilePropertyRoute() {
 		delete("/:user_id/profile/:property_id", (request, response) -> {
-            List<EmbeddedProperty> profile = getService().deleteUserProperty(
+            List<EmbeddedProperty> profile = getService().delete(
                     request, 
                     getRight(), 
                     getDeleteActionName()

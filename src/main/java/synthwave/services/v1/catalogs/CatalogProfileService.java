@@ -25,79 +25,11 @@ public class CatalogProfileService extends CoreCatalogProfileService {
 	 * @param datastore MOrphia datastore object
 	 */
 	public CatalogProfileService(Datastore datastore) {
-		super(datastore, Arrays.asList("registered"));
-	}
-	
-	/**
-	 * Method for create catalog profile property
-	 * @param request Spark request object
-	 * @return created catalog profile property
-	 * @throws DataException throw if can't be found some data
-	 * @throws TokenException throw if send incorrect token
-	 */
-	public EmbeddedProperty createCatalogProperty(
-			Request request
-	) throws DataException, TokenException {
-		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-		if (isTrusted) {
-			return createEmbeddedProperty(request);
-		} else {
-			Error error = new Error("Id from request not equal with id from token");
-			throw new TokenException("NotEquals", error);
-		}
-	}
-	
-	/**
-	 * Method for update catalog profile property
-	 * @param request Spark request object
-	 * @param right name of right
-	 * @param action name of action
-	 * @return updated property
-	 */
-	public EmbeddedProperty updateCatalogProperty(
-			Request request,
-			String right,
-			String action
-	) throws DataException, AccessException {
-		boolean hasAccess = checkHasAccess(request, right, action);
-		if (hasAccess) {
-			return updateEmbeddedProperty(request);
-		} else {
-			Error error = new Error("Has no access to update catalog profile");
-			throw new AccessException("CanNotUpdate", error);
-		} 
-	}
-	
-	/**
-	 * Method for delete profile property
-	 * @param request Spark request object
-	 * @param right right for action
-	 * @param action action name
-	 * @return result of action
-	 * @throws AccessException throw if user han't access for delete
-	 * 							catalog profile property
-	 * @throws DataException throw if can't be found some data
-	 */
-	public List<EmbeddedProperty> deleteCatalogProperty(
-			Request request,
-			String right,
-			String action
-	) 
-		throws AccessException, DataException {
-		boolean hasAccess = checkHasAccess(request, right, action);
-		if (hasAccess) {
-			return deletEmbeddedProperty(request);
-		} else {
-			Error error = new Error("Has no access to delete catalog profile property");
-			throw new AccessException("CanNotDelete", error);
-		}
+		super(datastore, Arrays.asList("created"));
 	}
 	
 	@Override
-	protected boolean checkExistHasAccess(
-			RuleDTO rule, 
-			boolean isTrusted
-	) {
+	protected boolean checkExistHasAccess(RuleDTO rule, boolean isTrusted) {
 		return (isTrusted) ? rule.isMyPublic() : rule.isOtherPublic();
 	}
 

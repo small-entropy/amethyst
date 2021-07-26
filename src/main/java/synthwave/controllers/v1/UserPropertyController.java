@@ -34,7 +34,7 @@ public class UserPropertyController
 	 */
 	protected void getPropertiesListByUserIdRoute() {
         get("/:user_id/properties", (request, response) -> {
-            List<EmbeddedProperty> properties = getService().getUserProperties(
+            List<EmbeddedProperty> properties = getService().list(
                     request,
                     getRight(), 
                     getReadActionName()
@@ -51,7 +51,7 @@ public class UserPropertyController
 	 */
 	protected void createUserPropoertyRoute() {
 		post("/:user_id/properties", (request, response) -> {
-            EmbeddedProperty userProperty = getService().createUserProperty(
+            EmbeddedProperty userProperty = getService().create(
                     request, 
                     getRight(), 
                     getCreateActionName()
@@ -68,7 +68,7 @@ public class UserPropertyController
 	 */
 	protected void getUserPropertyByUserIdAndId() {
 		get("/:user_id/properties/:property_id", (request, ressponse) -> {
-            EmbeddedProperty property = getService().getUserPropertyById(
+            EmbeddedProperty property = getService().entity(
                     request, 
                     getRight(), 
                     getReadActionName()
@@ -91,7 +91,7 @@ public class UserPropertyController
 	protected void updatePropertyRoute() {
 		put("/:user_id/properties/:property_id", (request, response) -> {
             // Get user rule for update users documents
-            EmbeddedProperty property = getService().updateProperty(
+            EmbeddedProperty property = getService().update(
                             request, 
                             getRight(),
                             getUpdateActionName()
@@ -108,7 +108,7 @@ public class UserPropertyController
 	 */
 	protected void deleteUserPropertyRoute() {
 		delete("/:user_id/properties/:property_id", (request, response) -> {
-            List<EmbeddedProperty> properties = getService().deleteUserProperty(
+            List<EmbeddedProperty> properties = getService().delete(
                     request, 
                     getRight(),
                     getDeleteActionName()

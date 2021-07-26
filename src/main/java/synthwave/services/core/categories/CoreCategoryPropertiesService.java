@@ -16,14 +16,14 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.repositories.mongodb.v1.CategoriesRepository;
 import synthwave.repositories.mongodb.v1.CategoryPropertiesRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 
 /**
  * Class with core methods for work with category properties field
  * @author small-entropy 
  */
 public abstract class CoreCategoryPropertiesService 
-    extends BaseEmbeddedPropertiesService<Category, CategoriesFilter, CategoriesRepository, CategoryPropertiesRepository> {
+    extends CRUDEmbeddedPropertyService<Category, CategoriesFilter, CategoriesRepository, CategoryPropertiesRepository> {
     
     /**
      * Default constructor for create category properties service
@@ -46,7 +46,7 @@ public abstract class CoreCategoryPropertiesService
      * Method for get default list of category properties
      * @return list of default category properties
      */
-    public static List<EmbeddedProperty> getDefaultCategoryProperties() {
+    public static List<EmbeddedProperty> getDefaultProperties() {
         int defaultCount = 0;
         EmbeddedProperty count = new EmbeddedProperty("count", defaultCount);
         return Arrays.asList(count);

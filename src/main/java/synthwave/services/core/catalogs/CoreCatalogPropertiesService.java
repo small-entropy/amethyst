@@ -13,14 +13,14 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.repositories.mongodb.v1.CatalogPropertiesRepository;
 import synthwave.repositories.mongodb.v1.CatalogsRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 
 /**
  * Class with core methods for work with catalog properties field
  * @author small-entopy
  */
 public abstract class CoreCatalogPropertiesService 
-    extends BaseEmbeddedPropertiesService <Catalog, CatalogsFilter, CatalogsRepository, CatalogPropertiesRepository> {
+    extends CRUDEmbeddedPropertyService <Catalog, CatalogsFilter, CatalogsRepository, CatalogPropertiesRepository> {
 
     /**
      * Default constructor for service. Create by 

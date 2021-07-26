@@ -13,14 +13,14 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.repositories.mongodb.v1.CatalogProfileRepository;
 import synthwave.repositories.mongodb.v1.CatalogsRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 
 /**
  * Base class for work with catalog profile property list
  * @author small-entropy
  */
 public abstract class CoreCatalogProfileService 
-	extends BaseEmbeddedPropertiesService<Catalog, CatalogsFilter, CatalogsRepository, CatalogProfileRepository> {
+	extends CRUDEmbeddedPropertyService<Catalog, CatalogsFilter, CatalogsRepository, CatalogProfileRepository> {
 	
 	/**
 	 * Default core catalog profile service constructor. Create 
@@ -54,11 +54,11 @@ public abstract class CoreCatalogProfileService
 	 */
 	public static List<EmbeddedProperty> getDefaultProfile() {
 		long currentDateTime = System.currentTimeMillis();
-		EmbeddedProperty registered = new EmbeddedProperty(
-			"registered", 
+		EmbeddedProperty created = new EmbeddedProperty(
+			"created", 
 			currentDateTime
 		);
-		return Arrays.asList(registered);
+		return Arrays.asList(created);
 
 	}
 }

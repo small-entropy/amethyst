@@ -16,13 +16,14 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.repositories.mongodb.v1.CategoriesRepository;
 import synthwave.repositories.mongodb.v1.CategoryProfileRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 
 /**
  * Base class for work with category profile property list
+ * @author small-entropy
  */
 public abstract class CoreCategoryProfileService 
-    extends BaseEmbeddedPropertiesService<Category, CategoriesFilter, CategoriesRepository, CategoryProfileRepository> {
+    extends CRUDEmbeddedPropertyService<Category, CategoriesFilter, CategoriesRepository, CategoryProfileRepository> {
 
     /**
      * Default core category profile service constructor. Create

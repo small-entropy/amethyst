@@ -6,7 +6,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UserPropertiesRepository;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -18,20 +18,17 @@ import spark.Request;
  * Base user properties service
  */
 public abstract class CoreUserPropertyService 
-        extends BaseEmbeddedPropertiesService<User, UsersFilter, UsersRepository, UserPropertiesRepository> {
+        extends CRUDEmbeddedPropertyService<User, UsersFilter, UsersRepository, UserPropertiesRepository> {
     
     public CoreUserPropertyService(Datastore datastore, List<String> blaclist) {
-        super(
-                datastore,
-                new UserPropertiesRepository(datastore, blaclist)
-        );
+        super(datastore, new UserPropertiesRepository(datastore, blaclist));
     }
 
     /**
      * Method for get default properties for create user
      * @return list of default user properties
      */
-    protected static List<EmbeddedProperty> getDefaultUserProperty() {
+    public static List<EmbeddedProperty> getDefaultUserProperty() {
         EmbeddedProperty banned = new EmbeddedProperty("banned", false);
         return Arrays.asList(banned);
     }

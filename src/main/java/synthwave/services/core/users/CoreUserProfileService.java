@@ -5,7 +5,7 @@ import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UserProfileRepository;
 import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.services.core.base.BaseEmbeddedPropertiesService;
+import synthwave.services.core.base.CRUDEmbeddedPropertyService;
 import dev.morphia.Datastore;
 import platform.exceptions.DataException;
 import platform.utils.helpers.ParamsManager;
@@ -22,7 +22,7 @@ import org.bson.types.ObjectId;
  * @author small-entropy
  */
 public abstract class CoreUserProfileService 
-     extends BaseEmbeddedPropertiesService<User, UsersFilter, UsersRepository, UserProfileRepository> {
+     extends CRUDEmbeddedPropertyService<User, UsersFilter, UsersRepository, UserProfileRepository> {
 	
 	/**
 	 * Default constructor for core user profile service. Create

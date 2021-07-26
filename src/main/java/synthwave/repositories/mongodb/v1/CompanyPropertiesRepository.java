@@ -9,23 +9,14 @@ import synthwave.filters.CompaniesFilter;
 import synthwave.models.mongodb.standalones.Company;
 import synthwave.repositories.mongodb.base.BasePropertyRepository;
 
-/**
- * Class of repository for company profile
- * @author small-entropy
- */
-public class CompanyProfileRepository 
+public class CompanyPropertiesRepository 
     extends BasePropertyRepository<Company, CompaniesFilter, CompaniesRepository> {
 
-    /**
-     * Default constructor for company profile repository
-     * @param datastore Morphia datastore object
-     * @param blacklist blacklist of fields
-     */
-    public CompanyProfileRepository(
+    public CompanyPropertiesRepository(
         Datastore datastore,
         List<String> blacklist
     ) {
-        super("profile", blacklist, new CompaniesRepository(datastore));
+        super("properties", blacklist, new CompaniesRepository(datastore));
     }
 
     @Override
