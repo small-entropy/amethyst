@@ -99,9 +99,9 @@ public abstract class BaseEmbeddedPropertiesService
 		throws DataException {
 		ObjectId entityId = getEntityIdFromRequest(request);
 		ObjectId propertyId = ParamsManager.getPropertyId(request);
-		return getRepository().getDocumentPropertyByEntityIdAndId(
-				entityId, 
-				propertyId
+		return getRepository().getDocumentPropertyByEntityIdAndId( 
+				propertyId,
+				entityId
 		);		
 	}
 	
