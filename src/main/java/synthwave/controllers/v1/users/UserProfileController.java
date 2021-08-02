@@ -13,6 +13,7 @@ import dev.morphia.Datastore;
 
 /**
  * Class with routes for work with profile documents
+ * @author small-entropy
  */
 public class UserProfileController 
 	extends EmbeddedPropertiesController<
@@ -26,7 +27,7 @@ public class UserProfileController
 	 * Default user profile controller. Create instance by
 	 * datastore & response transformer
 	 * @param datastore Morphia datastore object
-	 * @param transformer responser transformer 
+	 * @param transformer response transformer 
 	 */
 	public UserProfileController(
 			Datastore datastore,
@@ -51,7 +52,7 @@ public class UserProfileController
             case "entity" -> UserProfileMessages.ENTITY.getMessage();
             case "update" -> UserProfileMessages.UPDATED.getMessage();
             case "delete" -> UserProfileMessages.DELETED.getMessage();
-            default -> "Successfully";
+            default -> "Unknown success action";
         };
     }
 }

@@ -14,7 +14,7 @@ import dev.morphia.Datastore;
 /**
  * Static class with routes for work with user property documents
  */
-public class UserPropertyController 
+public class UserPropertiesController 
 	extends EmbeddedPropertiesController<
 		User,
 		UsersFilter,
@@ -22,7 +22,7 @@ public class UserPropertyController
 		UserPropertiesRepository,
 		UserPropertyService> {
 	
-	public UserPropertyController(
+	public UserPropertiesController(
 			Datastore datastore,
 			JsonTransformer transformer
 	) {

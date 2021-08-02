@@ -10,14 +10,20 @@ import platform.utils.transformers.JsonTransformer;
 import synthwave.controllers.common.ErrorsController;
 
 import synthwave.controllers.v1.companies.CompaniesController;
+import synthwave.controllers.v1.companies.CompanyProfileController;
+import synthwave.controllers.v1.companies.CompanyPropertiesController;
 import synthwave.controllers.v1.users.UserRightsController;
 import synthwave.controllers.v1.products.ProductsController;
 import synthwave.controllers.v1.categories.CategoriesController;
+import synthwave.controllers.v1.categories.CategoryProfileController;
+import synthwave.controllers.v1.categories.CategoryPropertiesController;
 import synthwave.controllers.v1.users.AuthorizationController;
-import synthwave.controllers.v1.users.UserPropertyController;
+import synthwave.controllers.v1.users.UserPropertiesController;
 import synthwave.controllers.v1.users.UserProfileController;
 import synthwave.controllers.v1.users.UserController;
 import synthwave.controllers.v1.tags.TagsController;
+import synthwave.controllers.v1.catalogs.CatalogProfileController;
+import synthwave.controllers.v1.catalogs.CatalogPropertiesController;
 import synthwave.controllers.v1.catalogs.CatalogsController;
 
 import static spark.Spark.*;
@@ -81,7 +87,7 @@ public class RESTSynthwave extends RestApplication<Datastore, JsonTransformer> {
             path("/users", () -> {
                 new AuthorizationController(datastore, transformer).register();
                 new UserController(datastore, transformer).register();
-                new UserPropertyController(datastore, transformer).register();
+                new UserPropertiesController(datastore, transformer).register();
                 new UserProfileController(datastore, transformer).register();
                 new UserRightsController(datastore, transformer).register();
             });
@@ -90,18 +96,24 @@ public class RESTSynthwave extends RestApplication<Datastore, JsonTransformer> {
             // BEGIN: REGISTER ROUTES FOR CATALOGS API
             path("/catalogs", () -> {
                 new CatalogsController(datastore, transformer).register();
+                new CatalogProfileController(datastore, transformer).register();
+                new CatalogPropertiesController(datastore, transformer).register();
             });
             // END: REGISTER ROUTES FOR CATALOGS API
 
             // BEGIN: REGISTER ROUTES FOR CATEGORIES API
             path("/categories", () -> {
                 new CategoriesController(datastore, transformer).register();
+                new CategoryProfileController(datastore, transformer).register();
+                new CategoryPropertiesController(datastore, transformer).register();
             });
             // END: REGISTER ROUTES FOR CATEGORIES API
 
             // BEGIN: REGISTER ROUTES FOR COMPANIES API
             path("/companies", () -> {
                 new CompaniesController(datastore, transformer).register();
+                new CompanyProfileController(datastore, transformer).register();
+                new CompanyPropertiesController(datastore, transformer).register();
             });
             // END: REGISTER ROUTES FOR COMPANIES API
 
