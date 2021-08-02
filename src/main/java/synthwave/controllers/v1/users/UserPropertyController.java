@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.users;
 
 import platform.constants.DefaultRights;
 import synthwave.controllers.base.EmbeddedPropertiesController;

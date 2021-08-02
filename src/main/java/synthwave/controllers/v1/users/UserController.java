@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.users;
 
 import synthwave.controllers.messages.TagsMessages;
 import synthwave.controllers.messages.UsersMessages;

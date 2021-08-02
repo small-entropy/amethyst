@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.users;
 
 import synthwave.controllers.messages.UserRightsMessages;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;

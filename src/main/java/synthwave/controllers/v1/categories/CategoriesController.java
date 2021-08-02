@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.categories;
 
 import synthwave.controllers.messages.CategoriesMessages;
 import synthwave.models.mongodb.standalones.Category;

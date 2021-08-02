@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.tags;
 
 import synthwave.controllers.messages.TagsMessages;
 import synthwave.models.mongodb.standalones.Tag;

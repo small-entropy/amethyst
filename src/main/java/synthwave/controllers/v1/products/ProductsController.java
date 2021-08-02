@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.products;
 
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;

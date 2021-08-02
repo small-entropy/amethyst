@@ -9,16 +9,16 @@ import platform.application.RestApplication;
 import platform.utils.transformers.JsonTransformer;
 import synthwave.controllers.common.ErrorsController;
 
-import synthwave.controllers.v1.CompaniesController;
-import synthwave.controllers.v1.UserRightsController;
-import synthwave.controllers.v1.ProductsController;
-import synthwave.controllers.v1.CategoriesController;
-import synthwave.controllers.v1.AuthorizationController;
-import synthwave.controllers.v1.UserPropertyController;
-import synthwave.controllers.v1.UserProfileController;
-import synthwave.controllers.v1.UserController;
-import synthwave.controllers.v1.TagsController;
-import synthwave.controllers.v1.CatalogsController;
+import synthwave.controllers.v1.companies.CompaniesController;
+import synthwave.controllers.v1.users.UserRightsController;
+import synthwave.controllers.v1.products.ProductsController;
+import synthwave.controllers.v1.categories.CategoriesController;
+import synthwave.controllers.v1.users.AuthorizationController;
+import synthwave.controllers.v1.users.UserPropertyController;
+import synthwave.controllers.v1.users.UserProfileController;
+import synthwave.controllers.v1.users.UserController;
+import synthwave.controllers.v1.tags.TagsController;
+import synthwave.controllers.v1.catalogs.CatalogsController;
 
 import static spark.Spark.*;
 

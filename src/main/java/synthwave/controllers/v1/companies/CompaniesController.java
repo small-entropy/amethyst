@@ -1,4 +1,4 @@
-package synthwave.controllers.v1;
+package synthwave.controllers.v1.companies;
 
 import synthwave.controllers.messages.CompaniesMessages;
 import synthwave.models.mongodb.standalones.Company;
