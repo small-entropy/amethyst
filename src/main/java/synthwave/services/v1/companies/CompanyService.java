@@ -37,7 +37,7 @@ public class CompanyService extends CoreCompanyService {
      * @return list of companies
      * @throws DataException trow if companies list is empty
      */
-    public List<Company> getCompaniesList(
+    public List<Company> getEntitiesList(
             Request request,
             String right,
             String action,
@@ -57,14 +57,8 @@ public class CompanyService extends CoreCompanyService {
         }
     }
 
-    /**
-     * Method for create company
-     * @param request Spark request object
-     * @param companiesRepository repository for companies collection
-     * @param rule rule data transfer object
-     * @return created company document
-     */
-    public Company createCompany(
+    @Override
+    public Company createEntity(
             Request request,
             String right,
             String action
@@ -85,14 +79,8 @@ public class CompanyService extends CoreCompanyService {
         }
     }
 
-    /**
-     * Method for get company by owner id and company id from request params
-     * @param request Spark request object
-     * @param companiesRepository repository for companies collection
-     * @param rule rule data transfer object
-     * @return finded document
-     */
-    public Company getCompanyByOwnerAndId(
+    @Override
+    public Company getEntityByIdByOwner(
             Request request,
             String right,
             String action
@@ -114,16 +102,8 @@ public class CompanyService extends CoreCompanyService {
         }
     }
 
-    /**
-     * Method for update company document
-     * @param request Spark request object
-     * @param companiesRepository repository for companies collection
-     * @param rule rule data transfer object
-     * @return updated document
-     * @throws AccessException throw if has no access to update document
-     * @throws DataException throw if can not find company document
-     */
-    public Company updateCompany(
+    @Override
+    public Company updateEntity(
             Request request,
             String right,
             String action
@@ -147,18 +127,8 @@ public class CompanyService extends CoreCompanyService {
         }
     }
 
-    /**
-     * Method for delete company (deactivate document)
-     * @param request Spark request object
-     * @param companiesRepository repository for companies collection
-     * @param rule rule data transfer object
-     * @return deactivated document
-     * @throws platform.exceptions.AccessException throw if user has no access to delete
-     *                                    company document
-     * @throws platform.exceptions.DataException throw if can not get from params company
-     *                                  id or user id
-     */
-    public Company deleteCompany(
+    @Override
+    public Company deleteEntity(
             Request request,
             String right,
             String action

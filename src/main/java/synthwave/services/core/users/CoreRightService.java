@@ -3,6 +3,7 @@ package synthwave.services.core.users;
 import synthwave.dto.UserRightDTO;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.embeddeds.EmbeddedRight;
+import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.RightsRepository;
 import synthwave.services.base.BaseDocumentService;
 import platform.utils.helpers.ParamsManager;
@@ -18,7 +19,7 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreRightService 
-        extends BaseDocumentService<RightsRepository>{
+        extends BaseDocumentService<User, RightsRepository>{
     
     public CoreRightService(Datastore datastore, List<String> blackList) {
         super(

@@ -28,13 +28,8 @@ public class CategoryService extends CoreCategoryService {
         );
     }
     
-    /**
-     * Methodo for get user categories
-     * @param request Spark request object
-     * @return list of categories
-     * @throws DataException throw if categories not founded
-     */
-    public List<Category> getCategoriesByUser(
+    @Override
+    public List<Category> getEntitiesListByOwner(
             Request request, 
             String right,
             String action
@@ -50,15 +45,8 @@ public class CategoryService extends CoreCategoryService {
         }
     }
     
-    /**
-     * Method for create category document
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return created category document
-     * @throws AccessException throw if user has not access for create category document
-     * @throws DataException  throw if can not find user or catelog document
-     */
-    public Category createCategory(
+    @Override
+    public Category createEntity(
             Request request, 
             String right,
             String action
@@ -78,13 +66,6 @@ public class CategoryService extends CoreCategoryService {
         }
     } 
 
-    /**
-     * Method for get categories by catalog
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return dounded categories
-     * @throws DataException  throw if categories ca not be found
-     */
     public List<Category> getCatalogCategories(
             Request request,  
             String right,
@@ -102,14 +83,8 @@ public class CategoryService extends CoreCategoryService {
         }
     }
     
-    /**
-     * Method for get categories documents list
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return categories list
-     * @throws DataException throw if can not found categories documents
-     */
-    public List<Category> getCategoriesList(
+    @Override
+    public List<Category> getEntitiesList(
             Request request, 
             String right,
             String action
@@ -125,14 +100,8 @@ public class CategoryService extends CoreCategoryService {
         }
     }
     
-    /**
-     * Mehtod for get category by requst params (ID)
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return category document
-     * @throws DataException throw if category document not found
-     */
-    public Category getCategoryById(
+    @Override
+    public Category getEntityByIdByOwner(
             Request request, 
             String right,
             String action
@@ -149,18 +118,8 @@ public class CategoryService extends CoreCategoryService {
         }
     }
 
-    /**
-     * Method for update category document
-     * @param request Spark request object
-     * @param right right name
-     * @param action action name
-     * @return updated document
-     * @throws AccessException throw when user have not 
-     * 						   access to update document
-     * @throws DataException throw when can't be found 
-     * 						 some data
-     */
-    public Category updateCategory(
+    @Override
+    public Category updateEntity(
             Request request,  
             String right,
             String action
@@ -180,16 +139,8 @@ public class CategoryService extends CoreCategoryService {
         }
     }
     
-    /**
-     * Method for mark to remove category document
-     * @param request Spark request object
-     * @param right right name
-     * @param action action name
-     * @return 
-     * @throws AccessException
-     * @throws DataException
-     */
-    public Category deleteCategory(
+    @Override
+    public Category deleteEntity(
             Request request,
             String right,
             String action

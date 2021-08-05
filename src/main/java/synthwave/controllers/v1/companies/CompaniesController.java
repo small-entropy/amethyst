@@ -1,23 +1,22 @@
 package synthwave.controllers.v1.companies;
 
+import platform.constants.DefaultRights;
+import platform.utils.transformers.JsonTransformer;
+
+import synthwave.controllers.base.RESTController;
 import synthwave.controllers.messages.CompaniesMessages;
 import synthwave.models.mongodb.standalones.Company;
+import synthwave.repositories.mongodb.v1.CompaniesRepository;
 import synthwave.services.v1.companies.CompanyService;
-import platform.constants.DefaultRights;
-import platform.controllers.BaseController;
-import platform.utils.responses.SuccessResponse;
-import platform.utils.transformers.JsonTransformer;
-import dev.morphia.Datastore;
-import java.util.List;
-import static spark.Spark.*;
 
+import dev.morphia.Datastore;
 /**
  * Class controller for work with companies routes
  * @author small-entropy
  * @version 1
  */
 public class CompaniesController 
-	extends BaseController<CompanyService, JsonTransformer> {
+	extends RESTController<Company, CompaniesRepository, CompanyService> {
     
 	/**
 	 * Default companies controller constructor
@@ -26,129 +25,26 @@ public class CompaniesController
 	 */
 	public CompaniesController(
 			Datastore datastore,
-			JsonTransformer transformer) {
+			JsonTransformer transformer
+	) {
 		super(
-				 new CompanyService(datastore),
-				 transformer,
-				 DefaultRights.COMPANIES.getName()
+				new CompanyService(datastore),
+				transformer,
+				DefaultRights.COMPANIES.getName(),
+				null,
+				"",
+				"/owner/:user_id/company/:company_id",
+				"/owner/:user_id",
+				true,
+				true,
+				true,
+				true,
+				true,
+				CompaniesMessages.CREATED.getMessage(),
+				CompaniesMessages.LIST.getMessage(),
+				CompaniesMessages.ENTITY.getMessage(),
+				CompaniesMessages.UPDATED.getMessage(),
+				CompaniesMessages.DELETED.getMessage()
 		);
 	}
-	
-	/**
-	 * Method for get company list
-	 */
-	protected void getCompaniesListRoute() {
-        get("", (request, response) -> {
-            List<Company> companies = getService().getCompaniesList(
-                    request,
-                    getRight(),
-                    getReadActionName(),
-                    false
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.LIST.getMessage(), 
-            		companies
-            );
-        }, getTransformer());
-	}
-	
-	/**
-	 * Method for get company list by user
-	 */
-	protected void getCompaniesListByUserRoute() {
-		get("/owner/:user_id", (request, ressponse) -> {
-            List<Company> companies = getService().getCompaniesList(
-                    request,
-                    getRight(),
-                    getReadActionName(),
-                    true
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.LIST.getMessage(), 
-            		companies
-            );
-        }, getTransformer());
-	}
-	
-	/**
-	 * Method for create company entity
-	 */
-	protected void createCompaniesRoute() {
-		post("/owner/:user_id", (request, response) -> {
-            Company company = getService().createCompany(
-                    request,
-                    getRight(),
-                    getCreateActionName()
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.CREATED.getMessage(), 
-            		company
-            );
-        }, getTransformer());
-	}
-	
-	/**
-	 * Method for get company entity by owner id and company id
-	 */
-	protected void getCompanyByOwnerAndIdRoute() {
-		get("/owner/:user_id/company/:company_id", (request, response) -> {
-            Company company = getService().getCompanyByOwnerAndId(
-                    request, 
-                    getRight(),
-                    getReadActionName()
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.ENTITY.getMessage(), 
-            		company
-            );
-        }, getTransformer());
-	}
-	
-	/**
-	 * Method for update company entity
-	 */
-	protected void updateCompanyRoute() {
-		put("/owner/:user_id/company/:company_id", (request, response) -> {
-            Company company = getService().updateCompany(
-                    request,
-                    getRight(),
-                    getUpdateActionName()
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.UPDATED.getMessage(), 
-            		company
-            );
-        }, getTransformer());
-	}
-	
-	/**
-	 * Method for deactivate company document
-	 */
-	protected void deleteCompanyRoute() {
-		delete("/owner/:user_id/compamy/:compamy_id", (request, response) -> {
-            Company company = getService().deleteCompany(
-                    request,
-                    getRight(),
-                    getDeleteActionName()
-            );
-            return new SuccessResponse<>(
-            		CompaniesMessages.DELETED.getMessage(), 
-            		company
-            );
-        }, getTransformer());
-	}
-	
-	
-    /**
-     * Method for register companies routes
-     */
-	@Override
-    public void register() {
-		createCompaniesRoute();
-    	getCompaniesListRoute();
-    	getCompaniesListByUserRoute();
-    	getCompanyByOwnerAndIdRoute();
-    	updateCompanyRoute();
-    	deleteCompanyRoute();
-    }
 }

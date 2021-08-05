@@ -21,7 +21,7 @@ import org.bson.types.ObjectId;
 import spark.Request;
 
 public abstract class CoreUserService 
-        extends BaseService<UsersRepository> {
+        extends BaseService<User, UsersRepository> {
     
     public CoreUserService(
             Datastore datastore,
@@ -239,8 +239,14 @@ ument
             int skip, 
             int limit, 
             String[] excludes
-    ) {
+    ) throws DataException {
         UsersFilter filter = new UsersFilter(skip, limit, excludes);
-        return getRepository().findAll(filter);
+        List<User> users = getRepository().findAll(filter);
+        if (users.isEmpty()) {
+            Error error = new Error("Users list is empty");
+            throw new DataException("NotFound", error);
+        } else {
+            return users;
+        }
     }
 }

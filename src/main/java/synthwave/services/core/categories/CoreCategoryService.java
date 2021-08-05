@@ -22,7 +22,7 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreCategoryService 
-        extends BaseDocumentService<CategoriesRepository> {
+        extends BaseDocumentService<Category, CategoriesRepository> {
     
     CatalogsRepository catalogsRepository;
     

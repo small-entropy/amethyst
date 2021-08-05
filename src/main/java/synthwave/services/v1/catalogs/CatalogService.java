@@ -29,14 +29,8 @@ public class CatalogService extends CoreCatalogService {
         );
     }
     
-    /**
-     * Method for get catalog by id from request
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return catalog document
-     * @throws DataException
-     */
-    public Catalog getCatalogById(
+    @Override
+    public Catalog getEntityByIdByOwner(
             Request request,
             String right,
             String action
@@ -52,15 +46,8 @@ public class CatalogService extends CoreCatalogService {
         }
     }
     
-    /**
-     * Method for get list of user catalog by owner id from request params
-     * @param request Spark request obejct 
-     * @param catalogsRepository datasource for catalogs colletion
-     * @param rule rule data transfer object
-     * @return list of catalog documents
-     * @throws DataException throw if can not find 
-     */
-    public List<Catalog> getCatalogsByUser(
+    @Override
+    public List<Catalog> getEntitiesListByOwner(
             Request request, 
             String right,
             String action
@@ -76,13 +63,8 @@ public class CatalogService extends CoreCatalogService {
         }
     }
 
-    /**
-     * Method for get list of catalogs documents
-     * @param request Spark reqeust object
-     * @return list of catalogs
-     * @throws DataException throw when can get catalogs
-     */
-    public List<Catalog> getCatalogs(
+    @Override
+    public List<Catalog> getEntitiesList(
             Request request, 
             String right,
             String action
@@ -98,15 +80,8 @@ public class CatalogService extends CoreCatalogService {
         }
     }
 
-    /**
-     * Method for create catalog documents by request
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return created catalog document
-     * @throws AccessException 
-     * @throws platform.exceptions.DataException 
-     */
-    public Catalog createCatalog(
+    @Override
+    public Catalog createEntity(
             Request request,
             String right,
             String action
@@ -127,15 +102,8 @@ public class CatalogService extends CoreCatalogService {
         }
     }
 
-    /**
-     * Method for get update catalo by request
-     * @param request Spark request object
-     * @param rule rule data transfer object 
-     * @return updated document
-     * @throws AccessException throw if no access to update document
-     * @throws DataException throw if can not find document
-     */
-    public Catalog updateCatalog(
+    @Override
+    public Catalog updateEntity(
             Request request,
             String right,
             String action
@@ -155,15 +123,8 @@ public class CatalogService extends CoreCatalogService {
         }
     }
 
-    /**
-     * Method for delete catalog
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return 
-     * @throws AccessException
-     * @throws DataException 
-     */
-    public Catalog deleteCatalog(
+    @Override
+    public Catalog deleteEntity(
             Request request,
             String right,
             String action

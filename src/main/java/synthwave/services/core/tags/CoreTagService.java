@@ -19,7 +19,7 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreTagService 
-        extends BaseDocumentService<TagsRepository> {
+        extends BaseDocumentService<Tag, TagsRepository> {
    
     public CoreTagService(
             Datastore datastore,

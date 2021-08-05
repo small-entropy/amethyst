@@ -21,7 +21,8 @@ public class BaseErrorsController {
         NOT_FOUND(404, "Not found"),
         UNAUTHORIZED(401, "Unauthorized user"),
         CONFLICT(409, "Conflict with sent data"),
-        NOT_ACCEPTABLE(406, "Not Acceptable");
+        NOT_ACCEPTABLE(406, "Not Acceptable"),
+        NOT_IMPLEMENTED(501, "Not Implemented"); 
         private final int code;
         private final String message;
         HttpErrors(int code, String message) {

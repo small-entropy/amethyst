@@ -24,7 +24,6 @@ public class TagService extends CoreTagService {
                 new String[] {},
                 new String[] {
                     "owner",
-                    "properties",
                     "version",
                     "status"
                 },
@@ -34,15 +33,8 @@ public class TagService extends CoreTagService {
                 }
         );
     }
-
-    /**
-     * Method fot get list of tags documents
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return list of tags documents
-     * @throws DataException throw if can not found tag documents
-     */
-    public List<Tag> getTagsList(
+    
+    private List<Tag> getEntitiesList(
             Request request,
             String right,
             String action,
@@ -65,18 +57,27 @@ public class TagService extends CoreTagService {
             throw new DataException("NotFound", error);
         }
     }
+
+    @Override
+    public List<Tag> getEntitiesList(
+        Request request,
+        String right,
+        String action
+    ) throws DataException {
+        return getEntitiesList(request, right, action, false);
+    }
+
+    @Override
+    public List<Tag> getEntitiesListByOwner(
+        Request request,
+        String right,
+        String action
+    ) throws DataException {
+        return getEntitiesList(request, right, action, true);
+    }
     
-    /**
-     * Method fot create tag documents
-     * @param request Spark request object
-     * @param rule rule data transfer object
-     * @return created tag document
-     * @throws AccessException throw if user has no access to 
-     *                         create tag documents
-     * @throws DataException throw if can not found createad 
-     *                       documents or creator user
-     */
-    public Tag createTag(
+    @Override
+    public Tag createEntity(
             Request request,
             String right,
             String action
@@ -94,13 +95,8 @@ public class TagService extends CoreTagService {
         }
     }
 
-    /**
-     * Method get tag document 
-     * @param request Spark request object
-     * @return founded tag document
-     * @throws DataException throw if can not found tag document
-     */
-    public Tag getTagById(
+    @Override
+    public Tag getEntityById(
             Request request,
             String right,
             String action
@@ -116,14 +112,8 @@ public class TagService extends CoreTagService {
         }
     }
 
-    /**
-     * Method for update tag document
-     * @param request Spark request object
-     * @return updated tag document
-     * @throws AccessException throw if has no access to update tag document
-     * @throws DataException throw if can't get ids from params or find tag
-     */
-    public Tag updateTag(
+    @Override
+    public Tag updateEntity(
             Request request,
             String right,
             String action
@@ -142,16 +132,8 @@ public class TagService extends CoreTagService {
         }
     }
 
-    /**
-     * Method for delete tag document
-     * @param request Spark reqeust object
-     * @param tagsRepository repository for tags collection
-     * @param rule rule data transfer object
-     * @return deactivated tag document
-     * @throws AccessException if has no access to delete tag document
-     * @throws DataException if can't get ids from params or find tag
-     */
-    public Tag deleteTag(
+    @Override
+    public Tag deleteEntity(
             Request request,
             String right,
             String action

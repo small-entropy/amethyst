@@ -1,6 +1,13 @@
 package synthwave.services.base;
 
+import java.util.List;
+
 import platform.dto.RuleDTO;
+import platform.exceptions.AccessException;
+import platform.exceptions.DataException;
+import platform.exceptions.ServerException;
+import platform.exceptions.TokenException;
+import platform.models.mongodb.morphia.Standalone;
 import synthwave.utils.access.RightManager;
 import spark.Request;
 
@@ -8,7 +15,7 @@ import spark.Request;
  * Base class to create service for server service
  * @author small-entropy
  */
-public abstract class BaseService <R>  {
+public abstract class BaseService <M extends Standalone, R>  {
 	
 	/** Service repository */
 	R repository;
@@ -173,4 +180,256 @@ public abstract class BaseService <R>  {
             return publicExcludes;
         }
     }
+
+     /**
+     * Method for create entity without access check
+     * @param request Spark request object
+     * @return created entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M createEntity(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for create entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for create entity with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return created entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M createEntity(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for create entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for update entity withoud access check
+     * @param request Spark request object
+     * @return updated entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M updateEntity(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for update entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+     /**
+     * Method for update entity with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return updated entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M updateEntity(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for update entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for delete entity by id without access check
+     * @param request Spark request object
+     * @return deleted entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M deleteEntity(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for delete entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for delete entity by id with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return deleted entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M deleteEntity(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for delete entity not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entity by id without access check
+     * @param request Spark request object
+     * @return founded entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M getEntityById(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entity by id not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entity by id with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return founded entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M getEntityById(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entity by id not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entity for owner with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return founded entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M getEntityByIdByOwner(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entity by id not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entity for owner without access check
+     * @param request Spark request object
+     * @return founded entity
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public M getEntityByIdByOwner(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entity by id not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entities list for owner with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return entities list
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public List<M> getEntitiesListByOwner(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entitites list by owner not implemented");
+        throw new ServerException("NotImplemented", error);
+    }
+
+    /**
+     * Method for get entities list for owner without access check
+     * @param request Spark request object
+     * @return entities list
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public List<M> getEntitiesListByOwner(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entitites list by owner not implemented");
+        throw new ServerException("NotImplemented", error);
+    }  
+
+    /**
+     * Method for get entities list with access check
+     * @param request Spark request object
+     * @param right name of right
+     * @param action name of action
+     * @return entities list
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public List<M> getEntitiesList(
+        Request request, 
+        String right, 
+        String action
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entitites list not implemented");
+        throw new ServerException("NotImplemented", error);
+    } 
+
+    /**
+     * Method for get entities list without access check
+     * @param request Spark request object
+     * @return entities list
+     * @throws AccessException throw if user hasn't access to this method
+     * @throws TokenException throw if token not sent or user from url & request not equals
+     * @throws ServerException throw if some error in server logic
+     * @throws DataException throw if some error with data
+     */
+    public List<M> getEntitiesList(
+        Request request
+    ) throws AccessException, TokenException, ServerException, DataException {
+        Error error = new Error("Method for get entitites list not implemented");
+        throw new ServerException("NotImplemented", error);
+    } 
 }

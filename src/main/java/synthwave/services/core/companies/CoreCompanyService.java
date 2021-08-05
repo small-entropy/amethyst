@@ -19,7 +19,7 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreCompanyService 
-        extends BaseDocumentService<CompaniesRepository> {
+        extends BaseDocumentService<Company, CompaniesRepository> {
     
     public CoreCompanyService(
             Datastore datastore,

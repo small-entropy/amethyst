@@ -20,7 +20,7 @@ import spark.Request;
  * @author small-entropy
  */
 public abstract class CoreCatalogService
-        extends BaseDocumentService<CatalogsRepository> {
+        extends BaseDocumentService<Catalog, CatalogsRepository> {
     
     /**
      * Default constructor for core catalog service. 

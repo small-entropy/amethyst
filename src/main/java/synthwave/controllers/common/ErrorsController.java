@@ -3,6 +3,7 @@ import platform.controllers.BaseErrorsController;
 import platform.exceptions.AccessException;
 import platform.exceptions.AuthorizationException;
 import platform.exceptions.DataException;
+import platform.exceptions.ServerException;
 import platform.exceptions.TokenException;
 
 import static spark.Spark.*;
@@ -18,6 +19,13 @@ public class ErrorsController extends BaseErrorsController {
      * Method for custom errors handlers
      */
     public static void errors_Custom() {
+        exception(ServerException.class, (error, req, res) -> {
+            int statusCode = switch (error.getMessage()) {
+                case "NotImplemented" -> HttpErrors.NOT_IMPLEMENTED.getCode();
+                default -> HttpErrors.INTERNAL_SERVER_ERROR.getCode();
+            };
+            sendError(res, statusCode, error);
+        });
         
         // Custom exception handler for TokenException error
         exception(TokenException.class, (error, req, res) -> {

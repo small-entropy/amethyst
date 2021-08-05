@@ -43,9 +43,9 @@ public class UserService extends CoreUserService {
      * @throws TokenException
      * @throws DataException
      */
-    public User markToRemove(Request request) 
-            throws TokenException, DataException 
-    {
+    public User deleteEntity(
+        Request request
+    ) throws TokenException, DataException {
         // Get token from request
         String token = RequestUtils.getTokenByRequest(request);
         // Check token on exist
@@ -61,21 +61,12 @@ public class UserService extends CoreUserService {
                 ObjectId userId = ParamsManager.getUserId(request);
                 // Find user by id
                 User user = getUserById(userId);
-                // Check founded user
-                // If user found - deactivate user & save changes
-                // If user not found - return null
-                if (user != null) {
-                    // Deactivate user
-                    user.deactivate();
-                    // Save changes in database
-                    getRepository().save(user);
-                    // Return saved document
-                    return user;
-                } else {
-                    // Return null if user not found
-                    Error error = new Error("Can not find user for mark to remove");
-                    throw new DataException("NotFound", error);
-                }
+                // Deactivate user
+                user.deactivate();
+                // Save changes in database
+                getRepository().save(user);
+                // Return saved document
+                return user;
             } else {
                 Error error = new Error("Incorrect token");
                 throw new TokenException("NotEquals", error);
@@ -94,22 +85,25 @@ public class UserService extends CoreUserService {
      * @return founded user document
      * @throws DataException
      */
-    public User getUserById(Request request) throws DataException {
+    public User getEntityById(
+        Request request
+    ) throws  DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         ObjectId userId = ParamsManager.getUserId(request);
         String[] excludes = isTrusted
                 ? getPrivateExcludes()
                 : getGlobalExcludes();
-        return getUserById(userId, excludes);
+        User user = getUserById(userId, excludes);
+        if (user != null) {
+            return user;
+        } else {
+            Error error = new Error("Can not find user by id");
+            throw new DataException("NotFound", error);
+        }
     }
     
-   /**
-     * Method for get user list
-     * @param request Spark request object
-     * @return list of users documents
-     * @throws DataException
-     */
-    public List<User> getList(
+    @Override
+    public List<User> getEntitiesList(
             Request request, 
             String right,
             String action

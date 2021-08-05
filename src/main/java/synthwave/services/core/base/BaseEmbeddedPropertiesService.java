@@ -30,7 +30,7 @@ public abstract class BaseEmbeddedPropertiesService
 	 PR, 
 	 R extends BasePropertyRepository<M, F, PR>
      > 
-	extends BaseDocumentService<R>
+	extends BaseDocumentService<M, R>
 {
 	
 	/**

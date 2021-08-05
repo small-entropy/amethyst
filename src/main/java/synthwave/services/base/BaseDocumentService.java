@@ -1,6 +1,7 @@
 package synthwave.services.base;
 
 import platform.dto.RuleDTO;
+import platform.models.mongodb.morphia.Standalone;
 import synthwave.filters.UsersFilter;
 import synthwave.models.mongodb.standalones.User;
 import synthwave.repositories.mongodb.v1.UsersRepository;
@@ -14,7 +15,7 @@ import spark.Request;
  * Abstract class for create service (for document)
  * @author small-entropy
  */
-public abstract class BaseDocumentService <R> extends BaseService<R> {
+public abstract class BaseDocumentService <M extends Standalone, R> extends BaseService<M, R> {
 	
 	/** Property with repository for work with users data */
 	UsersRepository usersRepository;
