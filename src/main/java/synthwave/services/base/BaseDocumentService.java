@@ -157,7 +157,7 @@ public abstract class BaseDocumentService <M extends Standalone, R> extends Base
      * @param action action name
      * @return rule data transfer object
      */
-    protected RuleDTO getRule(
+    public RuleDTO getRule(
             Request request,
             String right,
             String action

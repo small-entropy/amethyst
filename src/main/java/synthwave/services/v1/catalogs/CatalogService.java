@@ -1,13 +1,11 @@
 package synthwave.services.v1.catalogs;
 
 import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Catalog;
 import synthwave.services.core.catalogs.CoreCatalogService;
 import synthwave.utils.helpers.Comparator;
 import platform.utils.helpers.ParamsManager;
-import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -85,21 +83,13 @@ public class CatalogService extends CoreCatalogService {
             Request request,
             String right,
             String action
-    ) throws AccessException, DataException {
+    ) throws DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) 
-                ? rule.isMyGlobal()
-                : rule.isOtherGlobal();
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            Catalog catalog = createCatalog(userId, request);
-            String[] excludes = getExcludes(isTrusted, rule);
-            return getCatalogByDocument(catalog, excludes);
-        } else {
-            Error error = new Error("Has no access to create catalog");
-            throw new AccessException("CanNotCreate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        Catalog catalog = createCatalog(userId, request);
+        String[] excludes = getExcludes(isTrusted, rule);
+        return getCatalogByDocument(catalog, excludes);
     }
 
     @Override
@@ -107,20 +97,14 @@ public class CatalogService extends CoreCatalogService {
             Request request,
             String right,
             String action
-    ) throws AccessException, DataException {
+    ) throws DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyPrivate() : rule.isOtherPrivate();
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId catalogId = ParamsManager.getCatalogId(request);
-            Catalog catalog = updateCatalog(userId, catalogId, request);
-            String[] excludes = getExcludes(isTrusted, rule);
-            return getCatalogByDocument(catalog, excludes);
-        } else {
-            Error error = new Error("Has no access to update catalog document");
-            throw new AccessException("CanNotUpdate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId catalogId = ParamsManager.getCatalogId(request);
+        Catalog catalog = updateCatalog(userId, catalogId, request);
+        String[] excludes = getExcludes(isTrusted, rule);
+        return getCatalogByDocument(catalog, excludes);
     }
 
     @Override
@@ -128,16 +112,9 @@ public class CatalogService extends CoreCatalogService {
             Request request,
             String right,
             String action
-    ) throws AccessException, DataException {
-        RuleDTO rule = getRule(request, right, action);
-        boolean hasAccess = RightManager.chechAccess(request, rule);
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId catalogId = ParamsManager.getCatalogId(request);
-            return deleteCatalog(userId, catalogId);
-        } else {
-            Error error = new Error("Has no access to delete catalog document");
-            throw new AccessException("CanNotDelete", error);
-        }
-    }
+    ) throws DataException {
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId catalogId = ParamsManager.getCatalogId(request);
+        return deleteCatalog(userId, catalogId);
+     }
 }

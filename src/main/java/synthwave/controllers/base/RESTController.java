@@ -3,10 +3,17 @@ package synthwave.controllers.base;
 import java.util.List;
 
 import platform.controllers.BaseController;
+import platform.dto.RuleDTO;
+import platform.exceptions.AccessException;
+import platform.exceptions.DataException;
+import platform.exceptions.TokenException;
 import platform.models.mongodb.morphia.Standalone;
 import platform.utils.responses.SuccessResponse;
 import platform.utils.transformers.JsonTransformer;
+import spark.Response;
+import spark.Request;
 import synthwave.services.base.BaseService;
+import synthwave.utils.access.RightManager;
 
 import static spark.Spark.*;
 
@@ -97,6 +104,10 @@ public abstract class RESTController<
      * @param path url pattern for delete method
      */
     private void deleteRoute(String path) {
+        before(path, (request, response) -> {
+            beforeDeleteRoute(request, response);
+        });
+
         delete(path, (request, response) -> {
             M entity = (needAccessCheckDelete)
                 ? getService().deleteEntity(request, getRight(), getDeleteActionName())
@@ -104,6 +115,9 @@ public abstract class RESTController<
             return new SuccessResponse<>(msgDelete, entity);
         }, getTransformer()); 
     }
+
+    protected void beforeDeleteRoute(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
 
     /**
      * Method for register delete route
@@ -126,12 +140,30 @@ public abstract class RESTController<
      * @param path url path
      */
     private void updateRoute(String path) {
+        before(path, (request, response) -> {
+            beforeUpdateRoute(request, response);
+        });
+
         put(path, (request, response) -> {
             M entity = (needAccessCheckUpdate)
                 ? getService().updateEntity(request, getRight(), getUpdateActionName())
                 : getService().updateEntity(request);
             return new SuccessResponse<>(msgUpdate, entity);
         }, getTransformer());
+    }
+
+    protected void beforeUpdateRoute(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
+
+    protected void nextIfHasAccess(
+            boolean hasAccess, 
+            String message, 
+            String text) 
+        throws AccessException {
+        if (!hasAccess) {
+            Error error = new Error(text);
+            throw new AccessException(message, error); 
+        }
     }
 
     /**
@@ -154,6 +186,10 @@ public abstract class RESTController<
      * Method for register route for get entity by id
      */
     protected void getEntityByIdRoute() {
+        before(entityPath, (request, response) -> {
+            beforeGetEntityByIdRoute(request, response);
+        });
+
         get(entityPath, (request, response) -> {
             M entity = (needAccessCheckEntity)
                 ? getService().getEntityById(request, getRight(), getReadActionName())
@@ -162,10 +198,17 @@ public abstract class RESTController<
         }, getTransformer());
     }
 
+    protected void beforeGetEntityByIdRoute(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
+
     /**
      * Method for register get entity by id & owner id
      */
     protected void getEntityByIdByOwnerRoute() {
+        before(entityPathByOwner, (request, response) -> {
+            beforeGetEntityByIdByOwnerRoute(request, response);
+        });
+
         get(entityPathByOwner, (request, response) -> {
             M entity = (needAccessCheckEntity)
                 ? getService().getEntityByIdByOwner(request, getRight(), getReadActionName())
@@ -173,6 +216,9 @@ public abstract class RESTController<
             return new SuccessResponse<>(msgEntity, entity);
         }, getTransformer());
     }
+
+    protected void beforeGetEntityByIdByOwnerRoute(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
     // END: BLOCK GET ENTITY BY ID ROUTE
 
     // BEGIN: BLOCK GET ENTITIES LIST ROUTE
@@ -180,6 +226,10 @@ public abstract class RESTController<
      * Method for register route get entities list
      */
     private void getListRoute() {
+        before(listPath, (request, response) -> {
+			beforeGetList(request, response);
+		});
+
         get(listPath, (request, response) -> {
             List<M> entities = (needAccessCheckList)
                 ? getService().getEntitiesList(request, getRight(), getReadActionName())
@@ -188,10 +238,17 @@ public abstract class RESTController<
         }, getTransformer());
     }
 
+    protected void beforeGetList(Request request, Response response) 
+        throws TokenException, AccessException, DataException {}
+
     /**
      * Method for register route to get entitites list by owner id
      */
     protected void getListByOwnerRoute() {
+        before(listByPathByOwner, (request, response) -> {
+            beforeGetListByOwnerRoute(request, response);
+        });
+
         get(listByPathByOwner, (request, response) -> {
             List<M> entities = (needAccessCheckList)
                 ? getService().getEntitiesListByOwner(request, getRight(), getReadActionName())
@@ -199,6 +256,9 @@ public abstract class RESTController<
             return new SuccessResponse<>(msgList, entities);
         }, getTransformer());
     }
+
+    protected void beforeGetListByOwnerRoute(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
     // END: BLOCK GET ENTITIES LIST ROUTE
 
     // BEGIN: BLOCK GET ENTITIES LIST ROUTE
@@ -207,6 +267,10 @@ public abstract class RESTController<
      * @param path url path
      */
     private void createEntity(String path) {
+        before(path, (request, response) -> {
+            beforeCreateEntity(request, response);
+        });
+
         post(path, (request, response) -> {
             M entity = (needAccessCheckCreate)
                 ? getService().createEntity(request, getRight(), getCreateActionName())
@@ -214,6 +278,9 @@ public abstract class RESTController<
             return new SuccessResponse<>(msgCreate, entity);
         }, getTransformer());
     }
+    
+    protected void beforeCreateEntity(Request request, Response response) 
+        throws AccessException, TokenException, DataException {}
 
     /**
      * Method for register route to create entity
@@ -232,8 +299,11 @@ public abstract class RESTController<
 
     protected void customRoutes() {}
 
+    protected void afterDelete() {}
+
     @Override
     public final void register() {
+        registerBefore();
         if (listPath != null) {
             getListRoute();
             if (entityPath != null) {
@@ -260,6 +330,7 @@ public abstract class RESTController<
             deleteByOwnerRoute();
         }
         customRoutes();
+        registerAfter();
     }
 
     /**

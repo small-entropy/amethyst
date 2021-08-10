@@ -47,6 +47,16 @@ public abstract class BaseController <S, T> {
 	public void setRight(String right) {
 		this.right = right;
 	}
+
+	/**
+	 * Method for register middlewares before request
+	 */
+	protected void registerBefore() {}
+
+	/**
+	 * Mthod for register middleware after request
+	 */
+	protected void registerAfter() {}
 	
 	/**
 	 * Method for get controller routes

@@ -7,8 +7,8 @@ import com.mongodb.client.MongoClients;
 
 import platform.application.RestApplication;
 import platform.utils.transformers.JsonTransformer;
-import synthwave.controllers.common.ErrorsController;
 
+import synthwave.controllers.common.ErrorsController;
 import synthwave.controllers.v1.companies.CompaniesController;
 import synthwave.controllers.v1.companies.CompanyProfileController;
 import synthwave.controllers.v1.companies.CompanyPropertiesController;
@@ -91,7 +91,7 @@ public class RESTSynthwave extends RestApplication<Datastore, JsonTransformer> {
                 new UserProfileController(datastore, transformer).register();
                 new UserRightsController(datastore, transformer).register();
             });
-            // BEGIN: REGISTER ROUTES FOR USERS API
+            // END: REGISTER ROUTES FOR USERS API
 
             // BEGIN: REGISTER ROUTES FOR CATALOGS API
             path("/catalogs", () -> {
@@ -127,7 +127,7 @@ public class RESTSynthwave extends RestApplication<Datastore, JsonTransformer> {
             path("/products", () -> {
                 new ProductsController(datastore, transformer).register();
             });
-            // BEGIN: REGISTER ROUTES FOR PRODUCTS API
+            // END: REGISTER ROUTES FOR PRODUCTS API
         });
         // END: REGISTER ROUTES FOR API VERSION 1
     }
