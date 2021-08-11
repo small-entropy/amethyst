@@ -111,26 +111,24 @@ public abstract class EmbeddedPropertiesController
     }
 
     protected void accessControllCreate(Request request) throws AccessException, TokenException {
-        if (request.requestMethod() == "POST") {
-            if (protectedCreate) {
-                boolean hasAccess = getService().checkHasAccess(
-                    request, 
-                    getRight(), 
-                    getCreateActionName()
-                );
-                nextIfHasAccess(
-                    hasAccess, 
-                    "CanNotCreate", 
-                    "Hasn't access to create property"
-                );
-            } else {
-                boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-                if (isTrusted) {
-                    Error error = new Error("Hasn't access to create profile property");
-                    throw new TokenException("NotEquals", error);
-                }
-            }    
-        }
+        if (protectedCreate) {
+            boolean hasAccess = getService().checkHasAccess(
+                request, 
+                getRight(), 
+                getCreateActionName()
+            );
+            nextIfHasAccess(
+                hasAccess, 
+                "CanNotCreate", 
+                "Hasn't access to create property"
+            );
+        } else {
+            boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+            if (isTrusted) {
+                Error error = new Error("Hasn't access to create profile property");
+                throw new TokenException("NotEquals", error);
+            }
+        }    
     }
 
     protected void accessControllList(Request request) throws AccessException {
