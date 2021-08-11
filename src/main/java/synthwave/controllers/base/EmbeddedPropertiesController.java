@@ -1,14 +1,17 @@
 package synthwave.controllers.base;
 
 import platform.controllers.BaseController;
+import platform.exceptions.AccessException;
+import platform.exceptions.TokenException;
 import platform.models.mongodb.morphia.Standalone;
 import platform.utils.responses.SuccessResponse;
 import platform.utils.transformers.JsonTransformer;
+import spark.Request;
 import platform.filters.Filter;
 import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
 import synthwave.repositories.mongodb.base.BasePropertyRepository;
 import synthwave.services.core.base.CRUDEmbeddedPropertyService;
-
+import synthwave.utils.helpers.Comparator;
 import static spark.Spark.*;
 import java.util.List;
 
@@ -96,14 +99,138 @@ public abstract class EmbeddedPropertiesController
         return listUrl;
     }
 
+    protected void nextIfHasAccess(
+        boolean hasAccess, 
+        String message,
+        String text
+    ) throws AccessException {
+        if (!hasAccess) {
+            Error error = new Error(text);
+            throw new AccessException(message, error);
+        }
+    }
+
+    protected void accessControllCreate(Request request) throws AccessException, TokenException {
+        if (request.requestMethod() == "POST") {
+            if (protectedCreate) {
+                boolean hasAccess = getService().checkHasAccess(
+                    request, 
+                    getRight(), 
+                    getCreateActionName()
+                );
+                nextIfHasAccess(
+                    hasAccess, 
+                    "CanNotCreate", 
+                    "Hasn't access to create property"
+                );
+            } else {
+                boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+                if (isTrusted) {
+                    Error error = new Error("Hasn't access to create profile property");
+                    throw new TokenException("NotEquals", error);
+                }
+            }    
+        }
+    }
+
+    protected void accessControllList(Request request) throws AccessException {
+        if (protectedRead) {
+            boolean hasAccess = getService().checkHasAccess(
+                request, 
+                getRight(), 
+                getReadActionName()
+            );
+            nextIfHasAccess(
+                hasAccess, 
+                "CanNotRead", 
+                "Hasn't access to get propertie list"
+            );
+        }
+    }
+
+
+    protected void registerBeforForList() {
+        before(getListUrl(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "POST":
+                    accessControllCreate(request);
+                    break;
+                case "GET":
+                    accessControllList(request);
+                    break;
+                default: 
+                    break;
+            }
+                       
+        });
+    }
+
+    protected void accessControllEntity(Request request) throws AccessException {
+        if (protectedRead) {
+            boolean hasAccess = getService().checkHasAccess(
+                request, 
+                getRight(), 
+                getReadActionName()
+            );
+            nextIfHasAccess(
+                hasAccess, 
+                "CanNotRead", 
+                "Hasn't access to get property"
+            );
+        }
+    }
+
+    protected void accessControllUpdate(Request request) throws AccessException {
+        boolean hasAccess = getService().checkHasAccess(
+            request, 
+            getRight(), 
+            getUpdateActionName()    
+        );
+        nextIfHasAccess(
+            hasAccess, 
+            "CanNotUpdate", 
+            "Hasn't access to update property"
+        );
+    }
+
+    protected void accessControllDelete(Request request) throws AccessException {
+        boolean hasAccess = getService().checkHasAccess(
+            request, 
+            getRight(), 
+            getDeleteActionName()
+        );
+        nextIfHasAccess(
+            hasAccess, 
+            "CanNotDelete", 
+            "Hasn't access for delete property from list"
+        );
+    }
+
+    protected void registerBeforForEntity() {
+        before(getEntityUrl(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "DELETE":
+                    accessControllDelete(request);
+                    break;
+                case "GET":
+                    accessControllDelete(request);
+                    break;
+                case "PUT":
+                    accessControllUpdate(request);
+                    break;
+                default: 
+                    break;
+            }
+                       
+        });
+    }
+
     /**
      * Method with route for create embedded property
      */
     protected void createRoute() {
         post(getListUrl(), (request, response) -> {
-            EmbeddedProperty property = (protectedCreate)
-                ? getService().create(request, getRight(), getCreateActionName())
-                : getService().create(request);
+            EmbeddedProperty property = getService().create(request);
             return new SuccessResponse<>(
                 getSuccessMessage("createed"),
                 property
@@ -116,9 +243,7 @@ public abstract class EmbeddedPropertiesController
      */
     protected void listRoute() {
         get(getListUrl(), (request, response) -> {
-            List<EmbeddedProperty> properties = (protectedRead) 
-                ? getService().list(request, getRight(), getReadActionName()) 
-                : getService().list(request);
+            List<EmbeddedProperty> properties = getService().list(request);
             return new SuccessResponse<>(
                 getSuccessMessage("list"),
                 properties
@@ -131,9 +256,7 @@ public abstract class EmbeddedPropertiesController
      */
     protected void entityRoute() {
         get(getEntityUrl(), (request, response) -> {
-            EmbeddedProperty property = (protectedRead)
-                ? getService().entity(request, getRight(), getReadActionName()) 
-                : getService().entity(request);
+            EmbeddedProperty property = getService().entity(request);
             return new SuccessResponse<>(
                 getSuccessMessage("entity"),
                 property
@@ -146,15 +269,8 @@ public abstract class EmbeddedPropertiesController
      */
     protected void updateRoute() {
         put(getEntityUrl(), (request, response) -> {
-            EmbeddedProperty property = getService().update(
-                request,
-                getRight(),
-                getUpdateActionName()
-            );
-            return new SuccessResponse<>(
-                getSuccessMessage("update"),
-                property
-            );
+            EmbeddedProperty property = getService().update(request);
+            return new SuccessResponse<>(getSuccessMessage("update"), property);
         }, getTransformer());
     }
 
@@ -163,11 +279,7 @@ public abstract class EmbeddedPropertiesController
      */
     protected void deleteRoute() {
         delete(getEntityUrl(), (request, response) -> {
-            List<EmbeddedProperty> properties = getService().delete(
-                request,
-                getRight(),
-                getDeleteActionName()
-            );
+            List<EmbeddedProperty> properties = getService().delete(request);
             return new SuccessResponse<>(
                 getSuccessMessage("delete"), 
                 properties
@@ -199,10 +311,12 @@ public abstract class EmbeddedPropertiesController
     @Override
     public final void register() {
         if (listUrl != null) {
+            registerBeforForList();
             createRoute();
             listRoute();
         }
         if (entityUrl != null) {
+            registerBeforForEntity();
             entityRoute();
             updateRoute();
             deleteRoute();

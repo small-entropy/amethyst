@@ -102,10 +102,6 @@ public abstract class RESTController<
      * @param path url pattern for delete method
      */
     private void deleteRoute(String path) {
-        before(path, (request, response) -> {
-            beforeDeleteRoute(request, response);
-        });
-
         delete(path, (request, response) -> {
             M entity = (needAccessCheckDelete)
                 ? getService().deleteEntity(request, getRight(), getDeleteActionName())
@@ -138,10 +134,6 @@ public abstract class RESTController<
      * @param path url path
      */
     private void updateRoute(String path) {
-        before(path, (request, response) -> {
-            beforeUpdateRoute(request, response);
-        });
-
         put(path, (request, response) -> {
             M entity = (needAccessCheckUpdate)
                 ? getService().updateEntity(request, getRight(), getUpdateActionName())
@@ -184,10 +176,6 @@ public abstract class RESTController<
      * Method for register route for get entity by id
      */
     protected void getEntityByIdRoute() {
-        before(entityPath, (request, response) -> {
-            beforeGetEntityByIdRoute(request, response);
-        });
-
         get(entityPath, (request, response) -> {
             M entity = (needAccessCheckEntity)
                 ? getService().getEntityById(request, getRight(), getReadActionName())
@@ -203,10 +191,6 @@ public abstract class RESTController<
      * Method for register get entity by id & owner id
      */
     protected void getEntityByIdByOwnerRoute() {
-        before(entityPathByOwner, (request, response) -> {
-            beforeGetEntityByIdByOwnerRoute(request, response);
-        });
-
         get(entityPathByOwner, (request, response) -> {
             M entity = (needAccessCheckEntity)
                 ? getService().getEntityByIdByOwner(request, getRight(), getReadActionName())
@@ -224,10 +208,6 @@ public abstract class RESTController<
      * Method for register route get entities list
      */
     private void getListRoute() {
-        before(listPath, (request, response) -> {
-			beforeGetList(request, response);
-		});
-
         get(listPath, (request, response) -> {
             List<M> entities = (needAccessCheckList)
                 ? getService().getEntitiesList(request, getRight(), getReadActionName())
@@ -243,10 +223,6 @@ public abstract class RESTController<
      * Method for register route to get entitites list by owner id
      */
     protected void getListByOwnerRoute() {
-        before(listByPathByOwner, (request, response) -> {
-            beforeGetListByOwnerRoute(request, response);
-        });
-
         get(listByPathByOwner, (request, response) -> {
             List<M> entities = (needAccessCheckList)
                 ? getService().getEntitiesListByOwner(request, getRight(), getReadActionName())
@@ -265,10 +241,6 @@ public abstract class RESTController<
      * @param path url path
      */
     private void createEntity(String path) {
-        before(path, (request, response) -> {
-            beforeCreateEntity(request, response);
-        });
-
         post(path, (request, response) -> {
             M entity = (needAccessCheckCreate)
                 ? getService().createEntity(request, getRight(), getCreateActionName())
@@ -299,10 +271,73 @@ public abstract class RESTController<
 
     protected void afterDelete() {}
 
+    protected void registerBeforeListPath() {
+        before(getListPath(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "POST": 
+                    beforeCreateEntity(request, response);
+                case "GET":
+                    beforeGetList(request, response);
+                default:
+                    break;
+            }
+        });
+    }
+
+    protected void registerBeforeEntityPath() {
+        before(getEntityPath(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "GET":
+                    beforeGetEntityByIdRoute(request, response);
+                case "PUT":
+                    beforeUpdateRoute(request, response);
+                    break;
+                case "DELETE":
+                    beforeDeleteRoute(request, response);
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    protected void registerBeforeListPathByOwner() {
+        before(getListByPathByOwner(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "POST":
+                    beforeCreateEntity(request, response);
+                    break;
+                case "GET":
+                    beforeGetListByOwnerRoute(request, response);
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    protected void registerBeforeEntityPathByOwner() {
+        before(getEntityPathByOwner(), (request, response) -> {
+            switch (request.requestMethod()) {
+                case "GET":
+                    beforeGetEntityByIdByOwnerRoute(request, response);
+                    break;
+                case "PUT":
+                    beforeUpdateRoute(request, response);
+                    break;
+                case "DELETE":  
+                    beforeDeleteRoute(request, response);
+                default:
+                    break;
+            }
+        });
+    }
+
     @Override
     public final void register() {
         registerBefore();
         if (listPath != null) {
+            registerBeforeListPath();
             getListRoute();
             if (entityPath != null) {
                 createEntity();
@@ -310,12 +345,14 @@ public abstract class RESTController<
         }
         
         if (entityPath != null) {
+            registerBeforeEntityPath();
             getEntityByIdRoute();
             updateRoute();
             deleteRoute();
         }
 
         if (listByPathByOwner != null) {
+            registerBeforeListPathByOwner();
             getListByOwnerRoute();
             if (entityPathByOwner != null) {
                 createEntityByOwner();
@@ -323,6 +360,7 @@ public abstract class RESTController<
         }
 
         if (entityPathByOwner != null) {
+            registerBeforeEntityPathByOwner();
             getEntityByIdByOwnerRoute();
             updateByOwnerRoute();
             deleteByOwnerRoute();
