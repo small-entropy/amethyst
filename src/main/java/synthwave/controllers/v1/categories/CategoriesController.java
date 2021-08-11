@@ -5,9 +5,15 @@ import synthwave.controllers.messages.CategoriesMessages;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.repositories.mongodb.v1.CategoriesRepository;
 import synthwave.services.v1.categories.CategoryService;
+import synthwave.utils.helpers.Comparator;
+import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
+import platform.dto.RuleDTO;
+import platform.exceptions.AccessException;
 import platform.utils.responses.SuccessResponse;
 import platform.utils.transformers.JsonTransformer;
+import spark.Request;
+import spark.Response;
 import dev.morphia.Datastore;
 import java.util.List;
 import static spark.Spark.*;
@@ -19,6 +25,52 @@ import static spark.Spark.*;
  */
 public class CategoriesController 
 	extends RESTController<Category, CategoriesRepository, CategoryService> {
+
+	@Override
+	protected void beforeCreateEntity(Request request, Response response)
+		throws AccessException {
+		RuleDTO rule = getService().getRule(
+			request, 
+			getRight(), 
+			DefaultActions.CREATE.getName()
+		);
+		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+		boolean hasAccess;
+		if (rule == null) {
+			hasAccess = false;
+		} else {
+			hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
+		}
+		nextIfHasAccess(hasAccess, "CanNotCreate", "Has no access to create catalog");
+	}
+
+	@Override
+	protected void beforeUpdateRoute(Request request, Response response) 
+		throws AccessException {
+		RuleDTO rule = getService().getRule(
+			request, 
+			getRight(), 
+			DefaultActions.UPDATE.getName()
+		);
+		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
+		boolean hasAccess = getService().checkHasAccess(rule, isTrusted);
+		nextIfHasAccess(
+			hasAccess, 
+			"CanNotUpdate", 
+			"Has no access to update cateogry document"
+		);
+	}
+
+	@Override
+	protected void beforeDeleteRoute(Request request, Response response) 
+		throws AccessException {
+		boolean hasAccess = getService().checkHasGlobalAccess(
+			request, 
+			getRight(), 
+			DefaultActions.DELETE.getName()
+		);
+		nextIfHasAccess(hasAccess, "CanNotDelete", "Has no access to delete category");
+	}
     
 	/**
 	 * Default categories controller constructor.

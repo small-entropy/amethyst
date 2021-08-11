@@ -5,8 +5,13 @@ import synthwave.controllers.messages.TagsMessages;
 import synthwave.models.mongodb.standalones.Tag;
 import synthwave.repositories.mongodb.v1.TagsRepository;
 import synthwave.services.v1.tags.TagService;
+import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
+import platform.dto.RuleDTO;
+import platform.exceptions.AccessException;
 import platform.utils.transformers.JsonTransformer;
+import spark.Request;
+import spark.Response;
 import dev.morphia.Datastore;
 
 /**
@@ -15,6 +20,49 @@ import dev.morphia.Datastore;
  */
 public class TagsController
 	extends RESTController<Tag, TagsRepository, TagService> {
+
+	@Override
+	protected void beforeUpdateRoute(Request request, Response response) 
+		throws AccessException {
+		RuleDTO rule = getService().getRule(
+			request, 
+			getRight(),
+			DefaultActions.UPDATE.getName()
+		);
+		boolean hasAccess = getService().checkHasAccess(request, rule);
+		nextIfHasAccess(
+			hasAccess,
+			"CanNotUpdate",
+			"Has no access to update tag document"
+		);
+	}
+
+	@Override
+	protected void beforeCreateEntity(Request request, Response response) 
+		throws AccessException {
+		RuleDTO rule = getService().getRule(
+			request, 
+			getRight(), 
+			DefaultActions.CREATE.getName()
+		);
+		boolean hasAccess = getService().checkHasGlobalAccess(request, rule);
+		nextIfHasAccess(hasAccess, "CanNotCreate", "Has no access to create tag");
+	}
+
+	@Override
+	protected void beforeDeleteRoute(Request request, Response response)
+		throws AccessException {
+		boolean hasAccess = getService().checkHasGlobalAccess(
+			request, 
+			getRight(), 
+			DefaultActions.DELETE.getName()
+		);
+		nextIfHasAccess(
+			hasAccess, 
+			"CanNotDelete", 
+			"Has no access to delete tag document"
+		);
+	}
 	
 	/**
 	 * Default tag controller constructor. Create instance

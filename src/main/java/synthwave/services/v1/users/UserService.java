@@ -1,21 +1,24 @@
 package synthwave.services.v1.users;
-// Import models
-import platform.dto.RuleDTO;
-import platform.exceptions.DataException;
-import platform.exceptions.TokenException;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.services.core.users.CoreUserService;
-import synthwave.utils.helpers.Comparator;
-import platform.utils.helpers.ParamsManager;
-import platform.utils.helpers.QueryManager;
-import platform.utils.helpers.RequestUtils;
+
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
+import platform.dto.RuleDTO;
+import platform.exceptions.DataException;
+import platform.exceptions.TokenException;
+import platform.utils.helpers.ParamsManager;
+import platform.utils.helpers.QueryManager;
+
+import synthwave.models.mongodb.standalones.User;
+import synthwave.services.core.users.CoreUserService;
+import synthwave.utils.helpers.Comparator;
+
 /**
  * Class service for work with users collection
+ * @author small-entropy
+ * @version 1
  */
 public class UserService extends CoreUserService {
     
@@ -43,38 +46,12 @@ public class UserService extends CoreUserService {
      * @throws TokenException
      * @throws DataException
      */
-    public User deleteEntity(
-        Request request
-    ) throws TokenException, DataException {
-        // Get token from request
-        String token = RequestUtils.getTokenByRequest(request);
-        // Check token on exist
-        // If token send - try deactivate user
-        // If token not send - throw exception
-        if (token != null) {
-            // Check ids on equals
-            boolean isEqualsIds = Comparator.id_fromParam_fromToken(request);
-            // If ids equals - deactivate user account and save it
-            // If ids not equals - throw exception
-            if (isEqualsIds) {
-                // Get id from query params
-                ObjectId userId = ParamsManager.getUserId(request);
-                // Find user by id
-                User user = getUserById(userId);
-                // Deactivate user
-                user.deactivate();
-                // Save changes in database
-                getRepository().save(user);
-                // Return saved document
-                return user;
-            } else {
-                Error error = new Error("Incorrect token");
-                throw new TokenException("NotEquals", error);
-            }
-        } else {
-            Error error = new Error("Token not send");
-            throw new TokenException("NotSend", error);
-        }
+    public User deleteEntity(Request request) throws DataException {
+        ObjectId userId = ParamsManager.getUserId(request);
+        User user = getUserById(userId);
+        user.deactivate();
+        getRepository().save(user);
+        return user;
     }
 
     /**
@@ -85,9 +62,7 @@ public class UserService extends CoreUserService {
      * @return founded user document
      * @throws DataException
      */
-    public User getEntityById(
-        Request request
-    ) throws  DataException {
+    public User getEntityById(Request request) throws  DataException {
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         ObjectId userId = ParamsManager.getUserId(request);
         String[] excludes = isTrusted
@@ -111,11 +86,7 @@ public class UserService extends CoreUserService {
         int skip = QueryManager.getSkip(request);
         int limit = QueryManager.getLimit(request);
         RuleDTO rule = getRule(request, right, action);
-        String[] excludes = getExcludes(
-                rule,
-                true
-        );
-        // Get users list
+        String[] excludes = getExcludes(rule, true);
         return getList(skip, limit, excludes);
     }
 }

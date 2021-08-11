@@ -1,15 +1,16 @@
 package synthwave.services.v1.tags;
 
-import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.exceptions.DataException;
-import synthwave.models.mongodb.standalones.Tag;
-import synthwave.services.core.tags.CoreTagService;
-import platform.utils.helpers.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
+
+import platform.dto.RuleDTO;
+import platform.exceptions.DataException;
+import platform.utils.helpers.ParamsManager;
+
+import synthwave.models.mongodb.standalones.Tag;
+import synthwave.services.core.tags.CoreTagService;
 
 /**
  * Class service for work with tags collectoin
@@ -77,30 +78,18 @@ public class TagService extends CoreTagService {
     }
     
     @Override
-    public Tag createEntity(
-            Request request,
-            String right,
-            String action
-    ) throws AccessException, DataException {
+    public Tag createEntity(Request request, String right, String action) 
+        throws DataException {
         RuleDTO rule = getRule(request, right, action);
-        boolean hasAccess = checkHasGlobalAccess(request, rule);
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            Tag tag = createTag(userId, request);
-            String[] excludes = getExcludes(request, rule);
-            return getTagByDocument(tag, excludes);
-        } else {
-            Error error = new Error("Has no access to create tag");
-            throw new AccessException("CanNotCreate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        Tag tag = createTag(userId, request);
+        String[] excludes = getExcludes(request, rule);
+        return getTagByDocument(tag, excludes);
     }
 
     @Override
-    public Tag getEntityById(
-            Request request,
-            String right,
-            String action
-    ) throws DataException {
+    public Tag getEntityById(Request request, String right, String action) 
+        throws DataException {
         RuleDTO rule = getRule(request, right, action);
         String[] excludes = getExcludes(request, rule);
         var tag = getTagByRequestByUserId(request, excludes);
@@ -113,40 +102,22 @@ public class TagService extends CoreTagService {
     }
 
     @Override
-    public Tag updateEntity(
-            Request request,
-            String right,
-            String action
-    ) throws AccessException, DataException {
+    public Tag updateEntity(Request request, String right, String action) 
+        throws DataException {
         RuleDTO rule = getRule(request, right, action);
-        boolean hasAccess = checkHasAccess(request, rule);
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId tagId = ParamsManager.getTagId(request);
-            Tag tag = updateTag(userId, tagId, request);
-            String[] excludes = getExcludes(request, rule);
-            return getTagByDocument(tag, excludes);
-        } else {
-            Error error = new Error("Has no access to update tag document");
-            throw new AccessException("CanNotUpdate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId tagId = ParamsManager.getTagId(request);
+        Tag tag = updateTag(userId, tagId, request);
+        String[] excludes = getExcludes(request, rule);
+        return getTagByDocument(tag, excludes);
     }
 
     @Override
-    public Tag deleteEntity(
-            Request request,
-            String right,
-            String action
-    ) throws AccessException, DataException {
-        boolean hasAccess = checkHasGlobalAccess(request, right, action);
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId tagId = ParamsManager.getTagId(request);
-            return deleteTag(userId, tagId);
-        } else {
-            Error error = new Error("Has no access to delete tag document");
-            throw new AccessException("CanNotDelete", error);
-        }
+    public Tag deleteEntity(Request request, String right, String action) 
+        throws DataException {
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId tagId = ParamsManager.getTagId(request);
+        return deleteTag(userId, tagId);
     }
     
     @Override

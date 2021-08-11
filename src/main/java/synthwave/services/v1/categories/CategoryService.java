@@ -50,20 +50,14 @@ public class CategoryService extends CoreCategoryService {
             Request request, 
             String right,
             String action
-    ) throws AccessException, DataException {
+    ) throws DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = (isTrusted) ? rule.isMyGlobal() : rule.isOtherGlobal();
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId catalogId = ParamsManager.getCatalogId(request);
-            Category category = createCategory(userId, catalogId, request);
-            String[] exludes = getExcludes(isTrusted, rule);
-            return getCategoryByDocument(category, exludes);
-        } else {
-            Error error = new Error("Has no access to create catalog");
-            throw new AccessException("CanNotCreate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId catalogId = ParamsManager.getCatalogId(request);
+        Category category = createCategory(userId, catalogId, request);
+        String[] exludes = getExcludes(isTrusted, rule);
+        return getCategoryByDocument(category, exludes);
     } 
 
     public List<Category> getCatalogCategories(
@@ -123,20 +117,14 @@ public class CategoryService extends CoreCategoryService {
             Request request,  
             String right,
             String action
-    ) throws AccessException, DataException {
+    ) throws DataException {
         RuleDTO rule = getRule(request, right, action);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
-        boolean hasAccess = checkHasAccess(rule, isTrusted);
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId categoryId = ParamsManager.getCategoryId(request);
-            Category category = updateCategory(userId, categoryId, request);
-            String[] excludes = getExcludes(isTrusted, rule);
-            return getCategoryByDocument(category, excludes);
-        } else {
-            Error error = new Error("Has no access to update cateogry document");
-            throw new AccessException("CanNotUpdate", error);
-        }
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId categoryId = ParamsManager.getCategoryId(request);
+        Category category = updateCategory(userId, categoryId, request);
+        String[] excludes = getExcludes(isTrusted, rule);
+        return getCategoryByDocument(category, excludes);
     }
     
     @Override
@@ -144,15 +132,9 @@ public class CategoryService extends CoreCategoryService {
             Request request,
             String right,
             String action
-    ) throws AccessException, DataException {
-        boolean hasAccess = checkHasGlobalAccess(request, right, action); 
-        if (hasAccess) {
-            ObjectId userId = ParamsManager.getUserId(request);
-            ObjectId categoryId = ParamsManager.getCategoryId(request);
-            return deleteCategory(userId, categoryId);
-        } else {
-            Error error = new Error("Has no access to delete category document");
-            throw new AccessException("CanNotDelete", error);
-        }
+    ) throws DataException {
+        ObjectId userId = ParamsManager.getUserId(request);
+        ObjectId categoryId = ParamsManager.getCategoryId(request);
+        return deleteCategory(userId, categoryId);
     }
 }

@@ -1,12 +1,15 @@
 package synthwave.controllers.v1.catalogs;
 
+import spark.Response;
+import spark.Request;
+import dev.morphia.Datastore;
+
 import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.utils.transformers.JsonTransformer;
-import spark.Response;
-import spark.Request;
+
 import synthwave.controllers.base.RESTController;
 import synthwave.controllers.messages.CatalogsMessages;
 import synthwave.models.mongodb.standalones.Catalog;
@@ -14,7 +17,7 @@ import synthwave.repositories.mongodb.v1.CatalogsRepository;
 import synthwave.services.v1.catalogs.CatalogService;
 import synthwave.utils.access.RightManager;
 import synthwave.utils.helpers.Comparator;
-import dev.morphia.Datastore;
+
 /**
  * Class controller for work with catalogs routes
  * @author small-entropy

@@ -3,7 +3,6 @@ package synthwave.controllers.base;
 import java.util.List;
 
 import platform.controllers.BaseController;
-import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import platform.exceptions.TokenException;
@@ -13,7 +12,6 @@ import platform.utils.transformers.JsonTransformer;
 import spark.Response;
 import spark.Request;
 import synthwave.services.base.BaseService;
-import synthwave.utils.access.RightManager;
 
 import static spark.Spark.*;
 
