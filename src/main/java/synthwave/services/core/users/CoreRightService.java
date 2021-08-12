@@ -59,7 +59,7 @@ public abstract class CoreRightService
      * @return list of user rights
      * @throws DataException throw if can not found user or rights
      */
-    protected List<EmbeddedRight> getUserRights(
+    public List<EmbeddedRight> getUserRights(
             Request request
     ) throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
@@ -73,28 +73,28 @@ public abstract class CoreRightService
      * @return user right document
      * @throws DataException throw if can not found user or right
      */
-    protected EmbeddedRight getUserRightById(Request request) 
+    public EmbeddedRight getUserRightById(Request request) 
             throws DataException {
        ObjectId rightId = ParamsManager.getRightId(request);
        ObjectId userId = ParamsManager.getUserId(request);
        return getRepository().getRightByIdParam(rightId, userId);
     }
     
-    protected EmbeddedRight createUserRight(Request request) 
+    public EmbeddedRight createUserRight(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         UserRightDTO rightDTO = UserRightDTO.build(request, UserRightDTO.class);
         return getRepository().createUserRight(userId, rightDTO);
     }
     
-    protected List<EmbeddedRight> deleteRights(Request request) 
+    public List<EmbeddedRight> deleteRight(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId rightId = ParamsManager.getRightId(request);
         return getRepository().removeRight(rightId, userId);
     }
     
-    protected EmbeddedRight updateRight(Request request) 
+    public EmbeddedRight updateRight(Request request) 
             throws DataException {
         ObjectId userId = ParamsManager.getUserId(request);
         ObjectId rightId = ParamsManager.getRightId(request);

@@ -99,17 +99,6 @@ public abstract class EmbeddedPropertiesController
         return listUrl;
     }
 
-    protected void nextIfHasAccess(
-        boolean hasAccess, 
-        String message,
-        String text
-    ) throws AccessException {
-        if (!hasAccess) {
-            Error error = new Error(text);
-            throw new AccessException(message, error);
-        }
-    }
-
     protected void accessControllCreate(Request request) throws AccessException, TokenException {
         if (protectedCreate) {
             boolean hasAccess = getService().checkHasAccess(
@@ -239,7 +228,8 @@ public abstract class EmbeddedPropertiesController
     /**
      * Method with route for get list embedded properties
      */
-    protected void listRoute() {
+    @Override
+    protected void getListRoute() {
         get(getListUrl(), (request, response) -> {
             List<EmbeddedProperty> properties = getService().list(request);
             return new SuccessResponse<>(
@@ -252,7 +242,8 @@ public abstract class EmbeddedPropertiesController
     /**
      * Method with route for get embedded property by id
      */
-    protected void entityRoute() {
+    @Override
+    protected void getEntityByIdRoute() {
         get(getEntityUrl(), (request, response) -> {
             EmbeddedProperty property = getService().entity(request);
             return new SuccessResponse<>(
@@ -265,6 +256,7 @@ public abstract class EmbeddedPropertiesController
     /**
      * Method with route for update embedded property
      */
+    @Override
     protected void updateRoute() {
         put(getEntityUrl(), (request, response) -> {
             EmbeddedProperty property = getService().update(request);
@@ -275,6 +267,7 @@ public abstract class EmbeddedPropertiesController
     /**
      * Method for delete embedded property
      */
+    @Override
     protected void deleteRoute() {
         delete(getEntityUrl(), (request, response) -> {
             List<EmbeddedProperty> properties = getService().delete(request);
@@ -301,6 +294,17 @@ public abstract class EmbeddedPropertiesController
         };
     }
 
+    @Override
+    protected void registerBefore() {
+        if (listUrl != null) {
+            registerBeforForList();
+        }
+
+        if (entityUrl != null) {
+            registerBeforForEntity();
+        }
+    }
+
     /**
      * Method for register custom (additionals) routes
      */
@@ -308,14 +312,13 @@ public abstract class EmbeddedPropertiesController
 
     @Override
     public final void register() {
+        registerBefore();
         if (listUrl != null) {
-            registerBeforForList();
             createRoute();
-            listRoute();
+            getListRoute();
         }
         if (entityUrl != null) {
-            registerBeforForEntity();
-            entityRoute();
+            getEntityByIdRoute();
             updateRoute();
             deleteRoute();
         }

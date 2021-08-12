@@ -5,8 +5,11 @@ import synthwave.models.mongodb.embeddeds.EmbeddedRight;
 import synthwave.services.v1.users.UserRightService;
 import platform.constants.DefaultRights;
 import platform.controllers.BaseController;
+import platform.exceptions.AccessException;
 import platform.utils.responses.SuccessResponse;
 import platform.utils.transformers.JsonTransformer;
+import spark.Request;
+import spark.Response;
 import dev.morphia.Datastore;
 import java.util.List;
 import static spark.Spark.*;
@@ -29,17 +32,123 @@ public class UserRightsController
 				DefaultRights.USERS.getName()
 		);
 	}
+
+	protected void beforeGetEntityByIdRoute(Request request, Response response) 
+		throws AccessException {
+		boolean hasAccess = getService().checkHasAccess(
+			request, 
+			getRight(), 
+			getReadActionName()
+		);
+		nextIfHasAccess(
+			hasAccess, 
+			"CanNotRead", 
+			"Has not rights for read private fields"
+		);
+	}
+
+	protected void beforeCreateEntityRoute(Request request, Response response)
+		throws AccessException {
+		boolean hasAccess = getService().checkHasAccess(
+			request, 
+			getRight(), 
+			getCreateActionName()
+		);
+		nextIfHasAccess(
+			hasAccess, 
+			"CanNotCreate", 
+			"Has not rights to create right document for user document"
+		);
+	}
+
+	protected void beforeGetListRoute(Request request, Response response)
+		throws AccessException {
+		boolean hasAccess = getService().checkHasAccess(
+			request, 
+			getRight(), 
+			getReadActionName()
+		);
+		nextIfHasAccess(
+			hasAccess, 
+			"CanNotRead", 
+			"Has not rights for read private fields"
+		);
+	}
+
+	protected void beforeDeleteRoute(Request request, Response response)
+		throws AccessException {
+			boolean hasAccess = getService().checkHasAccess(
+					request, 
+					getRight(), 
+					getDeleteActionName()
+			);
+			nextIfHasAccess(
+				hasAccess, 
+				"CanNotDelete",
+				"Can't delete user right"
+			);
+	}
+
+	protected void beforeUpdateRoute(Request request, Response response)
+		throws AccessException {
+		boolean hasAccess = getService().checkHasAccess(
+			request, 
+			getRight(), 
+			getUpdateActionName()
+		);
+		nextIfHasAccess(
+			hasAccess,
+			"CanNotUpdate", 
+			"Can't update user right"	
+		);
+	}
+
+	protected void registerBeforeList() {
+		before("/:user_id/rights", (request, response) -> {
+			switch(request.requestMethod()) {
+				case "GET":
+					beforeGetListRoute(request, response);
+					break;
+				case "POST":
+					beforeCreateEntityRoute(request, response);
+					break;
+				default:
+					break;
+			}
+		});
+	}
+
+	protected void registerBeforeEntity() {
+		before("/:user_id/rigthts/:right_id", (request, response) -> {
+			switch(request.requestMethod()) {
+				case "GET":
+					beforeGetEntityByIdRoute(request, response);
+					break;
+				case "PUT":
+					beforeUpdateRoute(request, response);
+					break;
+				case "DELETE":
+					beforeDeleteRoute(request, response);
+					break;
+				default:
+					break;
+			}
+		});
+	}
+
+	@Override
+	protected void registerBefore() {
+		registerBeforeEntity();
+		registerBeforeList();
+	}
+
 	
 	/**
 	 * Method for get user rights list by user id
 	 */
-	protected void getUserRightsListByUserIdRoute() {
+	protected void getListRoute() {
 		get("/:user_id/rights", (request, response) -> {
-            List<EmbeddedRight> rights = getService().getUserRights(
-            		request, 
-            		getRight(), 
-            		getReadActionName()
-            );
+            List<EmbeddedRight> rights = getService().getUserRights(request);
             return new SuccessResponse<>(
             		UserRightsMessages.LIST.getMessage(), 
             		rights
@@ -50,13 +159,9 @@ public class UserRightsController
 	/**
 	 * Method for create user right entity
 	 */
-	protected void createUserRightRoute() {
+	protected void createEntity() {
 		post("/:user_id/rights", (request, response) -> {
-            EmbeddedRight right = getService().createUserRight(
-            		request, 
-            		getRight(), 
-            		getCreateActionName()
-            );
+            EmbeddedRight right = getService().createUserRight(request);
             return new SuccessResponse<>(
             		UserRightsMessages.CREATED.getMessage(), 
             		right
@@ -67,13 +172,9 @@ public class UserRightsController
 	/**
 	 * Method for get user rights entity by user id & right id
 	 */
-	protected void getUserRightByUserIdAndIdRoute() {
+	protected void getEntityByIdRoute() {
 		get("/:user_id/rights/:right_id", (request, ressponse) -> {
-            EmbeddedRight right = getService().getUserRightById(
-            		request, 
-            		getRight(), 
-            		getReadActionName()
-            );
+            EmbeddedRight right = getService().getUserRightById(request);
             return new SuccessResponse<>(
             		UserRightsMessages.ENTITY.getMessage(),
             		right
@@ -84,30 +185,23 @@ public class UserRightsController
 	/**
 	 * Method for update user right entity
 	 */
-	protected void updateUserRightRoute() {
+	protected void updateRoute() {
 		 put("/:user_id/rights/:right_id", (request, response) -> {
-	            EmbeddedRight right = getService().updateRight(
-	            		request,
-	            		getRight(), 
-	            		getUpdateActionName()
-	            );
-	            return new SuccessResponse<>(
-	            		UserRightsMessages.UPDATED.getMessage(), 
-	            		right
-	            );
-	        }, getTransformer());
+			EmbeddedRight right = getService().updateRight(request);
+			return new SuccessResponse<>(
+					UserRightsMessages.UPDATED.getMessage(), 
+					right
+			);
+	    }, getTransformer());
 	}
 	
 	/**
 	 * Method for remove user rights entity
 	 */
-	protected void deleteUserRightRoute() {
+	@Override
+	protected void deleteRoute() {
         delete("/:user_id/rights/:right_id", (request, response) -> {
-            List<EmbeddedRight> rights = getService().deleteRight(
-            		request,
-            		getRight(), 
-            		getDeleteActionName()
-            );
+            List<EmbeddedRight> rights = getService().deleteRight(request);
             return new SuccessResponse<>(
             		UserRightsMessages.DELETED.getMessage(), 
             		rights
@@ -120,10 +214,11 @@ public class UserRightsController
 	 */
 	@Override
     public void register() {
-		createUserRightRoute();
-		getUserRightsListByUserIdRoute();
-		getUserRightByUserIdAndIdRoute();
-		updateUserRightRoute();
-		deleteUserRightRoute();
+		registerBefore();
+		createEntity();
+		getListRoute();
+		getEntityByIdRoute();
+		updateRoute();
+		deleteRoute();
     }
 }

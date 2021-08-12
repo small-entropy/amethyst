@@ -6,7 +6,6 @@ import synthwave.models.mongodb.standalones.Category;
 import synthwave.repositories.mongodb.v1.CategoriesRepository;
 import synthwave.services.v1.categories.CategoryService;
 import synthwave.utils.helpers.Comparator;
-import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
@@ -27,12 +26,12 @@ public class CategoriesController
 	extends RESTController<Category, CategoriesRepository, CategoryService> {
 
 	@Override
-	protected void beforeCreateEntity(Request request, Response response)
+	protected void beforeCreateEntityRoute(Request request, Response response)
 		throws AccessException {
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.CREATE.getName()
+			getCreateActionName()
 		);
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
 		boolean hasAccess;
@@ -50,7 +49,7 @@ public class CategoriesController
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.UPDATE.getName()
+			getUpdateActionName()
 		);
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
 		boolean hasAccess = getService().checkHasAccess(rule, isTrusted);
@@ -67,7 +66,7 @@ public class CategoriesController
 		boolean hasAccess = getService().checkHasGlobalAccess(
 			request, 
 			getRight(), 
-			DefaultActions.DELETE.getName()
+			getDeleteActionName()
 		);
 		nextIfHasAccess(hasAccess, "CanNotDelete", "Has no access to delete category");
 	}

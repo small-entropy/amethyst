@@ -4,7 +4,6 @@ import spark.Response;
 import spark.Request;
 import dev.morphia.Datastore;
 
-import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
@@ -27,12 +26,12 @@ public class CatalogsController
 	extends RESTController<Catalog, CatalogsRepository, CatalogService> {
 
 	@Override
-	protected void beforeCreateEntity(Request request, Response response) 
+	protected void beforeCreateEntityRoute(Request request, Response response) 
 		throws AccessException {
 		RuleDTO rule = getService().getRule(
 			request,
 			getRight(),
-			DefaultActions.CREATE.getName()
+			getCreateActionName()
 		);
         boolean hasAccess;
 		if (rule == null) {
@@ -50,7 +49,7 @@ public class CatalogsController
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.DELETE.getName()
+			getDeleteActionName()
 		);
         boolean hasAccess = (rule == null) 
 			? false 
@@ -64,7 +63,7 @@ public class CatalogsController
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.UPDATE.getName()
+			getUpdateActionName()
 		);
         boolean isTrusted = Comparator.id_fromParam_fromToken(request);
         boolean hasAccess;

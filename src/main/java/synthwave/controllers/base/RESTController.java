@@ -116,6 +116,7 @@ public abstract class RESTController<
     /**
      * Method for register delete route
      */
+    @Override
     protected void deleteRoute() {
         deleteRoute(entityPath);
     }
@@ -159,6 +160,7 @@ public abstract class RESTController<
     /**
      * Method for register update route
      */
+    @Override
     protected void updateRoute() {
         updateRoute(entityPath);
     }
@@ -175,6 +177,7 @@ public abstract class RESTController<
     /**
      * Method for register route for get entity by id
      */
+    @Override
     protected void getEntityByIdRoute() {
         get(entityPath, (request, response) -> {
             M entity = (needAccessCheckEntity)
@@ -207,7 +210,8 @@ public abstract class RESTController<
     /**
      * Method for register route get entities list
      */
-    private void getListRoute() {
+    @Override
+    protected void getListRoute() {
         get(listPath, (request, response) -> {
             List<M> entities = (needAccessCheckList)
                 ? getService().getEntitiesList(request, getRight(), getReadActionName())
@@ -249,13 +253,14 @@ public abstract class RESTController<
         }, getTransformer());
     }
     
-    protected void beforeCreateEntity(Request request, Response response) 
+    protected void beforeCreateEntityRoute(Request request, Response response) 
         throws AccessException, TokenException, DataException {}
 
     /**
      * Method for register route to create entity
      */
-    protected void createEntity() {
+    @Override
+    protected void createEntityRoute() {
         createEntity(listPath);
     }
 
@@ -275,7 +280,7 @@ public abstract class RESTController<
         before(getListPath(), (request, response) -> {
             switch (request.requestMethod()) {
                 case "POST": 
-                    beforeCreateEntity(request, response);
+                    beforeCreateEntityRoute(request, response);
                 case "GET":
                     beforeGetList(request, response);
                 default:
@@ -305,7 +310,7 @@ public abstract class RESTController<
         before(getListByPathByOwner(), (request, response) -> {
             switch (request.requestMethod()) {
                 case "POST":
-                    beforeCreateEntity(request, response);
+                    beforeCreateEntityRoute(request, response);
                     break;
                 case "GET":
                     beforeGetListByOwnerRoute(request, response);
@@ -340,7 +345,7 @@ public abstract class RESTController<
             registerBeforeListPath();
             getListRoute();
             if (entityPath != null) {
-                createEntity();
+                createEntityRoute();
             }
         }
         

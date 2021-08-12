@@ -5,7 +5,6 @@ import synthwave.controllers.messages.TagsMessages;
 import synthwave.models.mongodb.standalones.Tag;
 import synthwave.repositories.mongodb.v1.TagsRepository;
 import synthwave.services.v1.tags.TagService;
-import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
@@ -27,7 +26,7 @@ public class TagsController
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(),
-			DefaultActions.UPDATE.getName()
+			getUpdateActionName()
 		);
 		boolean hasAccess = getService().checkHasAccess(request, rule);
 		nextIfHasAccess(
@@ -38,12 +37,12 @@ public class TagsController
 	}
 
 	@Override
-	protected void beforeCreateEntity(Request request, Response response) 
+	protected void beforeCreateEntityRoute(Request request, Response response) 
 		throws AccessException {
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.CREATE.getName()
+			getCreateActionName()
 		);
 		boolean hasAccess = getService().checkHasGlobalAccess(request, rule);
 		nextIfHasAccess(hasAccess, "CanNotCreate", "Has no access to create tag");
@@ -55,7 +54,7 @@ public class TagsController
 		boolean hasAccess = getService().checkHasGlobalAccess(
 			request, 
 			getRight(), 
-			DefaultActions.DELETE.getName()
+			getDeleteActionName()
 		);
 		nextIfHasAccess(
 			hasAccess, 

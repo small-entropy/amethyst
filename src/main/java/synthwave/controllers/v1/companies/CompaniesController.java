@@ -1,6 +1,5 @@
 package synthwave.controllers.v1.companies;
 
-import platform.constants.DefaultActions;
 import platform.constants.DefaultRights;
 import platform.dto.RuleDTO;
 import platform.exceptions.AccessException;
@@ -23,12 +22,12 @@ public class CompaniesController
 	extends RESTController<Company, CompaniesRepository, CompanyService> {
 	
 	@Override
-	protected void beforeCreateEntity(Request request, Response response) 
+	protected void beforeCreateEntityRoute(Request request, Response response) 
 		throws AccessException {
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.CREATE.getName()
+			getDeleteActionName()
 		);
 		boolean hasAccess = getService().checkHasGlobalAccess(request, rule);
 		nextIfHasAccess(hasAccess, "CanNotCreate", "Has no access to create tag");
@@ -40,7 +39,7 @@ public class CompaniesController
 		RuleDTO rule = getService().getRule(
 			request, 
 			getRight(), 
-			DefaultActions.UPDATE.getName()
+			getUpdateActionName()
 		);
 		boolean isTrusted = Comparator.id_fromParam_fromToken(request);
 		boolean hasAccess = getService().checkHasAccess(rule, isTrusted);
@@ -57,7 +56,7 @@ public class CompaniesController
 		boolean hasAccess = getService().checkHasGlobalAccess(
 			request, 
 			getRight(),
-			DefaultActions.DELETE.getName() 
+			getDeleteActionName()
 		);
 		nextIfHasAccess(
 			hasAccess, 

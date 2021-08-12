@@ -1,6 +1,7 @@
 package platform.controllers;
 
 import platform.constants.DefaultActions;
+import platform.exceptions.AccessException;
 
 /**
  * Base class for create controller
@@ -40,10 +41,18 @@ public abstract class BaseController <S, T> {
 		this.right = right;
 	}
 	
+	/**
+	 * Getter for right
+	 * @return value of right
+	 */
 	public String getRight() {
 		return right;
 	}
 	
+	/**
+	 * Setter for right
+	 * @param right new value of right
+	 */
 	public void setRight(String right) {
 		this.right = right;
 	}
@@ -62,6 +71,31 @@ public abstract class BaseController <S, T> {
 	 * Method for get controller routes
 	 */
 	public void register() {}
+
+	/**
+	 * Method for register get entity by id route
+	 */
+	protected void getEntityByIdRoute() {}
+
+	/**
+	 * Method for register get list of entities route
+	 */
+	protected void getListRoute() {}
+
+	/**
+	 * Method for register create entity route
+	 */
+	protected void createEntityRoute() {}
+
+	/**
+	 * Method for register update entity route
+	 */
+	protected void updateRoute() {}
+	
+	/**
+	 * Method for register delete entity route
+	 */
+	protected void deleteRoute() {}
 
 	/**
 	 * Getter for response transformer
@@ -110,4 +144,15 @@ public abstract class BaseController <S, T> {
 	public String getReadActionName() {
 		return readActionName;
 	}
+
+	protected void nextIfHasAccess(
+        boolean hasAccess, 
+        String message, 
+        String text
+    ) throws AccessException {
+        if (!hasAccess) {
+            Error error = new Error(text);
+            throw new AccessException(message, error);
+        }
+    }
 }

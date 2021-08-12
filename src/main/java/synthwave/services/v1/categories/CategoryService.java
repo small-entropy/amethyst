@@ -1,7 +1,6 @@
 package synthwave.services.v1.categories;
 
 import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
 import platform.exceptions.DataException;
 import synthwave.models.mongodb.standalones.Category;
 import synthwave.services.core.categories.CoreCategoryService;
