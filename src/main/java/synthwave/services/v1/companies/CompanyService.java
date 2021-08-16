@@ -1,10 +1,10 @@
 package synthwave.services.v1.companies;
 
-import platform.dto.RuleDTO;
-import platform.exceptions.DataException;
-import synthwave.models.mongodb.standalones.Company;
+import engine.dto.RuleDTO;
+import core.exceptions.DataException;
+import synthwave.models.morphia.extend.Company;
 import synthwave.services.core.companies.CoreCompanyService;
-import platform.utils.helpers.ParamsManager;
+import core.utils.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

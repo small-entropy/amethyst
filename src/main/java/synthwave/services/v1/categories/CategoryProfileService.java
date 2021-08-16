@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 
 import dev.morphia.Datastore;
-import platform.dto.RuleDTO;
+import engine.dto.RuleDTO;
 import synthwave.services.core.categories.CoreCategoryProfileService;
 
 /**

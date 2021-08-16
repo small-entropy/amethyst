@@ -1,17 +1,17 @@
 package synthwave.controllers.v1.companies;
 
-import platform.constants.DefaultRights;
-import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.dto.RuleDTO;
+import core.exceptions.AccessException;
+import core.response.transformers.JsonTransformer;
 import spark.Request;
 import spark.Response;
-import synthwave.controllers.base.RESTController;
-import synthwave.controllers.messages.CompaniesMessages;
-import synthwave.models.mongodb.standalones.Company;
-import synthwave.repositories.mongodb.v1.CompaniesRepository;
+import synthwave.controllers.abstracts.RESTController;
+import synthwave.constants.CompaniesMessages;
+import synthwave.models.morphia.extend.Company;
+import synthwave.repositories.morphia.CompaniesRepository;
 import synthwave.services.v1.companies.CompanyService;
-import synthwave.utils.helpers.Comparator;
+import core.utils.Comparator;
 import dev.morphia.Datastore;
 /**
  * Class controller for work with companies routes

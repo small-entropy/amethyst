@@ -1,14 +1,14 @@
 package synthwave.controllers.v1.companies;
 
 import dev.morphia.Datastore;
-import platform.constants.DefaultRights;
-import platform.utils.transformers.JsonTransformer;
-import synthwave.controllers.base.EmbeddedPropertiesController;
-import synthwave.controllers.messages.CompanyProfileMessages;
+import core.constants.DefaultRights;
+import core.response.transformers.JsonTransformer;
+import synthwave.controllers.abstracts.EmbeddedPropertiesController;
+import synthwave.constants.CompanyProfileMessages;
 import synthwave.filters.CompaniesFilter;
-import synthwave.models.mongodb.standalones.Company;
-import synthwave.repositories.mongodb.v1.CompaniesRepository;
-import synthwave.repositories.mongodb.v1.CompanyProfileRepository;
+import synthwave.models.morphia.extend.Company;
+import synthwave.repositories.morphia.CompaniesRepository;
+import synthwave.repositories.morphia.CompanyProfileRepository;
 import synthwave.services.v1.companies.CompanyProfileService;
 
 /**

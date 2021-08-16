@@ -4,18 +4,18 @@ import spark.Response;
 import spark.Request;
 import dev.morphia.Datastore;
 
-import platform.constants.DefaultRights;
-import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.dto.RuleDTO;
+import core.exceptions.AccessException;
+import core.response.transformers.JsonTransformer;
 
-import synthwave.controllers.base.RESTController;
-import synthwave.controllers.messages.CatalogsMessages;
-import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.repositories.mongodb.v1.CatalogsRepository;
+import synthwave.controllers.abstracts.RESTController;
+import synthwave.constants.CatalogsMessages;
+import synthwave.models.morphia.extend.Catalog;
+import synthwave.repositories.morphia.CatalogsRepository;
 import synthwave.services.v1.catalogs.CatalogService;
 import synthwave.utils.access.RightManager;
-import synthwave.utils.helpers.Comparator;
+import core.utils.Comparator;
 
 /**
  * Class controller for work with catalogs routes

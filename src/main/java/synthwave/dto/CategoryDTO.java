@@ -1,10 +1,10 @@
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
-import synthwave.models.mongodb.embeddeds.EmbeddedBreadcrumb;
-import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.models.mongodb.standalones.Category;
-import synthwave.models.mongodb.standalones.User;
+import core.dto.BaseDTO;
+import synthwave.models.morphia.embeddeds.EmbeddedBreadcrumb;
+import synthwave.models.morphia.extend.Catalog;
+import synthwave.models.morphia.extend.Category;
+import synthwave.models.morphia.extend.User;
 import java.util.List;
 import org.bson.types.ObjectId;
 

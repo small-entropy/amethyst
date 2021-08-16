@@ -1,14 +1,14 @@
 package synthwave.controllers.v1.categories;
 
 import dev.morphia.Datastore;
-import platform.constants.DefaultRights;
-import platform.utils.transformers.JsonTransformer;
-import synthwave.controllers.base.EmbeddedPropertiesController;
-import synthwave.controllers.messages.CategoryPropertiesMessages;
+import core.constants.DefaultRights;
+import core.response.transformers.JsonTransformer;
+import synthwave.controllers.abstracts.EmbeddedPropertiesController;
+import synthwave.constants.CategoryPropertiesMessages;
 import synthwave.filters.CategoriesFilter;
-import synthwave.models.mongodb.standalones.Category;
-import synthwave.repositories.mongodb.v1.CategoriesRepository;
-import synthwave.repositories.mongodb.v1.CategoryPropertiesRepository;
+import synthwave.models.morphia.extend.Category;
+import synthwave.repositories.morphia.CategoriesRepository;
+import synthwave.repositories.morphia.CategoryPropertiesRepository;
 import synthwave.services.v1.categories.CategoryPropertiesService;
 
 /**

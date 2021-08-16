@@ -5,11 +5,11 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
-import platform.dto.RuleDTO;
-import platform.exceptions.DataException;
-import platform.utils.helpers.ParamsManager;
+import engine.dto.RuleDTO;
+import core.exceptions.DataException;
+import core.utils.ParamsManager;
 
-import synthwave.models.mongodb.standalones.Tag;
+import synthwave.models.morphia.simple.Tag;
 import synthwave.services.core.tags.CoreTagService;
 
 /**

@@ -1,14 +1,14 @@
 package synthwave.services.core.catalogs;
 
 import synthwave.dto.CatalogDTO;
-import platform.exceptions.DataException;
+import core.exceptions.DataException;
 import synthwave.filters.CatalogsFilter;
-import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.CatalogsRepository;
-import synthwave.services.base.BaseDocumentService;
-import platform.utils.helpers.ParamsManager;
-import platform.utils.helpers.QueryManager;
+import synthwave.models.morphia.extend.Catalog;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.CatalogsRepository;
+import synthwave.services.abstracts.BaseDocumentService;
+import core.utils.ParamsManager;
+import core.utils.QueryManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

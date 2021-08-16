@@ -5,7 +5,7 @@
  */
 package synthwave.filters;
 
-import platform.filters.Filter;
+import core.filters.Filter;
 
 /**
  *

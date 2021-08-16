@@ -1,11 +1,11 @@
 package synthwave.services.core.users;
 
-import platform.dto.RuleDTO;
+import engine.dto.RuleDTO;
 import synthwave.dto.UserDTO;
 import synthwave.filters.UsersFilter;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.utils.jwt.JsonWebToken;
-import platform.utils.helpers.RequestUtils;
+import synthwave.models.morphia.extend.User;
+import core.utils.JsonWebToken;
+import core.utils.RequestManager;
 import synthwave.utils.access.RightManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ public abstract class CoreAuthorizationService
                 filterForSearch
         );
         // Get token from request
-        String token = RequestUtils.getTokenByRequest(request);
+        String token = RequestManager.getTokenByRequest(request);
         // Check user on exist & check issuedToken (token must be contains 
         // in this field)
         // If all check right - return user object,
@@ -121,7 +121,7 @@ public abstract class CoreAuthorizationService
             // If user haven't a generated token - generate new token
             String token;
             if (tokens == null || tokens.isEmpty()) {
-                token = JsonWebToken.encode(user);
+                token = JsonWebToken.encode(user.getUsername(), user.getStringifiedId());
                 user.setIssuedTokens(Arrays.asList(token));
                 getRepository().save(user);
             }
@@ -170,7 +170,7 @@ public abstract class CoreAuthorizationService
         // If founded user document equal null - return null.
         if (user != null) {
             // Get token from request
-            String token = RequestUtils.getTokenByRequest(request);
+            String token = RequestManager.getTokenByRequest(request);
             // Get user token index
             int tokenIndex = user.getIssuedTokens().indexOf(token);
             // Check token index on list contains

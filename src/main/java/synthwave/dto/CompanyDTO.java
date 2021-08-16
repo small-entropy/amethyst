@@ -1,8 +1,8 @@
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.standalones.User;
+import core.dto.BaseDTO;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import synthwave.models.morphia.extend.User;
 import java.util.List;
 
 /**

@@ -5,7 +5,7 @@
  */
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
+import core.dto.BaseDTO;
 
 /**
  * Class of data transfer object for 

@@ -1,13 +1,13 @@
 package synthwave.services.core.users;
 
 import synthwave.dto.UserRightDTO;
-import platform.exceptions.DataException;
-import synthwave.models.mongodb.embeddeds.EmbeddedRight;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.RightsRepository;
-import synthwave.services.base.BaseDocumentService;
-import platform.utils.helpers.ParamsManager;
-import platform.constants.DefaultRights;
+import core.exceptions.DataException;
+import core.models.morphia.embeddeds.EmbeddedRight;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.RightsRepository;
+import synthwave.services.abstracts.BaseDocumentService;
+import core.utils.ParamsManager;
+import core.constants.DefaultRights;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;

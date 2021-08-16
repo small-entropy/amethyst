@@ -1,6 +1,6 @@
 package synthwave.services.v1.users;
 
-import platform.dto.RuleDTO;
+import engine.dto.RuleDTO;
 import synthwave.services.core.users.CoreRightService;
 import dev.morphia.Datastore;
 import java.util.Arrays;

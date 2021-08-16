@@ -1,18 +1,18 @@
 package synthwave.services.core.users;
 
-import synthwave.utils.helpers.Comparator;
-import synthwave.utils.jwt.JsonWebToken;
-import platform.utils.helpers.HeadersUtils;
-import platform.utils.helpers.ParamsManager;
-import platform.utils.helpers.QueryManager;
-import platform.dto.RuleDTO;
+import core.utils.Comparator;
+import core.utils.JsonWebToken;
+import core.utils.HeadersManager;
+import core.utils.ParamsManager;
+import core.utils.QueryManager;
+import engine.dto.RuleDTO;
 import synthwave.dto.UserDTO;
-import platform.exceptions.DataException;
-import platform.exceptions.TokenException;
+import core.exceptions.DataException;
+import core.exceptions.TokenException;
 import synthwave.filters.UsersFilter;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.services.base.BaseService;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.UsersRepository;
+import synthwave.services.abstracts.BaseService;
 import synthwave.utils.access.RightManager;
 import com.google.gson.Gson;
 import dev.morphia.Datastore;
@@ -135,7 +135,7 @@ ument
             UsersFilter filter
     ) {
         // Get token from request headers
-        String header = HeadersUtils.getTokenFromHeaders(request);
+        String header = HeadersManager.getTokenFromHeaders(request);
         // Get token from request query params
         String queryParam = QueryManager.getTokenFromQuery(request);
         // Check token from exist
@@ -169,7 +169,7 @@ ument
             UsersFilter filter
     ) {
         // Get token from request headers
-        String header = HeadersUtils.getTokenFromHeaders(request);
+        String header = HeadersManager.getTokenFromHeaders(request);
         // Get token from request query params
         String queryParam = QueryManager.getTokenFromQuery(request);
         // Check token from exist

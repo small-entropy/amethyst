@@ -1,16 +1,16 @@
 package synthwave.controllers.v1.categories;
 
-import synthwave.controllers.base.RESTController;
-import synthwave.controllers.messages.CategoriesMessages;
-import synthwave.models.mongodb.standalones.Category;
-import synthwave.repositories.mongodb.v1.CategoriesRepository;
+import synthwave.controllers.abstracts.RESTController;
+import synthwave.constants.CategoriesMessages;
+import synthwave.models.morphia.extend.Category;
+import synthwave.repositories.morphia.CategoriesRepository;
 import synthwave.services.v1.categories.CategoryService;
-import synthwave.utils.helpers.Comparator;
-import platform.constants.DefaultRights;
-import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.utils.responses.SuccessResponse;
-import platform.utils.transformers.JsonTransformer;
+import core.utils.Comparator;
+import core.constants.DefaultRights;
+import engine.dto.RuleDTO;
+import core.exceptions.AccessException;
+import engine.response.answer.Success;
+import core.response.transformers.JsonTransformer;
 import spark.Request;
 import spark.Response;
 import dev.morphia.Datastore;
@@ -110,7 +110,7 @@ public class CategoriesController
                     getRight(),
                     getReadActionName()
             );
-            return new SuccessResponse<>(
+            return new Success<>(
             		CategoriesMessages.LIST.getMessage(), 
             		categories
            );

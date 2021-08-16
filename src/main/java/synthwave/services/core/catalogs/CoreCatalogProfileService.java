@@ -5,15 +5,15 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import dev.morphia.Datastore;
-import platform.exceptions.DataException;
-import platform.utils.helpers.ParamsManager;
+import core.exceptions.DataException;
+import core.utils.ParamsManager;
 import spark.Request;
 import synthwave.filters.CatalogsFilter;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.repositories.mongodb.v1.CatalogProfileRepository;
-import synthwave.repositories.mongodb.v1.CatalogsRepository;
-import synthwave.services.core.base.CRUDEmbeddedPropertyService;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import synthwave.models.morphia.extend.Catalog;
+import synthwave.repositories.morphia.CatalogProfileRepository;
+import synthwave.repositories.morphia.CatalogsRepository;
+import synthwave.services.abstracts.CRUDEmbeddedPropertyService;
 
 /**
  * Base class for work with catalog profile property list

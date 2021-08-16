@@ -1,14 +1,14 @@
 package synthwave.controllers.v1.tags;
 
-import synthwave.controllers.base.RESTController;
-import synthwave.controllers.messages.TagsMessages;
-import synthwave.models.mongodb.standalones.Tag;
-import synthwave.repositories.mongodb.v1.TagsRepository;
+import synthwave.controllers.abstracts.RESTController;
+import synthwave.constants.TagsMessages;
+import synthwave.models.morphia.simple.Tag;
+import synthwave.repositories.morphia.TagsRepository;
 import synthwave.services.v1.tags.TagService;
-import platform.constants.DefaultRights;
-import platform.dto.RuleDTO;
-import platform.exceptions.AccessException;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.dto.RuleDTO;
+import core.exceptions.AccessException;
+import core.response.transformers.JsonTransformer;
 import spark.Request;
 import spark.Response;
 import dev.morphia.Datastore;

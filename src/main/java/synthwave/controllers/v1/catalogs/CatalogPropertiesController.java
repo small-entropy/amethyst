@@ -1,14 +1,14 @@
 package synthwave.controllers.v1.catalogs;
 
 import dev.morphia.Datastore;
-import platform.constants.DefaultRights;
-import platform.utils.transformers.JsonTransformer;
-import synthwave.controllers.base.EmbeddedPropertiesController;
-import synthwave.controllers.messages.CatalogPropertiesMessages;
+import core.constants.DefaultRights;
+import core.response.transformers.JsonTransformer;
+import synthwave.controllers.abstracts.EmbeddedPropertiesController;
+import synthwave.constants.CatalogPropertiesMessages;
 import synthwave.filters.CatalogsFilter;
-import synthwave.models.mongodb.standalones.Catalog;
-import synthwave.repositories.mongodb.v1.CatalogPropertiesRepository;
-import synthwave.repositories.mongodb.v1.CatalogsRepository;
+import synthwave.models.morphia.extend.Catalog;
+import synthwave.repositories.morphia.CatalogPropertiesRepository;
+import synthwave.repositories.morphia.CatalogsRepository;
 import synthwave.services.v1.catalogs.CatalogPropertiesService;
 
 /**

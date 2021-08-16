@@ -1,8 +1,8 @@
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.embeddeds.EmbeddedRight;
+import core.dto.BaseDTO;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import core.models.morphia.embeddeds.EmbeddedRight;
 import java.util.List;
 
 public class UserDTO extends BaseDTO {

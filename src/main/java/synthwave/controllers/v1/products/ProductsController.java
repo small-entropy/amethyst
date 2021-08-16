@@ -1,8 +1,8 @@
 package synthwave.controllers.v1.products;
 
-import platform.constants.DefaultRights;
-import platform.controllers.BaseController;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.controllers.BaseController;
+import core.response.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 import static spark.Spark.*;
 

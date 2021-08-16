@@ -6,15 +6,15 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import dev.morphia.Datastore;
-import platform.exceptions.DataException;
-import platform.utils.helpers.ParamsManager;
+import core.exceptions.DataException;
+import core.utils.ParamsManager;
 import spark.Request;
 import synthwave.filters.CompaniesFilter;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.standalones.Company;
-import synthwave.repositories.mongodb.v1.CompaniesRepository;
-import synthwave.repositories.mongodb.v1.CompanyProfileRepository;
-import synthwave.services.core.base.CRUDEmbeddedPropertyService;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import synthwave.models.morphia.extend.Company;
+import synthwave.repositories.morphia.CompaniesRepository;
+import synthwave.repositories.morphia.CompanyProfileRepository;
+import synthwave.services.abstracts.CRUDEmbeddedPropertyService;
 
 /**
  * Base class for work with company profile property list

@@ -1,14 +1,14 @@
 package synthwave.services.core.tags;
 
 import synthwave.dto.TagDTO;
-import platform.exceptions.DataException;
+import core.exceptions.DataException;
 import synthwave.filters.TagsFilter;
-import synthwave.models.mongodb.standalones.Tag;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.TagsRepository;
-import synthwave.services.base.BaseDocumentService;
-import platform.utils.helpers.ParamsManager;
-import platform.utils.helpers.QueryManager;
+import synthwave.models.morphia.simple.Tag;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.TagsRepository;
+import synthwave.services.abstracts.BaseDocumentService;
+import core.utils.ParamsManager;
+import core.utils.QueryManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

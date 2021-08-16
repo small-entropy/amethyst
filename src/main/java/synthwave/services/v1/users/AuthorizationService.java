@@ -1,12 +1,12 @@
 package synthwave.services.v1.users;
 
-import platform.dto.RuleDTO;
+import engine.dto.RuleDTO;
 import synthwave.dto.UserDTO;
-import platform.exceptions.AuthorizationException;
-import platform.exceptions.DataException;
-import platform.exceptions.TokenException;
+import core.exceptions.AuthorizationException;
+import core.exceptions.DataException;
+import core.exceptions.TokenException;
 import synthwave.filters.UsersFilter;
-import synthwave.models.mongodb.standalones.User;
+import synthwave.models.morphia.extend.User;
 import synthwave.services.core.users.CoreAuthorizationService;
 import dev.morphia.Datastore;
 import spark.Request;

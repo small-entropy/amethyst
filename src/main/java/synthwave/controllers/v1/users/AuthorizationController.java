@@ -1,13 +1,13 @@
 package synthwave.controllers.v1.users;
 
-import synthwave.controllers.messages.AuthorizationMessages;
-import synthwave.models.mongodb.standalones.User;
+import synthwave.constants.AuthorizationMessages;
+import synthwave.models.morphia.extend.User;
 import synthwave.services.v1.users.AuthorizationService;
-import platform.constants.DefaultRights;
-import platform.controllers.BaseController;
-import platform.utils.helpers.HeadersUtils;
-import platform.utils.responses.SuccessResponse;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.controllers.BaseController;
+import core.utils.HeadersManager;
+import engine.response.answer.Success;
+import core.response.transformers.JsonTransformer;
 import spark.Response;
 import dev.morphia.Datastore;
 import static spark.Spark.get;
@@ -46,9 +46,8 @@ public class AuthorizationController
     		Response response, 
     		String token
     ) {
-        response.header(
-                HeadersUtils.getAuthHeaderField(),
-                HeadersUtils.getAuthHeaderValue(token)
+        response.header(HeadersManager.getAuthHeaderField(),
+                HeadersManager.getAuthHeaderValue(token)
         );
     }
 	
@@ -60,7 +59,7 @@ public class AuthorizationController
             User user = getService().registerUser(req);
             String token = user.getFirstToken();
             setAuthHeaders(res, token);
-            return new SuccessResponse<>(
+            return new Success<>(
             		AuthorizationMessages.REGISTERED.getMessage(), 
             		user
             );
@@ -79,7 +78,7 @@ public class AuthorizationController
             );
             String token = user.getFirstToken();
             setAuthHeaders(response, token);
-            return new SuccessResponse<>(
+            return new Success<>(
             		AuthorizationMessages.LOGIN.getMessage(), 
             		user
             );
@@ -96,7 +95,7 @@ public class AuthorizationController
             		getRight(), 
             		getReadActionName()
             );
-            return new SuccessResponse<>(
+            return new Success<>(
             		AuthorizationMessages.PASSWORD_CHANGED.getMessage(), 
             		user
             );
@@ -114,7 +113,7 @@ public class AuthorizationController
             		getRight(),
             		getReadActionName()
             );
-            return new SuccessResponse<>(
+            return new Success<>(
             		AuthorizationMessages.AUTOLOGIN.getMessage(), 
             		user
             );
@@ -131,7 +130,7 @@ public class AuthorizationController
             		getRight(), 
             		getReadActionName()
             );
-            return new SuccessResponse<>(
+            return new Success<>(
             		AuthorizationMessages.LOGOUT.getMessage(), 
             		user
             );

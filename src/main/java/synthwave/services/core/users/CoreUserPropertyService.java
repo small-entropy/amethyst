@@ -1,13 +1,13 @@
 package synthwave.services.core.users;
 
 import synthwave.filters.UsersFilter;
-import platform.exceptions.DataException;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.UserPropertiesRepository;
-import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.services.core.base.CRUDEmbeddedPropertyService;
-import platform.utils.helpers.ParamsManager;
+import core.exceptions.DataException;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.UserPropertiesRepository;
+import synthwave.repositories.morphia.UsersRepository;
+import synthwave.services.abstracts.CRUDEmbeddedPropertyService;
+import core.utils.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.Arrays;
 import java.util.List;

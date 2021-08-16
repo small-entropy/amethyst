@@ -8,15 +8,15 @@ import org.bson.types.ObjectId;
 import dev.morphia.Datastore;
 import spark.Request;
 
-import platform.exceptions.DataException;
-import platform.utils.helpers.ParamsManager;
+import core.exceptions.DataException;
+import core.utils.ParamsManager;
 
 import synthwave.filters.CategoriesFilter;
-import synthwave.models.mongodb.embeddeds.EmbeddedProperty;
-import synthwave.models.mongodb.standalones.Category;
-import synthwave.repositories.mongodb.v1.CategoriesRepository;
-import synthwave.repositories.mongodb.v1.CategoryPropertiesRepository;
-import synthwave.services.core.base.CRUDEmbeddedPropertyService;
+import core.models.morphia.embeddeds.EmbeddedProperty;
+import synthwave.models.morphia.extend.Category;
+import synthwave.repositories.morphia.CategoriesRepository;
+import synthwave.repositories.morphia.CategoryPropertiesRepository;
+import synthwave.services.abstracts.CRUDEmbeddedPropertyService;
 
 /**
  * Class with core methods for work with category properties field

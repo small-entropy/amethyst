@@ -1,13 +1,17 @@
 package synthwave.utils.access;
 
-import platform.dto.RuleDTO;
-import synthwave.filters.UsersFilter;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.models.mongodb.embeddeds.EmbeddedRight;
+import core.models.morphia.embeddeds.EmbeddedRight;
+import core.utils.Comparator;
+
+import engine.dto.RuleDTO;
+
 import synthwave.services.core.users.CoreUserService;
 import synthwave.services.v1.users.UserService;
-import synthwave.repositories.mongodb.v1.UsersRepository;
-import synthwave.utils.helpers.Comparator;
+import synthwave.repositories.morphia.UsersRepository;
+import synthwave.filters.UsersFilter;
+import synthwave.models.morphia.extend.User;
+
+
 import spark.Request;
 
 /**

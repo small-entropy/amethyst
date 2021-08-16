@@ -5,10 +5,10 @@ import dev.morphia.Morphia;
 import dev.morphia.mapping.MapperOptions;
 import com.mongodb.client.MongoClients;
 
-import platform.application.RestApplication;
-import platform.utils.transformers.JsonTransformer;
+import engine.applicatoins.RestApplication;
+import core.response.transformers.JsonTransformer;
 
-import synthwave.controllers.common.ErrorsController;
+import engine.controllers.ErrorsController;
 import synthwave.controllers.v1.companies.CompaniesController;
 import synthwave.controllers.v1.companies.CompanyProfileController;
 import synthwave.controllers.v1.companies.CompanyPropertiesController;

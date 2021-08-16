@@ -1,6 +1,6 @@
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
+import core.dto.BaseDTO;
 
 public class UserOrderDTO extends BaseDTO {
 }

@@ -1,14 +1,14 @@
 package synthwave.controllers.v1.users;
 
-import platform.constants.DefaultRights;
-import synthwave.controllers.base.EmbeddedPropertiesController;
-import synthwave.controllers.messages.UserPropertiesMessages;
+import core.constants.DefaultRights;
+import synthwave.controllers.abstracts.EmbeddedPropertiesController;
+import synthwave.constants.UserPropertiesMessages;
 import synthwave.filters.UsersFilter;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.UserPropertiesRepository;
-import synthwave.repositories.mongodb.v1.UsersRepository;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.UserPropertiesRepository;
+import synthwave.repositories.morphia.UsersRepository;
 import synthwave.services.v1.users.UserPropertyService;
-import platform.utils.transformers.JsonTransformer;
+import core.response.transformers.JsonTransformer;
 import dev.morphia.Datastore;
 
 /**

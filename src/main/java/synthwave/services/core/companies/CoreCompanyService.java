@@ -1,13 +1,13 @@
 package synthwave.services.core.companies;
 
 import synthwave.dto.CompanyDTO;
-import platform.exceptions.DataException;
+import core.exceptions.DataException;
 import synthwave.filters.CompaniesFilter;
-import synthwave.models.mongodb.standalones.Company;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.CompaniesRepository;
-import synthwave.services.base.BaseDocumentService;
-import platform.utils.helpers.QueryManager;
+import synthwave.models.morphia.extend.Company;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.CompaniesRepository;
+import synthwave.services.abstracts.BaseDocumentService;
+import core.utils.QueryManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

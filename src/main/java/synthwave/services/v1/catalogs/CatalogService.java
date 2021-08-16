@@ -1,11 +1,11 @@
 package synthwave.services.v1.catalogs;
 
-import platform.dto.RuleDTO;
-import platform.exceptions.DataException;
-import synthwave.models.mongodb.standalones.Catalog;
+import engine.dto.RuleDTO;
+import core.exceptions.DataException;
+import synthwave.models.morphia.extend.Catalog;
 import synthwave.services.core.catalogs.CoreCatalogService;
-import synthwave.utils.helpers.Comparator;
-import platform.utils.helpers.ParamsManager;
+import core.utils.Comparator;
+import core.utils.ParamsManager;
 import dev.morphia.Datastore;
 import java.util.List;
 import org.bson.types.ObjectId;

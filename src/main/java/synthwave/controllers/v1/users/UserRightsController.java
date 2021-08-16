@@ -1,13 +1,13 @@
 package synthwave.controllers.v1.users;
 
-import synthwave.controllers.messages.UserRightsMessages;
-import synthwave.models.mongodb.embeddeds.EmbeddedRight;
+import synthwave.constants.UserRightsMessages;
+import core.models.morphia.embeddeds.EmbeddedRight;
 import synthwave.services.v1.users.UserRightService;
-import platform.constants.DefaultRights;
-import platform.controllers.BaseController;
-import platform.exceptions.AccessException;
-import platform.utils.responses.SuccessResponse;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import engine.controllers.BaseController;
+import core.exceptions.AccessException;
+import engine.response.answer.Success;
+import core.response.transformers.JsonTransformer;
 import spark.Request;
 import spark.Response;
 import dev.morphia.Datastore;
@@ -149,7 +149,7 @@ public class UserRightsController
 	protected void getListRoute() {
 		get("/:user_id/rights", (request, response) -> {
             List<EmbeddedRight> rights = getService().getUserRights(request);
-            return new SuccessResponse<>(
+            return new Success<>(
             		UserRightsMessages.LIST.getMessage(), 
             		rights
             );
@@ -162,7 +162,7 @@ public class UserRightsController
 	protected void createEntity() {
 		post("/:user_id/rights", (request, response) -> {
             EmbeddedRight right = getService().createUserRight(request);
-            return new SuccessResponse<>(
+            return new Success<>(
             		UserRightsMessages.CREATED.getMessage(), 
             		right
             );
@@ -175,7 +175,7 @@ public class UserRightsController
 	protected void getEntityByIdRoute() {
 		get("/:user_id/rights/:right_id", (request, ressponse) -> {
             EmbeddedRight right = getService().getUserRightById(request);
-            return new SuccessResponse<>(
+            return new Success<>(
             		UserRightsMessages.ENTITY.getMessage(),
             		right
             );
@@ -188,7 +188,7 @@ public class UserRightsController
 	protected void updateRoute() {
 		 put("/:user_id/rights/:right_id", (request, response) -> {
 			EmbeddedRight right = getService().updateRight(request);
-			return new SuccessResponse<>(
+			return new Success<>(
 					UserRightsMessages.UPDATED.getMessage(), 
 					right
 			);
@@ -202,7 +202,7 @@ public class UserRightsController
 	protected void deleteRoute() {
         delete("/:user_id/rights/:right_id", (request, response) -> {
             List<EmbeddedRight> rights = getService().deleteRight(request);
-            return new SuccessResponse<>(
+            return new Success<>(
             		UserRightsMessages.DELETED.getMessage(), 
             		rights
             );

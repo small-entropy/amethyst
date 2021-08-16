@@ -4,17 +4,17 @@ import dev.morphia.Datastore;
 import spark.Request;
 import spark.Response;
 
-import platform.constants.DefaultRights;
-import platform.exceptions.TokenException;
-import platform.utils.helpers.RequestUtils;
-import platform.utils.transformers.JsonTransformer;
+import core.constants.DefaultRights;
+import core.exceptions.TokenException;
+import core.utils.RequestManager;
+import core.response.transformers.JsonTransformer;
 
-import synthwave.controllers.base.RESTController;
-import synthwave.controllers.messages.UsersMessages;
-import synthwave.models.mongodb.standalones.User;
-import synthwave.repositories.mongodb.v1.UsersRepository;
+import synthwave.controllers.abstracts.RESTController;
+import synthwave.constants.UsersMessages;
+import synthwave.models.morphia.extend.User;
+import synthwave.repositories.morphia.UsersRepository;
 import synthwave.services.v1.users.UserService;
-import synthwave.utils.helpers.Comparator;
+import core.utils.Comparator;
 
 /**
  * Class controller of users API
@@ -27,7 +27,7 @@ public class UserController
 	@Override
 	protected void beforeDeleteRoute(Request request, Response response) 
 		throws TokenException {
-		String token = RequestUtils.getTokenByRequest(request);
+		String token = RequestManager.getTokenByRequest(request);
 		if (token == null) {
 			Error error = new Error("Token not send");
             throw new TokenException("NotSend", error);

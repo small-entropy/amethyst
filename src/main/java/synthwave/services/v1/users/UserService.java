@@ -5,15 +5,15 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import spark.Request;
 
-import platform.dto.RuleDTO;
-import platform.exceptions.DataException;
-import platform.exceptions.TokenException;
-import platform.utils.helpers.ParamsManager;
-import platform.utils.helpers.QueryManager;
+import engine.dto.RuleDTO;
+import core.exceptions.DataException;
+import core.exceptions.TokenException;
+import core.utils.ParamsManager;
+import core.utils.QueryManager;
 
-import synthwave.models.mongodb.standalones.User;
+import synthwave.models.morphia.extend.User;
 import synthwave.services.core.users.CoreUserService;
-import synthwave.utils.helpers.Comparator;
+import core.utils.Comparator;
 
 /**
  * Class service for work with users collection

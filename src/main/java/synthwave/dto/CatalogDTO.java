@@ -5,8 +5,8 @@
  */
 package synthwave.dto;
 
-import platform.dto.BaseDTO;
-import synthwave.models.mongodb.standalones.User;
+import core.dto.BaseDTO;
+import synthwave.models.morphia.extend.User;
 
 /**
  * Class data transfer object for catalog model data
